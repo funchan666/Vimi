@@ -116,7 +116,7 @@ void main() {
       await app.refreshAccount();
       await tester.pump(const Duration(seconds: 1));
       await openTestPage(tester, DancerPage(id: peerId));
-      await waitFor(tester, () => find.text('Message').evaluate().isNotEmpty);
+      await waitFor(tester, () => action('Message').evaluate().isNotEmpty);
       await press(tester, 'Message');
       await waitFor(
         tester,
@@ -274,7 +274,7 @@ void main() {
       await openTestPage(tester, DancerPage(id: peerId));
       await waitFor(
         tester,
-        () => find.text('Block dancer').evaluate().isNotEmpty,
+        () => action('Block dancer').evaluate().isNotEmpty,
       );
       await press(tester, 'Block dancer');
       await press(tester, 'Block dancer');

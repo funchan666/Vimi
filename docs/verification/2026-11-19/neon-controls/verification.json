@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-19",
+  "local_tests": 23,
+  "secondary_larger_type_layout_cases": 28,
+  "native_evidence": "native-results.json",
+  "native_scope": "Local guest UI; no server connection, account or content writes",
+  "icon_navigation_semantics": "All four names, selected state and actionable button semantics verified at compact and expanded widths",
+  "source_sha256": {
+    "lib/design/vimi_ui.dart": "98db69d3684587d8302864cd63df98ce53beb49d3056083b324d8a9c40a6045d",
+    "lib/features/community/publish_page.dart": "b40391a1ea8411f37fea389169a0f59b59633a9ad2dc96dbcb9ee6e4b0fb55ef",
+    "lib/features/profile/help_pages.dart": "b8c5501de5918569fb55650e1133bc5603c6c9aad5eb2c02b7a8a4990e111526",
+    "lib/features/profile/profile_pages.dart": "138139cc18b6814bfd81d3efd948cd6ae59c62c7004b8be82ec07869ff4255ab",
+    "lib/features/shell.dart": "7776f6362f2a71b8606dcd585c4fd9768c4c79bfeec7ce3b09879c7d1f508542",
+    "lib/features/studio/media_library_pages.dart": "406c3b23cdcea90e355f5325b46bdb5ebb7d8a5fc76071eb07aafea13d331ac5",
+    "lib/features/studio/rehearsal_player.dart": "b2bb475b0de95044e55b6cd65186716af74a7c0de15182bdb60922b4b75931fb",
+    "lib/features/studio/studio_pages.dart": "951c43499e3c5db2451553bdbe0ff55c13b0b3ef1ecf06d6e7a03d7693094044"
+  },
+  "preview": {
+    "file": "dist/Vimi-1.0.0-arm64-preview.apk",
+    "mode": "profile",
+    "signing": "local debug key; preview only",
+    "bytes": 67253150,
+    "sha256": "0879442ad291e7d7a2544184a28a5738b52711b91a8ef988eaaf94eb475f8985",
+    "qa_credentials_present": false,
+    "private_configs_present": false,
+    "qa_fixture_labels_present": false,
+    "actual_distinct_passwords_checked": 2,
+    "arm64": true,
+    "installed": true,
+    "cold_launch": "passed",
+    "signature_v2_verified": true,
+    "startup_screenshot": "neon-controls/preview-studio.png",
+    "target_api": 36,
+    "min_api": 24,
+    "bundled_supplied_images": 55,
+    "bundled_supplied_videos": 10
+  },
+  "not_repeated_this_pass": [
+    "hosted social/authentication/deletion suites",
+    "real Google Play purchases",
+    "physical-device and 16 KB runtime validation"
+  ],
+  "camera_picker_scope": "Native camera source sheet opened; camera capture was not invoked in this UI-only suite",
+  "original_assets": "assets/brand/asset-inventory-v4.json",
+  "media_files_byte_checked_against_this_apk": 128,
+  "media_source_items": 65
+}

@@ -12,7 +12,7 @@ On November 19, 2026 the user approved the neon social direction: midnight viole
 
 - Floor: browse approved dance photos/videos, filter by style, discover dancers, join original eight-count challenges, publish with gallery/camera, comment, save, report and block.
 - Studio: keep practice sessions with routine, style, tempo, eight counts and notes. Replay a personal video with speed, mirror and loop controls. Optional coin-unlocked practice packs provide concrete reusable drills and planning prompts.
-- The free offline video library includes all ten publisher-supplied clips, with Solo/Duets/Groups filters, account-scoped local saves, native rehearsal controls and reusable clip references in practice notes. All 55 supplied photos are available in the profile image library with full preview and avatar-crop preview before an explicit profile save.
+- The free streaming video library includes all ten publisher-supplied clips, with Solo/Duets/Groups filters, account-scoped local saves, native rehearsal controls and reusable stable clip references in practice notes. All 55 supplied photos are available online in the profile image library with full preview and avatar-crop preview before an explicit profile save. Library bookmarks are local references, not offline video downloads.
 - Inbox: real Supabase direct messages between mutually following adults; no pretend replies or online indicators. New conversations and every send check the relationship on the server.
 - Me: dance identity, own posts including review states, relationships, saved posts, practice history, wallet ledger and settings.
 
@@ -22,7 +22,7 @@ Email/password authentication and recovery use Supabase Auth. Sessions use encry
 
 Coins have seven planned Google Play consumable IDs. Local prices come exclusively from Play. The backend verifies the purchase token and the obfuscated account ID, grants an idempotent credit in a locked database transaction, and consumes the token after crediting. No client balance writes. Basic social actions are free. Refunded purchase handling and Play service credentials are required release configuration.
 
-The publisher supplied 55 photos and ten videos and confirmed commercial App distribution, likeness and existing soundtrack rights on November 19, 2026. All are compressed and bundled; the rights confirmation and source/runtime inventory are in `docs/media/`. This is publisher confirmation, not independent rights clearance. Library performances and images do not create registered dancers, posts or engagement. The library is for viewing/private rehearsal and does not grant members a licence to republish another person's music or performance. Authored challenges and original brand photographs remain editorial app content. Members must have permission to upload media and audio.
+The publisher supplied 55 photos and ten videos and confirmed commercial App distribution, likeness and existing soundtrack rights on November 19, 2026. All are compressed and delivered from a separate public Supabase publisher-library bucket; the rights confirmation and source/runtime inventory are in `docs/media/`. This is publisher confirmation, not independent rights clearance. Library performances and images do not create registered dancers, posts or engagement. The library is for viewing/private rehearsal and does not grant members a licence to republish another person's music or performance. Authored challenges and original brand photographs remain editorial app content. Members must have permission to upload media and audio.
 
 ## Functional completeness and acceptance
 
@@ -35,3 +35,7 @@ The current journey-level acceptance record is in `docs/FUNCTIONAL_ACCEPTANCE.md
 ## Verification boundary
 
 The November 19 continuation explicitly requests complete working journeys. This task authorizes analysis, relevant tests, Android debug compilation and emulator flow verification, in addition to source/configuration/resource review and necessary backend fixes. Keep actual device, simulated widget, database transaction and live-service evidence separate. Real Google Play purchases require the publisher's remaining credentials/products; no public release or store upload is authorized.
+
+## Publisher media delivery update
+
+On November 19, the publisher explicitly approved migrating all 55 images and ten videos to Supabase and removing their local package copies only after verification. Stable library IDs resolve to public URLs; version-1 asset references in existing practice notes, drafts and recovery copies remain resolvable without rewriting private journal data. Member uploads remain in the separate private bucket. The publisher subsequently requested deletion of original and optimized project backups; ProjectMaterials/Supplied has been removed.

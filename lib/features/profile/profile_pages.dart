@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,6 +11,7 @@ import '../../core/pagination.dart';
 import '../../core/media_library.dart';
 import '../../design/page_footer.dart';
 import '../../design/vimi_ui.dart';
+import '../../design/library_image.dart';
 import '../auth/auth_pages.dart';
 import '../community/community_pages.dart';
 import '../messages/inbox_pages.dart';
@@ -93,25 +93,26 @@ class MePage extends StatelessWidget {
         Wrap(
           spacing: 8,
           children: [
-            VButton(
-              '${profile.followers} followers',
-              quiet: true,
+            VProfileStat(
+              count: profile.followers,
+              label: 'followers',
               onPressed: () => openPage(
                 context,
                 RelationsPage(id: profile.id, followers: true),
               ),
             ),
-            VButton(
-              '${profile.following} following',
-              quiet: true,
+            VProfileStat(
+              count: profile.following,
+              label: 'following',
               onPressed: () => openPage(
                 context,
                 RelationsPage(id: profile.id, followers: false),
               ),
             ),
-            VButton(
-              'Edit dance profile',
-              quiet: true,
+            VIconButton(
+              Glyph.edit,
+              label: 'Edit dance profile',
+              filled: true,
               onPressed: () =>
                   openPage(context, EditProfilePage(profile: profile)),
             ),
@@ -120,30 +121,22 @@ class MePage extends StatelessWidget {
         const SizedBox(height: 24),
         SurfacePanel(
           illuminated: true,
-          child: Row(
+          padding: const EdgeInsets.all(8),
+          child: Column(
             children: [
-              const VIcon(Glyph.coin, size: 32, color: VimiColors.cyan),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  '${app.coins} coins',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              VButton(
+              VActionRow(
                 'Wallet',
-                quiet: true,
+                glyph: Glyph.coin,
+                detail: '${app.coins} coins available',
                 onPressed: () => openPage(context, const WalletPage()),
+              ),
+              VActionRow(
+                'Saved inspiration',
+                glyph: Glyph.save,
+                onPressed: () => openPage(context, const SavedPostsPage()),
               ),
             ],
           ),
-        ),
-        const SizedBox(height: 24),
-        VButton(
-          'Saved inspiration',
-          glyph: Glyph.save,
-          quiet: true,
-          onPressed: () => openPage(context, const SavedPostsPage()),
         ),
         const SizedBox(height: 24),
         Text(
@@ -408,7 +401,25 @@ class _DancerPageState extends State<DancerPage> {
           return ListView(
             padding: const EdgeInsets.all(24),
             children: [
-              SignedAvatar(profile, size: 96),
+              Row(
+                children: [
+                  SignedAvatar(profile, size: 96),
+                  const Spacer(),
+                  if (profile.id != app.account) ...[
+                    VIconButton(
+                      Glyph.report,
+                      label: 'Report dancer',
+                      onPressed: () =>
+                          reportContent(context, 'user', profile.id),
+                    ),
+                    VIconButton(
+                      Glyph.block,
+                      label: 'Block dancer',
+                      onPressed: () => blockDancer(context, profile),
+                    ),
+                  ],
+                ],
+              ),
               const SizedBox(height: 20),
               Text(
                 profile.name,
@@ -423,17 +434,17 @@ class _DancerPageState extends State<DancerPage> {
               const SizedBox(height: 16),
               Wrap(
                 children: [
-                  VButton(
-                    '${profile.followers} followers',
-                    quiet: true,
+                  VProfileStat(
+                    count: profile.followers,
+                    label: 'followers',
                     onPressed: () => openPage(
                       context,
                       RelationsPage(id: profile.id, followers: true),
                     ),
                   ),
-                  VButton(
-                    '${profile.following} following',
-                    quiet: true,
+                  VProfileStat(
+                    count: profile.following,
+                    label: 'following',
                     onPressed: () => openPage(
                       context,
                       RelationsPage(id: profile.id, followers: false),
@@ -443,46 +454,39 @@ class _DancerPageState extends State<DancerPage> {
               ),
               if (profile.id != app.account) ...[
                 const SizedBox(height: 16),
-                VButton(
-                  profile.isFollowing
-                      ? 'Following · tap to unfollow'
-                      : 'Follow dancer',
-
-                  busy: busy,
-                  onPressed: () async {
-                    if (busy) return;
-                    setState(() => busy = true);
-                    try {
-                      await app.repo!.follow(
-                        profile.id,
-                        followed: !profile.isFollowing,
-                      );
-                      await app.refreshAccount();
-                    } catch (e) {
-                      if (context.mounted) feedback(context, readableError(e));
-                    } finally {
-                      if (mounted) setState(() => busy = false);
-                    }
-                  },
-                ),
-                const SizedBox(height: 8),
-                VButton(
-                  'Message',
-                  glyph: Glyph.inbox,
-                  onPressed: () => openPage(context, ChatPage(peer: profile)),
-                ),
-                Wrap(
+                Row(
                   children: [
-                    VButton(
-                      'Report dancer',
-                      quiet: true,
-                      onPressed: () =>
-                          reportContent(context, 'user', profile.id),
+                    Expanded(
+                      child: VButton(
+                        profile.isFollowing ? 'Following' : 'Follow dancer',
+                        glyph: profile.isFollowing ? Glyph.check : Glyph.add,
+
+                        busy: busy,
+                        onPressed: () async {
+                          if (busy) return;
+                          setState(() => busy = true);
+                          try {
+                            await app.repo!.follow(
+                              profile.id,
+                              followed: !profile.isFollowing,
+                            );
+                            await app.refreshAccount();
+                          } catch (e) {
+                            if (context.mounted)
+                              feedback(context, readableError(e));
+                          } finally {
+                            if (mounted) setState(() => busy = false);
+                          }
+                        },
+                      ),
                     ),
-                    VButton(
-                      'Block dancer',
-                      quiet: true,
-                      onPressed: () => blockDancer(context, profile),
+                    const SizedBox(width: 12),
+                    VIconButton(
+                      Glyph.inbox,
+                      label: 'Message',
+                      filled: true,
+                      onPressed: () =>
+                          openPage(context, ChatPage(peer: profile)),
                     ),
                   ],
                 ),
@@ -580,20 +584,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       var chosen = photo;
       if (libraryPhoto != null) {
-        final asset = libraryPhoto!.asset;
-        final bytes = await rootBundle.load(asset);
+        final portrait = libraryPhoto!;
+        final bytes = await portrait.download();
+        if (!mounted || app.account != owner) return;
         temporary = await (await getTemporaryDirectory()).createTemp(
           'vimi-avatar-',
         );
-        chosen =
-            await File(
-              '${temporary.path}/portrait.${asset.split('.').last}',
-            ).writeAsBytes(
-              bytes.buffer.asUint8List(
-                bytes.offsetInBytes,
-                bytes.lengthInBytes,
-              ),
-            );
+        chosen = await File(
+          '${temporary.path}/portrait.${portrait.extension}',
+        ).writeAsBytes(bytes);
       }
       if (!mounted || app.account != owner) return;
       final path = chosen == null
@@ -637,8 +636,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           Align(
             alignment: Alignment.centerLeft,
             child: ClipOval(
-              child: Image.asset(
-                libraryPhoto!.asset,
+              child: LibraryImage(
+                libraryPhoto!.url,
+                compact: true,
                 width: 96,
                 height: 96,
                 fit: BoxFit.cover,
@@ -662,28 +662,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
             ),
           ),
+        const SizedBox(height: 16),
         Wrap(
+          spacing: 12,
+          runSpacing: 8,
           children: [
-            VButton(
-              'Browse profile images',
-              glyph: Glyph.photo,
-              quiet: true,
+            VIconButton(
+              Glyph.library,
+              label: 'Browse profile images',
+              primary: true,
               onPressed: busy ? null : chooseLibraryPhoto,
             ),
-            VButton(
-              'Choose photo',
-              glyph: Glyph.photo,
-              quiet: true,
+            VIconButton(
+              Glyph.photo,
+              label: 'Choose photo',
+              filled: true,
               onPressed: busy ? null : () => choose(ImageSource.gallery),
             ),
-            VButton(
-              'Take photo',
-              glyph: Glyph.camera,
-              quiet: true,
+            VIconButton(
+              Glyph.camera,
+              label: 'Take photo',
+              filled: true,
               onPressed: busy ? null : () => choose(ImageSource.camera),
             ),
           ],
         ),
+        const SizedBox(height: 24),
         VField('Display name', controller: name, maxLength: 40, enabled: !busy),
         VField(
           'A little about your dancing',
@@ -749,75 +753,80 @@ class SettingsPage extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          VButton(
+          Text('Your space', style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 12),
+          VActionRow(
             'Blocked dancers',
             glyph: Glyph.block,
-            quiet: true,
             onPressed: () => openPage(context, const BlockedDancersPage()),
           ),
-          VButton(
+          VActionRow(
             'Your reports',
             glyph: Glyph.report,
-            quiet: true,
             onPressed: () => openPage(context, const MyReportsPage()),
           ),
-          VButton(
+          VActionRow(
             'Help & safety',
-            quiet: true,
+            glyph: Glyph.report,
             onPressed: () => openPage(context, const HelpCenterPage()),
           ),
-          VButton(
+          VActionRow(
             'Change password',
-            quiet: true,
+            glyph: Glyph.settings,
             onPressed: () => openPage(context, const ChangePasswordPage()),
           ),
           if (app.isModerator)
-            VButton(
+            VActionRow(
               'Content review',
               glyph: Glyph.check,
-              quiet: true,
               onPressed: () => openPage(context, const ModerationPage()),
             ),
-          VButton(
+          const SizedBox(height: 24),
+          Text(
+            'Safety & policies',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 12),
+          VActionRow(
             'Community guidelines',
-            quiet: true,
+            glyph: Glyph.person,
             onPressed: () => openPage(
               context,
               const LegalPage('Community guidelines', 'community'),
             ),
           ),
-          VButton(
+          VActionRow(
             'Child safety standards',
-            quiet: true,
+            glyph: Glyph.report,
             onPressed: () => openPage(
               context,
               const LegalPage('Child safety standards', 'child-safety'),
             ),
           ),
-          VButton(
+          VActionRow(
             'Account deletion & data',
-            quiet: true,
+            glyph: Glyph.delete,
             onPressed: () => openPage(
               context,
               const LegalPage('Account deletion & data', 'deletion'),
             ),
           ),
-          VButton(
+          VActionRow(
             'Privacy Policy',
-            quiet: true,
+            glyph: Glyph.save,
             onPressed: () =>
                 openPage(context, const LegalPage('Privacy Policy', 'privacy')),
           ),
-          VButton(
+          VActionRow(
             'Terms of Use',
-            quiet: true,
+            glyph: Glyph.library,
             onPressed: () =>
                 openPage(context, const LegalPage('Terms of Use', 'terms')),
           ),
           if (support.isNotEmpty || supportEmail.isNotEmpty)
-            VButton(
+            VActionRow(
               'Contact support',
-              quiet: true,
+              glyph: Glyph.inbox,
               onPressed: () async {
                 final uri = support.isNotEmpty
                     ? Uri.tryParse(support)
@@ -839,16 +848,15 @@ class SettingsPage extends StatelessWidget {
                   );
               },
             ),
-          VButton(
+          VActionRow(
             'Open-source licenses',
-            quiet: true,
+            glyph: Glyph.library,
             onPressed: () => openPage(context, const VimiLicensesPage()),
           ),
           const SizedBox(height: 32),
-          VButton(
+          VActionRow(
             'Sign out',
             glyph: Glyph.logout,
-            quiet: true,
             onPressed: () async {
               if (await confirmAction(
                     context,
@@ -865,10 +873,10 @@ class SettingsPage extends StatelessWidget {
               }
             },
           ),
-          VButton(
+          VActionRow(
             'Delete account',
             glyph: Glyph.delete,
-            quiet: true,
+            danger: true,
             onPressed: () => openPage(context, const DeleteAccountPage()),
           ),
           const SizedBox(height: 24),

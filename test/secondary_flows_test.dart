@@ -8,9 +8,11 @@ import 'package:vimi/core/local_studio.dart';
 import 'package:vimi/core/models.dart';
 import 'package:vimi/design/vimi_ui.dart';
 import 'package:vimi/features/auth/auth_pages.dart';
+import 'package:vimi/features/shell.dart';
 import 'package:vimi/features/auth/account_security_pages.dart';
 import 'package:vimi/features/community/publish_page.dart';
 import 'package:vimi/features/profile/help_pages.dart';
+import 'package:vimi/features/profile/profile_pages.dart';
 import 'package:vimi/features/profile/moderation_pages.dart';
 import 'package:vimi/features/studio/studio_pages.dart';
 import 'package:vimi/features/studio/media_library_pages.dart';
@@ -34,7 +36,10 @@ Future<void> show(WidgetTester tester, Finder target) async {
 }
 
 Future<void> tap(WidgetTester tester, String label) async {
-  final target = find.text(label);
+  final target = find.byWidgetPredicate(
+    (w) =>
+        (w is Text && w.data == label) || (w is Tooltip && w.message == label),
+  );
   await show(tester, target);
   await tester.tap(target.last);
   await tester.pumpAndSettle();
@@ -146,6 +151,63 @@ void main() {
   );
 
   testWidgets(
+    'icon-only navigation keeps labels, selected state and all destinations',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      final app = await controller();
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      try {
+        for (final size in [const Size(320, 740), const Size(900, 700)]) {
+          tester.view.physicalSize = size;
+          tester.view.devicePixelRatio = 1;
+          await mount(tester, app, const DanceShell(), scale: 1.3);
+          for (final label in ['Floor', 'Studio', 'Inbox', 'Me']) {
+            final icon = find.byTooltip(label);
+            expect(
+              find.descendant(of: icon, matching: find.text(label)),
+              findsNothing,
+              reason: 'Navigation captions stay hidden',
+            );
+            expect(icon, findsOneWidget);
+            final bounds = tester.getSize(icon);
+            expect(bounds.width, greaterThanOrEqualTo(48));
+            expect(bounds.height, greaterThanOrEqualTo(48));
+            await tester.tap(icon);
+            await tester.pumpAndSettle();
+            final button = tester.widget<VIconButton>(
+              find.ancestor(of: icon, matching: find.byType(VIconButton)),
+            );
+            expect(button.selected, isTrue);
+            expect(
+              tester.getSemantics(
+                find.ancestor(of: icon, matching: find.byType(VIconButton)),
+              ),
+              matchesSemantics(
+                label: label,
+                isButton: true,
+                hasSelectedState: true,
+                isSelected: true,
+                hasEnabledState: true,
+                isEnabled: true,
+                isFocusable: true,
+                hasTapAction: true,
+              ),
+            );
+            expect(tester.takeException(), isNull, reason: '$label at $size');
+          }
+          await tester.pumpWidget(const SizedBox());
+        }
+      } finally {
+        app.dispose();
+        semantics.dispose();
+      }
+    },
+  );
+
+  testWidgets(
     'secondary neon pages fit narrow and expanded layouts with larger type',
     (tester) async {
       final app = await controller();
@@ -164,6 +226,10 @@ void main() {
           const EmailConfirmationPage(email: 'qa@example.invalid'),
           const ChangePasswordPage(),
           const HelpCenterPage(),
+          const SettingsPage(),
+          const EditProfilePage(
+            profile: Dancer(id: 'layout-fixture', name: 'Layout preview'),
+          ),
           const ModerationPage(),
           const PracticeEditor(),
           MediaLibraryPage(

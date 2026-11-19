@@ -52,10 +52,10 @@ class StudioPage extends StatelessWidget {
           onPressed: () => openPage(context, const PracticeEditor()),
         ),
         const SizedBox(height: 12),
-        VButton(
-          'Explore the dance video library',
-          glyph: Glyph.video,
-          quiet: true,
+        VActionRow(
+          'Dance video library',
+          detail: '10 clips · Solo, duets & groups',
+          glyph: Glyph.library,
           onPressed: () => openPage(
             context,
             MediaLibraryPage(
@@ -88,35 +88,21 @@ class StudioPage extends StatelessWidget {
         for (final practice in app.practices)
           Padding(
             padding: const EdgeInsets.only(top: 16),
-            child: SurfacePanel(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    practice.routine,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '${practice.style} · ${practice.minutes} min · ${practice.counts} eights · ${displayDate(practice.createdAt)}',
-                    style: const TextStyle(color: VimiColors.muted),
-                  ),
-                  if (practice.notes.isNotEmpty) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      practice.notes,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                  const SizedBox(height: 12),
-                  VButton(
-                    'Open practice',
-                    quiet: true,
-                    onPressed: () =>
-                        openPage(context, PracticeEditor(session: practice)),
-                  ),
-                ],
+            child: Tooltip(
+              message: 'Open practice',
+              child: SurfacePanel(
+                padding: const EdgeInsets.all(8),
+                child: VActionRow(
+                  practice.routine,
+                  glyph: practice.videoPath == null
+                      ? Glyph.studio
+                      : Glyph.video,
+                  detail:
+                      '${practice.style} · ${practice.minutes} min · ${practice.counts} eights · ${displayDate(practice.createdAt)}'
+                      '${practice.notes.isEmpty ? '' : '\n${practice.notes}'}',
+                  onPressed: () =>
+                      openPage(context, PracticeEditor(session: practice)),
+                ),
               ),
             ),
           ),
@@ -131,26 +117,20 @@ class StudioPage extends StatelessWidget {
         ),
         for (final pack in StudioPack.all)
           Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(pack.title, style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 6),
-                Text(pack.description),
-                const SizedBox(height: 8),
-                VButton(
-                  app.unlocked.contains(pack.id)
-                      ? 'Open your pack'
-                      : 'See pack · ${pack.cost} coins',
-                  glyph: app.unlocked.contains(pack.id)
-                      ? Glyph.check
-                      : Glyph.coin,
-                  quiet: true,
-                  onPressed: () =>
-                      openPage(context, StudioPackPage(pack: pack)),
-                ),
-              ],
+            padding: const EdgeInsets.only(top: 16),
+            child: Tooltip(
+              message: app.unlocked.contains(pack.id)
+                  ? 'Open your pack'
+                  : 'See pack · ${pack.cost} coins',
+              child: VActionRow(
+                pack.title,
+                detail:
+                    '${app.unlocked.contains(pack.id) ? 'Unlocked' : '${pack.cost} coins'} · ${pack.description}',
+                glyph: app.unlocked.contains(pack.id)
+                    ? Glyph.check
+                    : Glyph.coin,
+                onPressed: () => openPage(context, StudioPackPage(pack: pack)),
+              ),
             ),
           ),
       ],
@@ -402,9 +382,9 @@ class _PracticeEditorState extends State<PracticeEditor> {
         if (video != null &&
             (isLibraryVideo(video!) || File(video!).existsSync())) ...[
           RehearsalPlayer(source: video!, practice: true),
-          VButton(
-            'Remove video from this note',
-            quiet: true,
+          VIconButton(
+            Glyph.close,
+            label: 'Remove video from this note',
             onPressed: busy
                 ? null
                 : () {
@@ -413,20 +393,19 @@ class _PracticeEditorState extends State<PracticeEditor> {
                   },
           ),
         ],
-        VButton(
+        VActionRow(
           video == null ? 'Add your rehearsal video' : 'Choose another video',
           glyph: Glyph.video,
-          quiet: true,
           onPressed: busy ? null : chooseVideo,
         ),
         const SizedBox(height: 16),
         if (error != null) ErrorNote(error!),
         VButton('Save practice', busy: busy, onPressed: save),
         if (widget.session != null)
-          VButton(
-            'Delete practice note',
-            glyph: Glyph.delete,
-            quiet: true,
+          VIconButton(
+            Glyph.delete,
+            label: 'Delete practice note',
+            color: VimiColors.danger,
             onPressed: () async {
               if (!await confirmAction(
                     context,

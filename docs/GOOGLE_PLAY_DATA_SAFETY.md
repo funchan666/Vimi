@@ -1,6 +1,6 @@
 # Vimi Data safety worksheet
 
-This is a source-based worksheet, not a submitted form or a blanket declaration. Reconcile it with the final AAB, service-provider terms/logging and the developer's support practices before submission. Account and cloud functionality use Supabase; offline guest practice is a separate device-only path. Follow the current [Google definitions](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en).
+This is a source-based worksheet, not a submitted form or a blanket declaration. Reconcile it with the final AAB, service-provider terms/logging and the developer's support practices before submission. Account and cloud functionality use Supabase; guest practice notes are a separate device-only path. Follow the current [Google definitions](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en).
 
 | Candidate Console data type | Actual source/processing | Purpose / requiredness to assess |
 | --- | --- | --- |
@@ -19,6 +19,8 @@ This is a source-based worksheet, not a submitted form or a blanket declaration.
 | Device or other IDs / diagnostics | Observed provider logs include TLS/client fingerprint, user agent and authentication/session metadata | Declare the provider identifier and diagnostic processing under the applicable categories; no advertising identifier is read by the app |
 
 Local-only practice notes, drafts, rehearsal files and drill progress are not automatically cloud-synced; distinguish them from a deliberately published photo/video. No standalone audio upload, microphone SDK recording, address-book access, advertising identifier SDK, health platform integration, advertising SDK or third-party behavioral analytics SDK is implemented in this version. This does not erase the cloud/account/social data above.
+
+The ten reference videos and 55 profile-library images are publisher content delivered from a separate public Supabase Storage bucket. Library viewing produces media-delivery requests and the provider network/security logs described above; an account or token is not sent to fetch these public media URLs. Library bookmarks and note references remain device/account-local and do not provide offline video downloads. A selected library profile image is downloaded and follows the existing account photo-upload/profile processing only after Save profile. Member-uploaded media stays in the existing private bucket with its approval/access rules. No new behavioral analytics SDK was added.
 
 ## Collection and sharing
 

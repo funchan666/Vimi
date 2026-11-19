@@ -1,21 +1,11 @@
 {
   "artifact": "dist/Vimi-1.0.0-arm64-preview.apk",
-  "bytes": 66942164,
-  "sha256": "52c38ca4fd5159c701291644f3b11367f54ee20c8efcfdabcf4e5c9f85e60469",
-  "all_65_source_items_packaged": true,
-  "distinct_runtime_media_files_byte_checked": 128,
-  "bundled_policies_match_source": true,
-  "badging": [
-    "package: name='com.vimistudio.vimi' versionCode='2001' versionName='1.0.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
-    "minSdkVersion:'24'",
-    "targetSdkVersion:'36'",
-    "uses-permission: name='android.permission.INTERNET'",
-    "uses-permission: name='com.android.vending.BILLING'",
-    "uses-permission: name='android.permission.ACCESS_NETWORK_STATE'",
-    "uses-permission: name='android.permission.WAKE_LOCK'",
-    "uses-permission: name='com.vimistudio.vimi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'",
-    "native-code: 'arm64-v8a'"
-  ],
+  "bytes": 36909069,
+  "sha256": "193f1daf0f6161b77f5a5df61e28a6a51f8b3d27a2f95eeb368fedacc4199c3a",
+  "bundled_supplied_media_files": 0,
+  "cloud_publisher_objects": 128,
+  "bundled_ui_data_policies_match_source": true,
+  "original_ui_assets_preserved": 8,
   "libraries": [
     {
       "library": "lib/arm64-v8a/libapp.so",
@@ -65,5 +55,16 @@
     }
   ],
   "zipalign_16kb": "passed",
-  "runtime_16kb_device": "not performed"
+  "runtime_16kb_device": "not performed",
+  "badging": [
+    "package: name='com.vimistudio.vimi' versionCode='2001' versionName='1.0.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+    "minSdkVersion:'24'",
+    "targetSdkVersion:'36'",
+    "uses-permission: name='android.permission.INTERNET'",
+    "uses-permission: name='com.android.vending.BILLING'",
+    "uses-permission: name='android.permission.ACCESS_NETWORK_STATE'",
+    "uses-permission: name='android.permission.WAKE_LOCK'",
+    "uses-permission: name='com.vimistudio.vimi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'",
+    "native-code: 'arm64-v8a'"
+  ]
 }

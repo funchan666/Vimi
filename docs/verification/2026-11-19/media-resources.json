@@ -1,23 +1,20 @@
 {
   "runtime_asset_bytes": {
-    "ui": 1368972,
-    "data": 15224,
-    "legal": 15317,
-    "content": 30324892,
-    "fonts": 244646
+    "ui": 1614206,
+    "data": 48738,
+    "legal": 15672,
+    "fonts": 244646,
+    "content": 0
   },
-  "total_bytes": 31969051,
+  "total_bytes": 1923262,
   "source_backup_included": false,
-  "media_files": 128,
+  "media_files": 0,
   "media_source_items": 65,
+  "cloud_objects": 128,
   "registered_families": [
     "ui",
     "data",
     "legal",
-    "content/portraits",
-    "content/thumbnails",
-    "content/videos",
-    "content/covers",
     "DMSans and OFL"
   ]
 }

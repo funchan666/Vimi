@@ -140,6 +140,14 @@ enum Glyph {
   share,
   send,
   clock,
+  edit,
+  mirror,
+  loop,
+  expand,
+  rewind,
+  forward,
+  next,
+  library,
 }
 
 class VIcon extends StatelessWidget {
@@ -183,12 +191,25 @@ class VIcon extends StatelessWidget {
     Rect.fromLTRB(1339.0, 706.0, 1480.0, 825.0),
     Rect.fromLTRB(1556.0, 700.0, 1691.0, 837.0),
   ];
+  static const _utilityRegions = <Rect>[
+    Rect.fromLTRB(96, 82, 380, 383),
+    Rect.fromLTRB(520, 75, 813, 400),
+    Rect.fromLTRB(948, 89, 1270, 358),
+    Rect.fromLTRB(1410, 87, 1697, 357),
+    Rect.fromLTRB(84, 506, 369, 825),
+    Rect.fromLTRB(513, 531, 806, 826),
+    Rect.fromLTRB(1029, 542, 1184, 800),
+    Rect.fromLTRB(1381, 542, 1721, 809),
+  ];
   final Glyph glyph;
   final double size;
   final Color color;
   @override
   Widget build(BuildContext context) {
-    final region = _regions[glyph.index];
+    final utility = glyph.index >= _regions.length;
+    final region = utility
+        ? _utilityRegions[glyph.index - _regions.length]
+        : _regions[glyph.index];
     final scale = size * .92 / math.max(region.width, region.height);
     final atlasWidth = 1774.0 * scale;
     final atlasHeight = 887.0 * scale;
@@ -209,7 +230,9 @@ class VIcon extends StatelessWidget {
                 size / 2 - region.center.dy * scale,
               ),
               child: Image.asset(
-                'assets/ui/glyphs-clean.webp',
+                utility
+                    ? 'assets/ui/utility-controls-v4.webp'
+                    : 'assets/ui/glyphs-clean.webp',
                 width: atlasWidth,
                 height: atlasHeight,
                 fit: BoxFit.fill,
@@ -241,11 +264,7 @@ class VButton extends StatelessWidget {
   final bool tonal, busy, quiet;
   @override
   Widget build(BuildContext context) {
-    final ink = quiet
-        ? VimiColors.accent
-        : tonal
-        ? VimiColors.ink
-        : VimiColors.onAccent;
+    final ink = quiet || tonal ? VimiColors.ink : VimiColors.onAccent;
     return Semantics(
       liveRegion: busy,
       child: Opacity(
@@ -255,27 +274,27 @@ class VButton extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              if (!quiet)
-                Positioned.fill(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.asset(
-                      tonal
-                          ? 'assets/ui/control-fill.webp'
-                          : 'assets/ui/neon-spectrum.webp',
-                      fit: BoxFit.fill,
-                      color: tonal ? VimiColors.tonal : null,
-                      colorBlendMode: tonal ? BlendMode.srcIn : null,
-                    ),
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    tonal || quiet
+                        ? 'assets/ui/control-fill.webp'
+                        : 'assets/ui/neon-spectrum.webp',
+                    excludeFromSemantics: true,
+                    fit: BoxFit.fill,
+                    color: tonal || quiet ? VimiColors.tonal : null,
+                    colorBlendMode: tonal || quiet ? BlendMode.srcIn : null,
                   ),
                 ),
+              ),
               TextButton(
                 style: TextButton.styleFrom(
                   foregroundColor: ink,
                   disabledForegroundColor: ink,
                   minimumSize: const Size(48, 52),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: quiet ? 14 : 20,
                     vertical: 14,
                   ),
                   shape: RoundedRectangleBorder(
@@ -316,17 +335,30 @@ class VIconButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.color = VimiColors.ink,
+    this.filled = false,
+    this.primary = false,
+    this.selected,
+    this.busy = false,
   });
   final Glyph glyph;
   final String label;
   final VoidCallback? onPressed;
   final Color color;
+  final bool filled, primary, busy;
+  final bool? selected;
   @override
   Widget build(BuildContext context) => Semantics(
     button: true,
-    label: label,
+    label: busy ? '$label, please wait' : label,
+    selected: selected,
+    liveRegion: busy,
+    enabled: !busy && onPressed != null,
+    focusable: !busy && onPressed != null,
+    onTap: busy ? null : onPressed,
+    excludeSemantics: true,
     child: Tooltip(
       message: label,
+      excludeFromSemantics: true,
       textStyle: const TextStyle(
         color: VimiColors.ink,
         fontFamily: 'DMSans',
@@ -339,15 +371,152 @@ class VIconButton extends StatelessWidget {
           colorFilter: ColorFilter.mode(VimiColors.surface, BlendMode.srcIn),
         ),
       ),
-      child: TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: color,
-          minimumSize: const Size(48, 48),
-          padding: const EdgeInsets.all(12),
-          shape: const RoundedRectangleBorder(),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (filled || primary || selected == true)
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  primary || selected == true
+                      ? 'assets/ui/neon-spectrum.webp'
+                      : 'assets/ui/control-fill.webp',
+                  excludeFromSemantics: true,
+                  fit: BoxFit.fill,
+                  color: primary || selected == true ? null : VimiColors.tonal,
+                  colorBlendMode: primary || selected == true
+                      ? null
+                      : BlendMode.srcIn,
+                ),
+              ),
+            ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: primary || selected == true
+                  ? VimiColors.onAccent
+                  : color,
+              minimumSize: const Size(48, 48),
+              padding: const EdgeInsets.all(12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            onPressed: busy ? null : onPressed,
+            child: Opacity(
+              opacity: onPressed == null || busy ? .45 : 1,
+              child: VIcon(
+                glyph,
+                color: primary || selected == true
+                    ? VimiColors.onAccent
+                    : color,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+/// A destination is read as one row, rather than a separate text action.
+class VActionRow extends StatelessWidget {
+  const VActionRow(
+    this.label, {
+    super.key,
+    required this.glyph,
+    required this.onPressed,
+    this.detail,
+    this.value,
+    this.danger = false,
+  });
+  final String label;
+  final Glyph glyph;
+  final VoidCallback? onPressed;
+  final String? detail, value;
+  final bool danger;
+  @override
+  Widget build(BuildContext context) => TextButton(
+    onPressed: onPressed,
+    style: TextButton.styleFrom(
+      foregroundColor: danger ? VimiColors.danger : VimiColors.ink,
+      minimumSize: const Size(48, 72),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+    child: Row(
+      children: [
+        VIcon(glyph, color: danger ? VimiColors.danger : VimiColors.violet),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: danger ? VimiColors.danger : VimiColors.ink,
+                ),
+              ),
+              if (detail != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  detail!,
+                  style: const TextStyle(color: VimiColors.muted, fontSize: 14),
+                ),
+              ],
+            ],
+          ),
         ),
-        onPressed: onPressed,
-        child: VIcon(glyph, color: color),
+        const SizedBox(width: 12),
+        if (value != null) ...[
+          Text(
+            value!,
+            style: const TextStyle(
+              color: VimiColors.cyan,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(width: 12),
+        ],
+        const VIcon(Glyph.next, size: 16, color: VimiColors.muted),
+      ],
+    ),
+  );
+}
+
+class VProfileStat extends StatelessWidget {
+  const VProfileStat({
+    super.key,
+    required this.count,
+    required this.label,
+    required this.onPressed,
+  });
+  final int count;
+  final String label;
+  final VoidCallback onPressed;
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: '$count $label',
+    child: TextButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        foregroundColor: VimiColors.ink,
+        minimumSize: const Size(80, 64),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      child: ExcludeSemantics(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('$count', style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              label,
+              style: const TextStyle(color: VimiColors.muted, fontSize: 14),
+            ),
+          ],
+        ),
       ),
     ),
   );

@@ -3,18 +3,22 @@
     "file": "dist/Vimi-1.0.0-arm64-preview.apk",
     "mode": "profile",
     "signing": "local debug key; preview only",
-    "bytes": 36522345,
-    "sha256": "499c6c9880ea09f7026c10d907dbf9a0fc8c7b374e1ae69d957669672230a69d",
+    "bytes": 36909069,
+    "sha256": "193f1daf0f6161b77f5a5df61e28a6a51f8b3d27a2f95eeb368fedacc4199c3a",
     "qa_credentials_present": false,
     "private_configs_present": false,
     "qa_fixture_labels_present": false,
-    "actual_distinct_passwords_checked": 4,
+    "actual_distinct_passwords_checked": 3,
     "arm64": true,
     "installed": true,
     "cold_launch": "passed",
     "signature_v2_verified": true,
-    "startup_screenshot": "play-final-preview.png",
+    "startup_screenshot": "cloud-library/preview-cloud-player.png",
     "target_api": 36,
-    "min_api": 24
+    "min_api": 24,
+    "bundled_supplied_images": 0,
+    "bundled_supplied_videos": 0,
+    "cloud_supplied_images": 55,
+    "cloud_supplied_videos": 10
   }
 ]

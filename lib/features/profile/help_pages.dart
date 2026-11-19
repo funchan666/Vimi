@@ -80,40 +80,40 @@ class HelpCenterPage extends StatelessWidget {
             Text(answer.$2),
             const SizedBox(height: 24),
           ],
-          VButton(
+          VActionRow(
             'Child safety standards',
-            quiet: true,
+            glyph: Glyph.report,
             onPressed: () => openPage(
               context,
               const LegalPage('Child safety standards', 'child-safety'),
             ),
           ),
-          VButton(
+          VActionRow(
             'Account deletion & data',
-            quiet: true,
+            glyph: Glyph.delete,
             onPressed: () => openPage(
               context,
               const LegalPage('Account deletion & data', 'deletion'),
             ),
           ),
           if (VimiScope.of(context).signedIn)
-            VButton(
+            VActionRow(
               'Your reports',
               glyph: Glyph.report,
               onPressed: () => openPage(context, const MyReportsPage()),
             ),
-          VButton(
+          VActionRow(
             'Community guidelines',
-            quiet: true,
+            glyph: Glyph.person,
             onPressed: () => openPage(
               context,
               const LegalPage('Community guidelines', 'community'),
             ),
           ),
           if (support.isNotEmpty || email.isNotEmpty)
-            VButton(
+            VActionRow(
               'Contact support',
-              quiet: true,
+              glyph: Glyph.inbox,
               onPressed: () async {
                 final uri = support.isNotEmpty
                     ? Uri.tryParse(support)
@@ -161,9 +161,9 @@ class HelpCenterPage extends StatelessWidget {
           if (email.isNotEmpty) ...[
             const SizedBox(height: 12),
             const SelectableText(email),
-            VButton(
+            VActionRow(
               'Copy support email',
-              quiet: true,
+              glyph: Glyph.share,
               onPressed: () async {
                 await Clipboard.setData(const ClipboardData(text: email));
                 if (context.mounted) feedback(context, 'Support email copied.');

@@ -82,6 +82,7 @@ void main() {
       expect(player.value.duration.inSeconds, 12);
       await press(tester, 'Mirror off');
       await press(tester, 'Loop off');
+      await press(tester, '1.0×');
       await press(tester, '0.5×');
       await press(tester, '+5s');
       await reveal(tester, find.byTooltip('Play video'));
@@ -100,9 +101,10 @@ void main() {
       expect(player.value.isPlaying, isFalse);
       expect(player.value.isLooping, isTrue);
       expect(player.value.playbackSpeed, .5);
-      expect(find.text('Mirror on'), findsOneWidget);
+      expect(find.byTooltip('Mirror on'), findsOneWidget);
       final retained = player.value.position;
       await press(tester, 'Mirror on');
+      await press(tester, '0.5×');
       await press(tester, '0.75×');
       await reveal(tester, find.byTooltip('Play video'));
       await tester.tap(find.byTooltip('Play video'));
@@ -117,7 +119,7 @@ void main() {
       expect(player.value.isPlaying, isFalse);
       expect(player.value.isLooping, isTrue);
       expect(player.value.playbackSpeed, .75);
-      expect(find.text('Mirror off'), findsOneWidget);
+      expect(find.byTooltip('Mirror off'), findsOneWidget);
       expect(player.value.position, greaterThan(retained));
       await capture(binding, tester, 'player-returned-continuity');
       binding.reportData!.addAll({

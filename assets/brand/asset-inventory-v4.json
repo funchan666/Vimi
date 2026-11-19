@@ -1,0 +1,65 @@
+{
+  "id": "utility-controls-v4",
+  "source": "assets/brand/sources/controls-v4/utility-controls.png",
+  "source_bytes": 553799,
+  "runtime": "assets/ui/utility-controls-v4.webp",
+  "runtime_bytes": 245234,
+  "dimensions": [
+    1774,
+    887
+  ],
+  "alpha": true,
+  "encoding": "lossless WebP; alpha retained",
+  "origin": "original built-in host-native image generation",
+  "prompt": "garden-gpt-image-2/prompt/vimi-controls-v4-20261119.md",
+  "regions": {
+    "edit": [
+      96,
+      82,
+      380,
+      383
+    ],
+    "mirror": [
+      520,
+      75,
+      813,
+      400
+    ],
+    "loop": [
+      948,
+      89,
+      1270,
+      358
+    ],
+    "expand": [
+      1410,
+      87,
+      1697,
+      357
+    ],
+    "rewind": [
+      84,
+      506,
+      369,
+      825
+    ],
+    "forward": [
+      513,
+      531,
+      806,
+      826
+    ],
+    "next": [
+      1029,
+      542,
+      1184,
+      800
+    ],
+    "library": [
+      1381,
+      542,
+      1721,
+      809
+    ]
+  }
+}

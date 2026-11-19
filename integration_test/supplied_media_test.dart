@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:video_player/video_player.dart';
@@ -13,6 +12,8 @@ import 'package:vimi/features/auth/auth_pages.dart';
 import 'package:vimi/features/profile/profile_pages.dart';
 import 'package:vimi/features/studio/media_library_pages.dart';
 import 'package:vimi/features/studio/studio_pages.dart';
+import 'package:vimi/features/studio/rehearsal_player.dart';
+import 'package:vimi/design/vimi_ui.dart';
 import 'support.dart';
 
 void main() {
@@ -34,19 +35,24 @@ void main() {
       final catalog = await MediaLibrary.load();
       expect(catalog.clips, hasLength(10));
       expect(catalog.portraits, hasLength(55));
-      for (final portrait in catalog.portraits) {
-        final bytes = await rootBundle.load(portrait.asset);
-        final codec = await ui.instantiateImageCodec(
-          bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes),
+      for (var start = 0; start < catalog.portraits.length; start += 4) {
+        await Future.wait(
+          catalog.portraits.skip(start).take(4).map((portrait) async {
+            final bytes = await portrait.download();
+            final codec = await ui.instantiateImageCodec(bytes);
+            final frame = await codec.getNextFrame();
+            expect(frame.image.width, greaterThan(0));
+            frame.image.dispose();
+            codec.dispose();
+          }),
         );
-        final frame = await codec.getNextFrame();
-        expect(frame.image.width, greaterThan(0));
-        frame.image.dispose();
-        codec.dispose();
+        debugPrint(
+          'Public portraits verified: ${(start + 4).clamp(0, catalog.portraits.length)}/55',
+        );
       }
       binding.reportData!['all_55_full_images_decode_on_android'] = 'passed';
       await press(tester, 'Explore the studio');
-      await press(tester, 'Explore the dance video library');
+      await press(tester, 'Dance video library');
       await waitFor(tester, () => find.text('10 clips').evaluate().isNotEmpty);
       await capture(binding, tester, 'supplied-video-library');
       for (final clip in catalog.clips) {
@@ -64,7 +70,7 @@ void main() {
         final player = tester
             .widget<VideoPlayer>(find.byType(VideoPlayer))
             .controller;
-        expect(player.dataSource, clip.asset);
+        expect(player.dataSource, clip.url);
         expect(
           (player.value.duration.inMilliseconds - clip.duration * 1000).abs(),
           lessThan(200),
@@ -77,7 +83,31 @@ void main() {
         await player.pause();
         await goBack(tester);
       }
-      binding.reportData!['all_10_bundled_videos_native_playback'] = 'passed';
+      binding.reportData!['all_10_public_videos_native_network_playback'] =
+          'passed';
+      await openTestPage(
+        tester,
+        VPage(
+          title: 'Legacy note reference',
+          child: RehearsalPlayer(
+            source: catalog.clips.first.legacySource,
+            practice: true,
+          ),
+        ),
+      );
+      await waitFor(
+        tester,
+        () => find.byType(VideoPlayer).evaluate().isNotEmpty,
+      );
+      expect(
+        tester
+            .widget<VideoPlayer>(find.byType(VideoPlayer))
+            .controller
+            .dataSource,
+        catalog.clips.first.url,
+      );
+      await goBack(tester);
+      binding.reportData!['legacy_asset_note_resolves_to_cloud'] = 'passed';
       await press(tester, catalog.clips.first.title);
       await press(tester, 'Save clip');
       expect(
@@ -88,6 +118,7 @@ void main() {
       );
       await press(tester, 'Mirror off');
       await press(tester, 'Loop off');
+      await press(tester, '1.0×');
       await press(tester, '0.5×');
       await capture(binding, tester, 'supplied-clip-practice-controls');
       await press(tester, 'Add to a practice note');
@@ -130,11 +161,11 @@ void main() {
             .widget<VideoPlayer>(find.byType(VideoPlayer))
             .controller
             .dataSource,
-        catalog.clips.first.asset,
+        catalog.clips.first.url,
       );
       await capture(binding, tester, 'supplied-note-reopened');
       await goBack(tester);
-      binding.reportData!['saved_filter_and_bundled_practice_save_reopen'] =
+      binding.reportData!['saved_filter_and_cloud_practice_save_reopen'] =
           'passed';
       await appController(tester).removePractice(note.id);
       await appController(
@@ -174,7 +205,7 @@ void main() {
         () => find.byType(EditProfilePage).evaluate().isEmpty,
       );
       final app = appController(tester);
-      final sourceBytes = await rootBundle.load(catalog.portraits.last.asset);
+      final sourceBytes = await catalog.portraits.last.download();
       final client = HttpClient();
       try {
         final request = await client.getUrl(
@@ -185,14 +216,7 @@ void main() {
         final uploaded = await consolidateHttpClientResponseBytes(response);
         expect(
           sha256.convert(uploaded).toString(),
-          sha256
-              .convert(
-                sourceBytes.buffer.asUint8List(
-                  sourceBytes.offsetInBytes,
-                  sourceBytes.lengthInBytes,
-                ),
-              )
-              .toString(),
+          sha256.convert(sourceBytes).toString(),
         );
       } finally {
         client.close(force: true);
@@ -216,6 +240,6 @@ void main() {
           'passed';
       expect(tester.takeException(), isNull);
     },
-    timeout: const Timeout(Duration(minutes: 6)),
+    timeout: const Timeout(Duration(minutes: 12)),
   );
 }

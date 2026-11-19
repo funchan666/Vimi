@@ -32,87 +32,46 @@ class _DanceShellState extends State<DanceShell> {
     setState(() => tab = next);
   }
 
+  Widget destination(int index) => SizedBox(
+    width: 60,
+    height: 52,
+    child: VIconButton(
+      icons[index],
+      label: titles[index],
+      selected: tab == index,
+      color: VimiColors.muted,
+      onPressed: () => select(index),
+    ),
+  );
+
   Widget navigation(bool expanded) => Padding(
-    padding: EdgeInsets.fromLTRB(expanded ? 8 : 12, 8, expanded ? 8 : 12, 10),
+    padding: EdgeInsets.fromLTRB(expanded ? 12 : 20, 8, expanded ? 12 : 20, 10),
     child: SurfacePanel(
-      padding: EdgeInsets.symmetric(horizontal: expanded ? 12 : 4, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: expanded
           ? Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const SizedBox(height: 24),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    'assets/ui/neon-mark.webp',
+                    width: 38,
+                    height: 38,
+                  ),
+                ),
                 const SizedBox(height: 32),
-                const VimiWordmark(),
-                const SizedBox(height: 40),
                 for (var i = 0; i < 4; i++)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: VButton(
-                      titles[i],
-                      glyph: icons[i],
-                      quiet: tab != i,
-                      onPressed: () => select(i),
-                    ),
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: destination(i),
                   ),
               ],
             )
           : Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 for (var i = 0; i < 4; i++)
-                  Expanded(
-                    child: Semantics(
-                      selected: tab == i,
-                      child: TextButton(
-                        onPressed: () => select(i),
-                        style: TextButton.styleFrom(
-                          minimumSize: const Size(48, 56),
-                          foregroundColor: tab == i
-                              ? VimiColors.accent
-                              : VimiColors.muted,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 8,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            VIcon(
-                              icons[i],
-                              size: 24,
-                              color: tab == i
-                                  ? VimiColors.accent
-                                  : VimiColors.muted,
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              titles[i],
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: tab == i
-                                    ? FontWeight.w800
-                                    : FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            SizedBox(
-                              width: 24,
-                              height: 3,
-                              child: tab == i
-                                  ? ClipRRect(
-                                      borderRadius: BorderRadius.circular(2),
-                                      child: Image.asset(
-                                        'assets/ui/neon-spectrum.webp',
-                                        fit: BoxFit.fill,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  Expanded(child: Center(child: destination(i))),
               ],
             ),
     ),
@@ -141,9 +100,10 @@ class _DanceShellState extends State<DanceShell> {
                     constraints: BoxConstraints(
                       maxWidth: constraints.maxWidth * .5,
                     ),
-                    child: VButton(
-                      'Post',
-                      glyph: Glyph.add,
+                    child: VIconButton(
+                      Glyph.add,
+                      label: 'Post',
+                      primary: true,
                       onPressed: () async {
                         if (await requireSignIn(context) && context.mounted)
                           await openPage(context, const PublishPage());
@@ -177,7 +137,7 @@ class _DanceShellState extends State<DanceShell> {
               child: expanded
                   ? Row(
                       children: [
-                        SizedBox(width: 200, child: navigation(true)),
+                        SizedBox(width: 112, child: navigation(true)),
                         Expanded(child: body),
                       ],
                     )

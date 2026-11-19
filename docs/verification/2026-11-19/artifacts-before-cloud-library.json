@@ -1,0 +1,22 @@
+[
+  {
+    "file": "dist/Vimi-1.0.0-arm64-preview.apk",
+    "mode": "profile",
+    "signing": "local debug key; preview only",
+    "bytes": 67253150,
+    "sha256": "0879442ad291e7d7a2544184a28a5738b52711b91a8ef988eaaf94eb475f8985",
+    "qa_credentials_present": false,
+    "private_configs_present": false,
+    "qa_fixture_labels_present": false,
+    "actual_distinct_passwords_checked": 2,
+    "arm64": true,
+    "installed": true,
+    "cold_launch": "passed",
+    "signature_v2_verified": true,
+    "startup_screenshot": "neon-controls/preview-studio.png",
+    "target_api": 36,
+    "min_api": 24,
+    "bundled_supplied_images": 55,
+    "bundled_supplied_videos": 10
+  }
+]

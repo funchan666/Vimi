@@ -1,0 +1,10 @@
+{
+  "scope": "Installed main profile APK; targeted emulator firewall, restored in finally",
+  "initial_chain": "chain:disabled",
+  "initial_package": "com.vimistudio.vimi:allow",
+  "offline_grid_error_and_retry": "passed",
+  "network_restored_and_image_retry": "passed",
+  "no_bundled_media_main_apk_cloud_player": "passed",
+  "restored_chain": "chain:disabled",
+  "restored_package": "com.vimistudio.vimi:allow"
+}

@@ -1,0 +1,7 @@
+{
+  "scope": "Local guest UI; no server connection, account or content writes",
+  "four_icon_destinations_and_selection": "passed",
+  "native_play_seek_speed_loop_mirror_and_shared_fullscreen": "passed",
+  "photo_picker_55_and_capture_source_sheet": "passed",
+  "settings_help_and_child_safety_routes": "passed"
+}

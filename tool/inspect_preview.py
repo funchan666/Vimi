@@ -21,7 +21,7 @@ with zipfile.ZipFile(apk) as package:
     for name in names:
         data=package.read(name)
         assert not any(secret in data for secret in needles),'Private credential found in '+name
-        assert b'History QA' not in data and b'Supplied Media QA' not in data and b'QA_PASSWORD_' not in data,'QA target found in '+name
+        assert b'History QA' not in data and b'Supplied Media QA' not in data and b'QA_PASSWORD_' not in data and b'ui-fixture-only' not in data and b'Local guest UI;' not in data,'QA target found in '+name
 result={'file':str(apk.relative_to(root)),'mode':'profile','signing':'local debug key; preview only',
         'bytes':apk.stat().st_size,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),
         'qa_credentials_present':False,'private_configs_present':False,'qa_fixture_labels_present':False,

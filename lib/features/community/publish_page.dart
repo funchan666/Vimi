@@ -196,6 +196,36 @@ class _PublishPageState extends State<PublishPage> {
     }
   }
 
+  Future<void> captureDance() async {
+    final record = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SurfacePanel(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                VActionRow(
+                  'Take photo',
+                  glyph: Glyph.photo,
+                  onPressed: () => Navigator.pop(ctx, false),
+                ),
+                VActionRow(
+                  'Record video',
+                  glyph: Glyph.video,
+                  onPressed: () => Navigator.pop(ctx, true),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    if (record != null && mounted) await choose(ImageSource.camera, record);
+  }
+
   Future<void> publish() async {
     if (busy) return;
     final app = VimiScope.of(context);
@@ -306,37 +336,27 @@ class _PublishPageState extends State<PublishPage> {
           spacing: 8,
           runSpacing: 8,
           children: [
-            VButton(
-              'Photo library',
-              glyph: Glyph.photo,
-              quiet: true,
+            VIconButton(
+              Glyph.photo,
+              label: 'Photo library',
+              filled: true,
               onPressed: busy || uploaded != null
                   ? null
                   : () => choose(ImageSource.gallery, false),
             ),
-            VButton(
-              'Video library',
-              glyph: Glyph.video,
-              quiet: true,
+            VIconButton(
+              Glyph.video,
+              label: 'Video library',
+              filled: true,
               onPressed: busy || uploaded != null
                   ? null
                   : () => choose(ImageSource.gallery, true),
             ),
-            VButton(
-              'Take photo',
-              glyph: Glyph.camera,
-              quiet: true,
-              onPressed: busy || uploaded != null
-                  ? null
-                  : () => choose(ImageSource.camera, false),
-            ),
-            VButton(
-              'Record video',
-              glyph: Glyph.video,
-              quiet: true,
-              onPressed: busy || uploaded != null
-                  ? null
-                  : () => choose(ImageSource.camera, true),
+            VIconButton(
+              Glyph.camera,
+              label: 'Capture dance',
+              filled: true,
+              onPressed: busy || uploaded != null ? null : captureDance,
             ),
           ],
         ),

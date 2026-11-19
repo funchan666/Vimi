@@ -1,0 +1,70 @@
+{
+  "artifact": "dist/Vimi-1.0.0-arm64-preview.apk",
+  "bytes": 67253150,
+  "sha256": "0879442ad291e7d7a2544184a28a5738b52711b91a8ef988eaaf94eb475f8985",
+  "all_65_source_items_packaged": true,
+  "distinct_runtime_media_files_byte_checked": 128,
+  "bundled_policies_match_source": true,
+  "badging": [
+    "package: name='com.vimistudio.vimi' versionCode='2001' versionName='1.0.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+    "minSdkVersion:'24'",
+    "targetSdkVersion:'36'",
+    "uses-permission: name='android.permission.INTERNET'",
+    "uses-permission: name='com.android.vending.BILLING'",
+    "uses-permission: name='android.permission.ACCESS_NETWORK_STATE'",
+    "uses-permission: name='android.permission.WAKE_LOCK'",
+    "uses-permission: name='com.vimistudio.vimi.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'",
+    "native-code: 'arm64-v8a'"
+  ],
+  "libraries": [
+    {
+      "library": "lib/arm64-v8a/libapp.so",
+      "load_alignments": [
+        65536,
+        65536,
+        65536
+      ],
+      "aligned_16kb": true
+    },
+    {
+      "library": "lib/arm64-v8a/libdartjni.so",
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "aligned_16kb": true
+    },
+    {
+      "library": "lib/arm64-v8a/libdatastore_shared_counter.so",
+      "load_alignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "aligned_16kb": true
+    },
+    {
+      "library": "lib/arm64-v8a/libflutter.so",
+      "load_alignments": [
+        65536,
+        65536,
+        65536
+      ],
+      "aligned_16kb": true
+    },
+    {
+      "library": "lib/arm64-v8a/libvmservice_snapshot.so",
+      "load_alignments": [
+        65536,
+        65536,
+        65536
+      ],
+      "aligned_16kb": true
+    }
+  ],
+  "zipalign_16kb": "passed",
+  "runtime_16kb_device": "not performed",
+  "original_utility_atlas_matches": true
+}

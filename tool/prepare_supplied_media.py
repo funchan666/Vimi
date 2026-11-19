@@ -165,6 +165,9 @@ def prepare_video(item, index):
 
 
 def main():
+    active = ROOT / 'assets/data/media_library.json'
+    if active.exists() and json.loads(active.read_text()).get('version') == 2:
+        raise SystemExit('The publisher requested no project media backups. The cloud library is active; local preparation is disabled.')
     assert FFMPEG and FFPROBE, 'ffmpeg and ffprobe are required'
     inputs = json.loads(INTAKE.read_text())
     images = [x for x in inputs if x['kind'] == 'image']

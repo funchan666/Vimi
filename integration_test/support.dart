@@ -72,8 +72,12 @@ Future<void> reveal(WidgetTester tester, Finder target) async {
   await tester.pump(const Duration(milliseconds: 250));
 }
 
+Finder action(String label) => find.byWidgetPredicate(
+  (w) => (w is Text && w.data == label) || (w is Tooltip && w.message == label),
+);
+
 Future<void> press(WidgetTester tester, String label) async {
-  final target = find.text(label);
+  final target = action(label);
   await reveal(tester, target);
   final button = find.ancestor(of: target.last, matching: find.byType(VButton));
   if (button.evaluate().isNotEmpty) {

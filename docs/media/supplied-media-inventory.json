@@ -5,9 +5,9 @@
   "source_bytes": 54009823,
   "optimized_bytes": 30324892,
   "rights_status": "publisher confirmed commercial distribution, likeness and audio rights on 2026-11-19; confirmation is not an independent rights clearance",
-  "distribution_status": "all 65 source items registered in local Flutter media library; no cloud seed users or posts",
-  "runtime_files": 128,
-  "runtime_bytes": 30324892,
+  "distribution_status": "All 65 publisher source items served from public Supabase dance-library; no bundled media bytes or fabricated member content",
+  "runtime_files": 0,
+  "runtime_bytes": 0,
   "items": [
     {
       "id": "media-001",
@@ -30,12 +30,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-001.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-001.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-001.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-001.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 01",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "324d611a8e97a2a158d356807bd0cd1b4c5e108bda133ef7a90a08a00b649c93"
+      "runtime_sha256": "324d611a8e97a2a158d356807bd0cd1b4c5e108bda133ef7a90a08a00b649c93",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-001.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-001.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-001.webp",
+          "bytes": 101550,
+          "sha256": "324d611a8e97a2a158d356807bd0cd1b4c5e108bda133ef7a90a08a00b649c93",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-001.webp",
+          "bytes": 20482,
+          "sha256": "df0ec9e8eebd7de2281b89f824969f497730b1526db281189b11fcbf55cc8cf0",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-002",
@@ -58,12 +76,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-002.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-002.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-002.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-002.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 02",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "49096468edb5577da92e3eb68844dd80dca43a5579c058aa7a4a3ea0eaf96603"
+      "runtime_sha256": "49096468edb5577da92e3eb68844dd80dca43a5579c058aa7a4a3ea0eaf96603",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-002.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-002.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-002.webp",
+          "bytes": 42534,
+          "sha256": "49096468edb5577da92e3eb68844dd80dca43a5579c058aa7a4a3ea0eaf96603",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-002.webp",
+          "bytes": 7900,
+          "sha256": "1a19ee84e6312883d188779d80fd44bfaf7f3fc894c40fe6ba2d54b58085e930",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-003",
@@ -86,12 +122,30 @@
       "optimized_height": 1200,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-003.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-003.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-003.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-003.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 03",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "497aa31334d62f83258b2c9d68c2a64e6f1bcd37978e5d695f78d34f8384f1d3"
+      "runtime_sha256": "497aa31334d62f83258b2c9d68c2a64e6f1bcd37978e5d695f78d34f8384f1d3",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-003.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-003.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-003.webp",
+          "bytes": 205816,
+          "sha256": "497aa31334d62f83258b2c9d68c2a64e6f1bcd37978e5d695f78d34f8384f1d3",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-003.webp",
+          "bytes": 26386,
+          "sha256": "80a767b92a88d7fec9c6f51f615597f5fab13718a029d1824c084a9a05f2e2f8",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-004",
@@ -114,12 +168,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-004.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-004.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-004.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-004.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 04",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "9abde5ea8b8e45dd2887b4d574305430b1276e5013b3f7a793c52a9ea1f07f45"
+      "runtime_sha256": "9abde5ea8b8e45dd2887b4d574305430b1276e5013b3f7a793c52a9ea1f07f45",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-004.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-004.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-004.webp",
+          "bytes": 46556,
+          "sha256": "9abde5ea8b8e45dd2887b4d574305430b1276e5013b3f7a793c52a9ea1f07f45",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-004.webp",
+          "bytes": 7186,
+          "sha256": "9e507a0decc664320b1db415fe484ccd926b009502df99d6230760a6e0bad7a5",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-005",
@@ -142,12 +214,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-005.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-005.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-005.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-005.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 05",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "54e11c1ff77f27635af30e69fa9e0d21d8812471e9d99b7c3fd7678f36deda3d"
+      "runtime_sha256": "54e11c1ff77f27635af30e69fa9e0d21d8812471e9d99b7c3fd7678f36deda3d",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-005.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-005.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-005.webp",
+          "bytes": 70950,
+          "sha256": "54e11c1ff77f27635af30e69fa9e0d21d8812471e9d99b7c3fd7678f36deda3d",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-005.webp",
+          "bytes": 12254,
+          "sha256": "d015f306d21e7b8204377408767c8752af250ef76ee1330ea9617e12a3177c01",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-006",
@@ -170,12 +260,30 @@
       "optimized_height": 1200,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-006.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-006.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-006.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-006.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 06",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "34a8f275d45b8d8646386f035788a9a5ae9883448dc29a66509df0eb251eb52e"
+      "runtime_sha256": "34a8f275d45b8d8646386f035788a9a5ae9883448dc29a66509df0eb251eb52e",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-006.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-006.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-006.webp",
+          "bytes": 303426,
+          "sha256": "34a8f275d45b8d8646386f035788a9a5ae9883448dc29a66509df0eb251eb52e",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-006.webp",
+          "bytes": 35634,
+          "sha256": "8b4d3f6f90362ffa567381eb6974b6ce069e46236afe4279fa67831dd25affc9",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-007",
@@ -198,12 +306,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-007.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-007.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-007.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-007.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 07",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "62f75e7c1942a3e50b05b9fb65ecb64f5267decb82386d8cb551ae177f0f6c87"
+      "runtime_sha256": "62f75e7c1942a3e50b05b9fb65ecb64f5267decb82386d8cb551ae177f0f6c87",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-007.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-007.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-007.webp",
+          "bytes": 102948,
+          "sha256": "62f75e7c1942a3e50b05b9fb65ecb64f5267decb82386d8cb551ae177f0f6c87",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-007.webp",
+          "bytes": 16660,
+          "sha256": "16d3cb7476074c3b56b013fe125b71e77538855c117401bddc159af3435d2cc7",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-008",
@@ -226,12 +352,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-008.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-008.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-008.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-008.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 08",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "5d73c2050a3587646b1cd019b52acfc05f6d3730cbe5da5cc37c1d955c409776"
+      "runtime_sha256": "5d73c2050a3587646b1cd019b52acfc05f6d3730cbe5da5cc37c1d955c409776",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-008.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-008.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-008.webp",
+          "bytes": 215920,
+          "sha256": "5d73c2050a3587646b1cd019b52acfc05f6d3730cbe5da5cc37c1d955c409776",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-008.webp",
+          "bytes": 27258,
+          "sha256": "2094a146665ee9b7455218df0d96705c4ae1250e2053a1dda03a9c46a1efed55",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-009",
@@ -254,12 +398,30 @@
       "optimized_height": 1202,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-009.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-009.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-009.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-009.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 09",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "301d321b5d53d8290e94d18036a6938abe191ee5020ac5680c7fe6cc05aadd0f"
+      "runtime_sha256": "301d321b5d53d8290e94d18036a6938abe191ee5020ac5680c7fe6cc05aadd0f",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-009.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-009.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-009.webp",
+          "bytes": 133234,
+          "sha256": "301d321b5d53d8290e94d18036a6938abe191ee5020ac5680c7fe6cc05aadd0f",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-009.webp",
+          "bytes": 19952,
+          "sha256": "313f031ff4831c505a8c38104bf43a6c651711b236b4f6bfb9ca969190787d6d",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-010",
@@ -282,12 +444,30 @@
       "optimized_height": 720,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-010.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-010.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-010.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-010.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 10",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "8d1b31128f12742ce7dfb13d9a6f813b3321651e0efec5538c2d13cfa8de68c8"
+      "runtime_sha256": "8d1b31128f12742ce7dfb13d9a6f813b3321651e0efec5538c2d13cfa8de68c8",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-010.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-010.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-010.webp",
+          "bytes": 84914,
+          "sha256": "8d1b31128f12742ce7dfb13d9a6f813b3321651e0efec5538c2d13cfa8de68c8",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-010.webp",
+          "bytes": 11628,
+          "sha256": "da941a96af9594c8bc85d490a8d3ad1b4fcecbdb941df78b36b866160d7de7a0",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-011",
@@ -310,12 +490,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-011.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-011.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-011.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-011.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 11",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "dcd330ce17dba3197adf983f2acd3f4a54ef71b48a7e84593c4a0f48c62e3926"
+      "runtime_sha256": "dcd330ce17dba3197adf983f2acd3f4a54ef71b48a7e84593c4a0f48c62e3926",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-011.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-011.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-011.webp",
+          "bytes": 85842,
+          "sha256": "dcd330ce17dba3197adf983f2acd3f4a54ef71b48a7e84593c4a0f48c62e3926",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-011.webp",
+          "bytes": 13258,
+          "sha256": "baccb725fb0448cb2f3cd7b50dfe80ecc2cefbb2b0f7c0c5584bb543b483f05d",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-012",
@@ -338,12 +536,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-012.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-012.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-012.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-012.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 12",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "e8f4738107e5dbca06f86a5f085d36940c307467fc956eb2e774ea75750a2a81"
+      "runtime_sha256": "e8f4738107e5dbca06f86a5f085d36940c307467fc956eb2e774ea75750a2a81",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-012.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-012.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-012.webp",
+          "bytes": 64982,
+          "sha256": "e8f4738107e5dbca06f86a5f085d36940c307467fc956eb2e774ea75750a2a81",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-012.webp",
+          "bytes": 12090,
+          "sha256": "6636331c130697ec7d75cffed461f5b9316b14cb46936374d50316f748e2af70",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-013",
@@ -366,12 +582,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-013.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-013.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-013.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-013.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 13",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "f849527e5f097203bc0df249ccaca18a6267e48515258f876437ece0a648eaf7"
+      "runtime_sha256": "f849527e5f097203bc0df249ccaca18a6267e48515258f876437ece0a648eaf7",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-013.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-013.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-013.webp",
+          "bytes": 116744,
+          "sha256": "f849527e5f097203bc0df249ccaca18a6267e48515258f876437ece0a648eaf7",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-013.webp",
+          "bytes": 16528,
+          "sha256": "16a3da27b69a073028ae455c77685b8c537dd0dab0d4b898137f83fd9d519cb2",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-014",
@@ -394,12 +628,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-014.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-014.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-014.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-014.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 14",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "e4fe3101ffdc37cb13f22e0e09427fe7ff0ef38f7623457590fd6b75c43c4e78"
+      "runtime_sha256": "e4fe3101ffdc37cb13f22e0e09427fe7ff0ef38f7623457590fd6b75c43c4e78",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-014.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-014.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-014.webp",
+          "bytes": 123348,
+          "sha256": "e4fe3101ffdc37cb13f22e0e09427fe7ff0ef38f7623457590fd6b75c43c4e78",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-014.webp",
+          "bytes": 17070,
+          "sha256": "e34b89e20800f315b242dcba58bd8c449ccc7fa68f7dd3febf7dae08f58649eb",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-015",
@@ -422,12 +674,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-015.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-015.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-015.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-015.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 15",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "759e844e18322386cd2273a717d580180b348fcd26d4bce62fc9bddfecbb5399"
+      "runtime_sha256": "759e844e18322386cd2273a717d580180b348fcd26d4bce62fc9bddfecbb5399",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-015.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-015.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-015.webp",
+          "bytes": 99028,
+          "sha256": "759e844e18322386cd2273a717d580180b348fcd26d4bce62fc9bddfecbb5399",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-015.webp",
+          "bytes": 13126,
+          "sha256": "cf7639884198cbf4f3d9f30abba1cac8c89bf0a3f825cdeabd07b4d4bc4ddead",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-016",
@@ -450,12 +720,30 @@
       "optimized_height": 719,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-016.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-016.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-016.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-016.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 16",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "5eb7e44db792ba0deec17783d8f5fabc9ab53593eab5458a7af1dc91d53e94bf"
+      "runtime_sha256": "5eb7e44db792ba0deec17783d8f5fabc9ab53593eab5458a7af1dc91d53e94bf",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-016.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-016.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-016.webp",
+          "bytes": 20166,
+          "sha256": "5eb7e44db792ba0deec17783d8f5fabc9ab53593eab5458a7af1dc91d53e94bf",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-016.webp",
+          "bytes": 4178,
+          "sha256": "4221b19d853e40309a83c2feefa38a465c5f567dbc09609c24811e29ee8b4fb0",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-017",
@@ -478,12 +766,30 @@
       "optimized_height": 1204,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-017.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-017.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-017.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-017.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 17",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "fa4d1c835041334e2ec591fc4537f06806cfb0673c45662ab6d334bb5474874c"
+      "runtime_sha256": "fa4d1c835041334e2ec591fc4537f06806cfb0673c45662ab6d334bb5474874c",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-017.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-017.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-017.webp",
+          "bytes": 59042,
+          "sha256": "fa4d1c835041334e2ec591fc4537f06806cfb0673c45662ab6d334bb5474874c",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-017.webp",
+          "bytes": 12550,
+          "sha256": "94fa529ac029d2cb15066df20f479c23bfd227eb70160581ce49d349ec3fc57e",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-018",
@@ -506,12 +812,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-018.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-018.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-018.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-018.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 18",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "2405f2cc47c743079b08a8d66b496bb5d4f217efcedf51e47e44749c90110c43"
+      "runtime_sha256": "2405f2cc47c743079b08a8d66b496bb5d4f217efcedf51e47e44749c90110c43",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-018.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-018.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-018.webp",
+          "bytes": 102760,
+          "sha256": "2405f2cc47c743079b08a8d66b496bb5d4f217efcedf51e47e44749c90110c43",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-018.webp",
+          "bytes": 15800,
+          "sha256": "66a2d7ed955e5af9bba80588d6fd8d1878a8b9bad0e68a101a5fe772cd30dc0e",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-019",
@@ -534,12 +858,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-019.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-019.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-019.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-019.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 19",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "c7fed595b72d09cfe3639b7533aac310c7cd15f5257055bb68a30e06435ad6a4"
+      "runtime_sha256": "c7fed595b72d09cfe3639b7533aac310c7cd15f5257055bb68a30e06435ad6a4",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-019.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-019.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-019.webp",
+          "bytes": 138428,
+          "sha256": "c7fed595b72d09cfe3639b7533aac310c7cd15f5257055bb68a30e06435ad6a4",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-019.webp",
+          "bytes": 18154,
+          "sha256": "c3551143d2b45c16f9c5d34fbef95cde785e6e7cccbd5432fca10753304e94fe",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-020",
@@ -562,12 +904,30 @@
       "optimized_height": 1200,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-020.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-020.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-020.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-020.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 20",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "7d8905e601cf2fd0018ff2c45a7a6b5bd1cc244bd033d13043d7029d523da00f"
+      "runtime_sha256": "7d8905e601cf2fd0018ff2c45a7a6b5bd1cc244bd033d13043d7029d523da00f",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-020.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-020.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-020.webp",
+          "bytes": 131662,
+          "sha256": "7d8905e601cf2fd0018ff2c45a7a6b5bd1cc244bd033d13043d7029d523da00f",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-020.webp",
+          "bytes": 17332,
+          "sha256": "5fe238e161ea7c5e3a5aa66085bf827b61ea69ad9d16634c8939ba0062ad80ab",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-021",
@@ -590,12 +950,30 @@
       "optimized_height": 720,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-021.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-021.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-021.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-021.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 21",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "a13e10d3c14eb37540e5cad9afec96e41b9fa7599e8b6aaee14122571ed106df"
+      "runtime_sha256": "a13e10d3c14eb37540e5cad9afec96e41b9fa7599e8b6aaee14122571ed106df",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-021.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-021.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-021.webp",
+          "bytes": 37996,
+          "sha256": "a13e10d3c14eb37540e5cad9afec96e41b9fa7599e8b6aaee14122571ed106df",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-021.webp",
+          "bytes": 8168,
+          "sha256": "e42be4c1c43ccd634b1b251f751fbc0e6b93075dd5c7d0fa1aa3ae6d6dcf97ad",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-022",
@@ -618,12 +996,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-022.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-022.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-022.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-022.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 22",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "0fa429474d3cceb8eba18a40911b2e45c20b7e1f49438280ec95d137d51da7c0"
+      "runtime_sha256": "0fa429474d3cceb8eba18a40911b2e45c20b7e1f49438280ec95d137d51da7c0",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-022.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-022.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-022.webp",
+          "bytes": 123514,
+          "sha256": "0fa429474d3cceb8eba18a40911b2e45c20b7e1f49438280ec95d137d51da7c0",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-022.webp",
+          "bytes": 20550,
+          "sha256": "ce98f2b5f199d9673ac8226549fc6ea6759314e95dac579d8fdc4ce80a8c5704",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-023",
@@ -646,12 +1042,30 @@
       "optimized_height": 960,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-023.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-023.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-023.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-023.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 23",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "52000124df75c75685288afca51a3be19c1071dc349bd9a0ae9cbb2d041211eb"
+      "runtime_sha256": "52000124df75c75685288afca51a3be19c1071dc349bd9a0ae9cbb2d041211eb",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-023.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-023.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-023.webp",
+          "bytes": 72278,
+          "sha256": "52000124df75c75685288afca51a3be19c1071dc349bd9a0ae9cbb2d041211eb",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-023.webp",
+          "bytes": 13098,
+          "sha256": "947f3e9ac5536394ed755262c45d1d0724c124eb2705605ea83e03c7a0f4a610",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-024",
@@ -674,12 +1088,30 @@
       "optimized_height": 1183,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-024.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-024.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-024.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-024.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 24",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "951259f19cd9caf83eb873a94e0fac804e2d0a39005089f9920ad8a8c8b3f6a0"
+      "runtime_sha256": "951259f19cd9caf83eb873a94e0fac804e2d0a39005089f9920ad8a8c8b3f6a0",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-024.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-024.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-024.webp",
+          "bytes": 175206,
+          "sha256": "951259f19cd9caf83eb873a94e0fac804e2d0a39005089f9920ad8a8c8b3f6a0",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-024.webp",
+          "bytes": 25392,
+          "sha256": "abc330c527b595471a7b1ea2ef58048a24e2f7c28d4ea010d6ebdea84c9a34f3",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-025",
@@ -702,12 +1134,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-025.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-025.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-025.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-025.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 25",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "30b75fe9a0f8d5afc1eab7387babfbf9f0dc6b7112b147faa51b64cd43cdae16"
+      "runtime_sha256": "30b75fe9a0f8d5afc1eab7387babfbf9f0dc6b7112b147faa51b64cd43cdae16",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-025.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-025.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-025.webp",
+          "bytes": 158948,
+          "sha256": "30b75fe9a0f8d5afc1eab7387babfbf9f0dc6b7112b147faa51b64cd43cdae16",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-025.webp",
+          "bytes": 20576,
+          "sha256": "8bf18b5a28afe7426c00811c6b06b8d8c86f59db98dc489e7a74f318a4c9a1f1",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-026",
@@ -730,12 +1180,30 @@
       "optimized_height": 640,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-026.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-026.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-026.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-026.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 26",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "d0f4eb58dc50b5e8a3f4cbfae5c149796b9c5d95da1afc794ebbb46164000f4e"
+      "runtime_sha256": "d0f4eb58dc50b5e8a3f4cbfae5c149796b9c5d95da1afc794ebbb46164000f4e",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-026.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-026.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-026.webp",
+          "bytes": 33974,
+          "sha256": "d0f4eb58dc50b5e8a3f4cbfae5c149796b9c5d95da1afc794ebbb46164000f4e",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-026.webp",
+          "bytes": 6350,
+          "sha256": "3967290c8a35515c37d2b5a635f64b25f2a29536ece6f7428110d8823e1441dc",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-027",
@@ -758,12 +1226,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-027.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-027.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-027.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-027.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 27",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "4c584d57bf4735649dfbdd2567b2bb85c9e2a2f490aca67f1e8f3e4f5560cea9"
+      "runtime_sha256": "4c584d57bf4735649dfbdd2567b2bb85c9e2a2f490aca67f1e8f3e4f5560cea9",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-027.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-027.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-027.webp",
+          "bytes": 50172,
+          "sha256": "4c584d57bf4735649dfbdd2567b2bb85c9e2a2f490aca67f1e8f3e4f5560cea9",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-027.webp",
+          "bytes": 9960,
+          "sha256": "e7760c5ef1bb805ef704a29609cc6438f55b41d403bc06887458957d90156497",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-028",
@@ -786,12 +1272,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-028.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-028.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-028.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-028.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 28",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "52acda499b462ab51a514c1a8ac3adab896d290f27e57555477b8ef430f9a66e"
+      "runtime_sha256": "52acda499b462ab51a514c1a8ac3adab896d290f27e57555477b8ef430f9a66e",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-028.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-028.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-028.webp",
+          "bytes": 109484,
+          "sha256": "52acda499b462ab51a514c1a8ac3adab896d290f27e57555477b8ef430f9a66e",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-028.webp",
+          "bytes": 12810,
+          "sha256": "95f3277c472ea7acb7f54cf93fd57343688bddaabe4421189008cecdc67d663a",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-029",
@@ -814,12 +1318,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-029.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-029.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-029.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-029.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 29",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "7be3db6d9bc3c5f6e3ba2a487ac8be90656740c775c365011f78df7132c643b3"
+      "runtime_sha256": "7be3db6d9bc3c5f6e3ba2a487ac8be90656740c775c365011f78df7132c643b3",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-029.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-029.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-029.webp",
+          "bytes": 290662,
+          "sha256": "7be3db6d9bc3c5f6e3ba2a487ac8be90656740c775c365011f78df7132c643b3",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-029.webp",
+          "bytes": 34808,
+          "sha256": "c1a24e94b311bd518d1fc6fc435ec76282d27820aafd50cdb00c8b0f47108217",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-030",
@@ -842,12 +1364,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-030.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-030.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-030.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-030.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 30",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "993442bf06b51821e3e24de84427b53285679ea435aaf0127aa8070d8c570fa6"
+      "runtime_sha256": "993442bf06b51821e3e24de84427b53285679ea435aaf0127aa8070d8c570fa6",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-030.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-030.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-030.webp",
+          "bytes": 195748,
+          "sha256": "993442bf06b51821e3e24de84427b53285679ea435aaf0127aa8070d8c570fa6",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-030.webp",
+          "bytes": 26350,
+          "sha256": "c5f3b29f945fa34b53afe093cb7a1cac62d6446bfb776f8e7b030d441db12b9e",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-031",
@@ -870,12 +1410,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-031.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-031.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-031.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-031.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 31",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "45c2bff9833ef9abc16340760626bcdc1c347768c89804a51694a37dd743a165"
+      "runtime_sha256": "45c2bff9833ef9abc16340760626bcdc1c347768c89804a51694a37dd743a165",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-031.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-031.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-031.webp",
+          "bytes": 55910,
+          "sha256": "45c2bff9833ef9abc16340760626bcdc1c347768c89804a51694a37dd743a165",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-031.webp",
+          "bytes": 10480,
+          "sha256": "6b5d9f4558cbb6112738f7bc71ab7b8b7620b588cd3ccc1576cdbedf46243e3b",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-032",
@@ -898,12 +1456,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-032.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-032.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-032.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-032.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 32",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "63520cb8dc559ce4decb81a3d741598fa318ec15099677a458c3cc9accfdcc53"
+      "runtime_sha256": "63520cb8dc559ce4decb81a3d741598fa318ec15099677a458c3cc9accfdcc53",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-032.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-032.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-032.webp",
+          "bytes": 81358,
+          "sha256": "63520cb8dc559ce4decb81a3d741598fa318ec15099677a458c3cc9accfdcc53",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-032.webp",
+          "bytes": 10550,
+          "sha256": "a2d9ba1eabdba98a9b4fc82b736ae8cb35f094281f2e183092e9f898b70dc2f9",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-033",
@@ -926,12 +1502,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-033.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-033.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-033.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-033.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 33",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "3a0e7a5b8e12a14db16f95370fe5ac96a57b3c5c7a95aa1a089a91ae3f72c49c"
+      "runtime_sha256": "3a0e7a5b8e12a14db16f95370fe5ac96a57b3c5c7a95aa1a089a91ae3f72c49c",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-033.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-033.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-033.webp",
+          "bytes": 46276,
+          "sha256": "3a0e7a5b8e12a14db16f95370fe5ac96a57b3c5c7a95aa1a089a91ae3f72c49c",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-033.webp",
+          "bytes": 9070,
+          "sha256": "9ac11ddd7a719251e000601669cebb4ea6072ac791e5366bb8eb93b1c67ccdaa",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-034",
@@ -954,12 +1548,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-034.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-034.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-034.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-034.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 34",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "9b048ec98166abe0e20ca9a1fa48b4cfef6461050270edf1729035d600768a47"
+      "runtime_sha256": "9b048ec98166abe0e20ca9a1fa48b4cfef6461050270edf1729035d600768a47",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-034.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-034.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-034.webp",
+          "bytes": 158136,
+          "sha256": "9b048ec98166abe0e20ca9a1fa48b4cfef6461050270edf1729035d600768a47",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-034.webp",
+          "bytes": 14062,
+          "sha256": "1e1fdacb43d1715620b4f3f0229bc689c5f2e8d8e427e9310ff21a01c1b70e46",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-035",
@@ -982,12 +1594,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-035.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-035.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-035.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-035.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 35",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "455e647d77809d9ceeb8da9b2be9e59d2fc0d6976242d61685b9c7af31d4537d"
+      "runtime_sha256": "455e647d77809d9ceeb8da9b2be9e59d2fc0d6976242d61685b9c7af31d4537d",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-035.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-035.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-035.webp",
+          "bytes": 69288,
+          "sha256": "455e647d77809d9ceeb8da9b2be9e59d2fc0d6976242d61685b9c7af31d4537d",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-035.webp",
+          "bytes": 12396,
+          "sha256": "3f1234d1dbc5f0f6c13c398df6eaba1f80f214c7ab68a95c5e6becb17b2116e8",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-036",
@@ -1010,12 +1640,30 @@
       "optimized_height": 1200,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-036.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-036.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-036.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-036.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 36",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "b63ef7d8b2f69ca5dc5b48c74852e7004d2fe6fe81e5936fcb39764b372db406"
+      "runtime_sha256": "b63ef7d8b2f69ca5dc5b48c74852e7004d2fe6fe81e5936fcb39764b372db406",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-036.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-036.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-036.webp",
+          "bytes": 85306,
+          "sha256": "b63ef7d8b2f69ca5dc5b48c74852e7004d2fe6fe81e5936fcb39764b372db406",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-036.webp",
+          "bytes": 18504,
+          "sha256": "af574fe3ea01f61f3b817a41d31f1c4ef3e99180c9aa6287d9cfd120c69645e8",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-037",
@@ -1038,12 +1686,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-037.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-037.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-037.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-037.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 37",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "94ef9151c945d338fd25d9d01eea3523d2dfadef80939b9807fa39b899946747"
+      "runtime_sha256": "94ef9151c945d338fd25d9d01eea3523d2dfadef80939b9807fa39b899946747",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-037.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-037.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-037.webp",
+          "bytes": 100328,
+          "sha256": "94ef9151c945d338fd25d9d01eea3523d2dfadef80939b9807fa39b899946747",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-037.webp",
+          "bytes": 11934,
+          "sha256": "73da0cda41ff3e5aa24ee9a007f18902322dad71e3848c663eeea7fc3c43f57d",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-038",
@@ -1066,12 +1732,30 @@
       "optimized_height": 1440,
       "encoding": "Original retained after WebP trial; smaller source wins",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-038.webp",
-        "thumbnail": "assets/content/portraits/portrait-038.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-038.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-038.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 38",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "6d1c02eca0cc95d583a6a22d48a5361d1439b3b388ac212530af29cafd60dbee"
+      "runtime_sha256": "6d1c02eca0cc95d583a6a22d48a5361d1439b3b388ac212530af29cafd60dbee",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-038.webp",
+        "thumbnail": "assets/content/portraits/portrait-038.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-038.webp",
+          "bytes": 135980,
+          "sha256": "6d1c02eca0cc95d583a6a22d48a5361d1439b3b388ac212530af29cafd60dbee",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-038.webp",
+          "bytes": 135980,
+          "sha256": "6d1c02eca0cc95d583a6a22d48a5361d1439b3b388ac212530af29cafd60dbee",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-039",
@@ -1094,12 +1778,30 @@
       "optimized_height": 1200,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-039.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-039.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-039.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-039.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 39",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "53910f1b545a2e280b86f49d793ae965e362139e37c835419c8bfefaf012a054"
+      "runtime_sha256": "53910f1b545a2e280b86f49d793ae965e362139e37c835419c8bfefaf012a054",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-039.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-039.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-039.webp",
+          "bytes": 171080,
+          "sha256": "53910f1b545a2e280b86f49d793ae965e362139e37c835419c8bfefaf012a054",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-039.webp",
+          "bytes": 24654,
+          "sha256": "95f0f70c84a40b8d0688d729f41900ec3dbcff95fdc238822e2ec5097c9a25ad",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-040",
@@ -1122,12 +1824,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-040.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-040.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-040.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-040.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 40",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "c1e755ef8852fb137f90656ba0aa4739704fd01580f37dcc785ac0ea3af1815e"
+      "runtime_sha256": "c1e755ef8852fb137f90656ba0aa4739704fd01580f37dcc785ac0ea3af1815e",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-040.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-040.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-040.webp",
+          "bytes": 341836,
+          "sha256": "c1e755ef8852fb137f90656ba0aa4739704fd01580f37dcc785ac0ea3af1815e",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-040.webp",
+          "bytes": 38082,
+          "sha256": "c22fea442ab439b33170837d8d46dffd3d4b22411916d4923d25914a2b10893a",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-041",
@@ -1150,12 +1870,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-041.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-041.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-041.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-041.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 41",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "20f998cd5bba25f4eee9516261313bb8f2ec74cdbfa9715a417c2792423e7c3e"
+      "runtime_sha256": "20f998cd5bba25f4eee9516261313bb8f2ec74cdbfa9715a417c2792423e7c3e",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-041.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-041.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-041.webp",
+          "bytes": 180532,
+          "sha256": "20f998cd5bba25f4eee9516261313bb8f2ec74cdbfa9715a417c2792423e7c3e",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-041.webp",
+          "bytes": 26292,
+          "sha256": "c953aed2573b55106bea336f72038e85877c100c49077705a7d7308b7a5dcb84",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-042",
@@ -1178,12 +1916,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-042.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-042.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-042.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-042.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 42",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "459909f0d93088205bab6d3dc106cd159db9c3b435b2b16c54cec587cb56977c"
+      "runtime_sha256": "459909f0d93088205bab6d3dc106cd159db9c3b435b2b16c54cec587cb56977c",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-042.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-042.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-042.webp",
+          "bytes": 75178,
+          "sha256": "459909f0d93088205bab6d3dc106cd159db9c3b435b2b16c54cec587cb56977c",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-042.webp",
+          "bytes": 17874,
+          "sha256": "fff2ed73b1d532a93c7db6b10eea2ba5d0f9766612658fb606664060848a96e1",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-043",
@@ -1206,12 +1962,30 @@
       "optimized_height": 1200,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-043.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-043.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-043.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-043.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 43",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "b105323b8e086f605344bdad3354599e6acb0051860f6380c15b9e0625dbf50d"
+      "runtime_sha256": "b105323b8e086f605344bdad3354599e6acb0051860f6380c15b9e0625dbf50d",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-043.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-043.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-043.webp",
+          "bytes": 27920,
+          "sha256": "b105323b8e086f605344bdad3354599e6acb0051860f6380c15b9e0625dbf50d",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-043.webp",
+          "bytes": 4616,
+          "sha256": "3f5ae4010b722d2ddd4cd46c0ead28bd83ea1d527f900133e201e6c2190054e7",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-044",
@@ -1234,12 +2008,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-044.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-044.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-044.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-044.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 44",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "7fde3bd1940c313517b93b153097a67564832045611dee5109342fa4a291aa1b"
+      "runtime_sha256": "7fde3bd1940c313517b93b153097a67564832045611dee5109342fa4a291aa1b",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-044.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-044.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-044.webp",
+          "bytes": 142050,
+          "sha256": "7fde3bd1940c313517b93b153097a67564832045611dee5109342fa4a291aa1b",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-044.webp",
+          "bytes": 16138,
+          "sha256": "350bf6bdfed809190d00da7e19de4218cfad7125790c612ce16e553e206519b0",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-045",
@@ -1262,12 +2054,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-045.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-045.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-045.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-045.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 45",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "cd8a04c0223fbe8d1c83f385912631561b356edf85187268e4b335138d0f5ac7"
+      "runtime_sha256": "cd8a04c0223fbe8d1c83f385912631561b356edf85187268e4b335138d0f5ac7",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-045.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-045.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-045.webp",
+          "bytes": 105216,
+          "sha256": "cd8a04c0223fbe8d1c83f385912631561b356edf85187268e4b335138d0f5ac7",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-045.webp",
+          "bytes": 19966,
+          "sha256": "33afb65aafcbbd7d76420cc32a858f9697dd44be891cc5b0a077d35ce3984a35",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-046",
@@ -1290,12 +2100,30 @@
       "optimized_height": 1277,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-046.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-046.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-046.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-046.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 46",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "6e6cc26d91edeafd17720e3973bce5def39749fe00d20f516c00412b4d5338dc"
+      "runtime_sha256": "6e6cc26d91edeafd17720e3973bce5def39749fe00d20f516c00412b4d5338dc",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-046.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-046.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-046.webp",
+          "bytes": 169952,
+          "sha256": "6e6cc26d91edeafd17720e3973bce5def39749fe00d20f516c00412b4d5338dc",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-046.webp",
+          "bytes": 27750,
+          "sha256": "33200ff513ac89ae859202f2aa91600ccf511e7b2069d0ecb18f2b935bc3a445",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-047",
@@ -1318,12 +2146,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-047.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-047.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-047.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-047.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 47",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "a6fe28b39f3e93eeed12b12f9328993dced8063e980329525df22fc1021f6f7c"
+      "runtime_sha256": "a6fe28b39f3e93eeed12b12f9328993dced8063e980329525df22fc1021f6f7c",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-047.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-047.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-047.webp",
+          "bytes": 44652,
+          "sha256": "a6fe28b39f3e93eeed12b12f9328993dced8063e980329525df22fc1021f6f7c",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-047.webp",
+          "bytes": 7404,
+          "sha256": "4c2564a49c40daf5ab3d78dd126a9dd85304094894e34faa6daf037c3317fd68",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-048",
@@ -1346,12 +2192,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-048.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-048.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-048.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-048.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 48",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "1940fe3752cbbe9c5a88749ee902e8fd11762bd58185350c3e86145579b9fc49"
+      "runtime_sha256": "1940fe3752cbbe9c5a88749ee902e8fd11762bd58185350c3e86145579b9fc49",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-048.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-048.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-048.webp",
+          "bytes": 61322,
+          "sha256": "1940fe3752cbbe9c5a88749ee902e8fd11762bd58185350c3e86145579b9fc49",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-048.webp",
+          "bytes": 9480,
+          "sha256": "bbb33448a20b16a59bae67a22d515f033b39ed6ee3f05e90ed31c2cca27fc972",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-049",
@@ -1374,12 +2238,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-049.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-049.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-049.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-049.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 49",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "f8627929a01ce7eb1193658f58576c590690ec577484513622ea69080015a6bb"
+      "runtime_sha256": "f8627929a01ce7eb1193658f58576c590690ec577484513622ea69080015a6bb",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-049.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-049.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-049.webp",
+          "bytes": 178668,
+          "sha256": "f8627929a01ce7eb1193658f58576c590690ec577484513622ea69080015a6bb",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-049.webp",
+          "bytes": 17510,
+          "sha256": "9c5575259c5b6ee532f80e9e48d99df486211b938d676d0780c416ae0f13269a",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-050",
@@ -1402,12 +2284,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-050.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-050.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-050.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-050.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 50",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "f897f575491c4e6813ad02e2456110f895b2794077d4d5b93b2de673278c9f63"
+      "runtime_sha256": "f897f575491c4e6813ad02e2456110f895b2794077d4d5b93b2de673278c9f63",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-050.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-050.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-050.webp",
+          "bytes": 127028,
+          "sha256": "f897f575491c4e6813ad02e2456110f895b2794077d4d5b93b2de673278c9f63",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-050.webp",
+          "bytes": 18454,
+          "sha256": "8fbb55aeeedf724d5d15e465de366b6483d0ada6db94efb75f6a650cd6e6a5c6",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-051",
@@ -1430,12 +2330,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-051.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-051.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-051.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-051.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 51",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "07c3216730cb6d6441c4fdd7ec4e5965a26e0dd36b2ea5e70d966ad740b049ae"
+      "runtime_sha256": "07c3216730cb6d6441c4fdd7ec4e5965a26e0dd36b2ea5e70d966ad740b049ae",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-051.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-051.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-051.webp",
+          "bytes": 187008,
+          "sha256": "07c3216730cb6d6441c4fdd7ec4e5965a26e0dd36b2ea5e70d966ad740b049ae",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-051.webp",
+          "bytes": 27864,
+          "sha256": "456949c34743951f3b3d6823232cca82849ef7670d35209b41921d25377486ed",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-052",
@@ -1458,12 +2376,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-052.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-052.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-052.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-052.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 52",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "2d702a84d622d225d50b4d4b15e6af17d2685ea7d480cd15449aa925aed53bed"
+      "runtime_sha256": "2d702a84d622d225d50b4d4b15e6af17d2685ea7d480cd15449aa925aed53bed",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-052.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-052.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-052.webp",
+          "bytes": 192722,
+          "sha256": "2d702a84d622d225d50b4d4b15e6af17d2685ea7d480cd15449aa925aed53bed",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-052.webp",
+          "bytes": 24290,
+          "sha256": "52bdb98519cd7901993eb70d1571b99b5dde8996c7b768c84ef7fb79a42d278e",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-053",
@@ -1486,12 +2422,30 @@
       "optimized_height": 1280,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-053.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-053.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-053.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-053.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 53",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "78454cf6b614d83ff24c21c4db38a7f0dc01661159f3ea47b2dd958619314568"
+      "runtime_sha256": "78454cf6b614d83ff24c21c4db38a7f0dc01661159f3ea47b2dd958619314568",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-053.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-053.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-053.webp",
+          "bytes": 214380,
+          "sha256": "78454cf6b614d83ff24c21c4db38a7f0dc01661159f3ea47b2dd958619314568",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-053.webp",
+          "bytes": 28986,
+          "sha256": "8c2ff2656446aa2257a83e094673c0a7d81e9e713b8f3acc0ceb667b5fdbd064",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-054",
@@ -1514,12 +2468,30 @@
       "optimized_height": 1350,
       "encoding": "Original retained after WebP trial; smaller source wins",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-054.webp",
-        "thumbnail": "assets/content/portraits/portrait-054.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-054.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-054.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 54",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "a018e638a8e355d001fc887156d2acb950a7f648a7aacb2213578a1e597f5297"
+      "runtime_sha256": "a018e638a8e355d001fc887156d2acb950a7f648a7aacb2213578a1e597f5297",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-054.webp",
+        "thumbnail": "assets/content/portraits/portrait-054.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-054.webp",
+          "bytes": 87080,
+          "sha256": "a018e638a8e355d001fc887156d2acb950a7f648a7aacb2213578a1e597f5297",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-054.webp",
+          "bytes": 87080,
+          "sha256": "a018e638a8e355d001fc887156d2acb950a7f648a7aacb2213578a1e597f5297",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-055",
@@ -1542,12 +2514,30 @@
       "optimized_height": 960,
       "encoding": "WebP Q80; oriented sRGB; max 960x1280; thumbnail Q78 max 320x400",
       "runtime": {
-        "optimized": "assets/content/portraits/portrait-055.webp",
-        "thumbnail": "assets/content/thumbnails/portrait-055.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-055.webp",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-055.webp"
       },
       "reachable_route": "Me \u2192 Edit dance profile \u2192 Browse profile images \u2192 Portrait 55",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "b7f0b757ee790bec3dcd81504e1d623c6653f600efe2ede094a8f57ef11220c1"
+      "runtime_sha256": "b7f0b757ee790bec3dcd81504e1d623c6653f600efe2ede094a8f57ef11220c1",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/portraits/portrait-055.webp",
+        "thumbnail": "assets/content/thumbnails/portrait-055.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/portraits/portrait-055.webp",
+          "bytes": 151332,
+          "sha256": "b7f0b757ee790bec3dcd81504e1d623c6653f600efe2ede094a8f57ef11220c1",
+          "content_type": "image/webp"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/thumbnails/portrait-055.webp",
+          "bytes": 27146,
+          "sha256": "cc41eabdcffcfae0d23049a8ebb203102d1b3a2c4d66e7362193abac4e9de7bf",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-056",
@@ -1591,12 +2581,30 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/open-air-group.mp4",
-        "thumbnail": "assets/content/covers/open-air-group.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/open-air-group.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/open-air-group.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Open-air group routine",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "172a579bb16703c8e1916c707b3917f591dedb3845f09fb6a360ab5fba3b1dfb"
+      "runtime_sha256": "172a579bb16703c8e1916c707b3917f591dedb3845f09fb6a360ab5fba3b1dfb",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/open-air-group.mp4",
+        "thumbnail": "assets/content/covers/open-air-group.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/open-air-group.mp4",
+          "bytes": 2528185,
+          "sha256": "172a579bb16703c8e1916c707b3917f591dedb3845f09fb6a360ab5fba3b1dfb",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/open-air-group.webp",
+          "bytes": 32156,
+          "sha256": "e99a1260de979ef567c9ed9a36c8532c315015a1a4b02720703df06d195b2b5c",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-057",
@@ -1647,12 +2655,30 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/street-style-group.mp4",
-        "thumbnail": "assets/content/covers/street-style-group.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/street-style-group.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/street-style-group.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Street-style group take",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "1748915d9e5e98c412a4d8f4130037cf8f4043d12169464869ce3620774cdcc6"
+      "runtime_sha256": "1748915d9e5e98c412a4d8f4130037cf8f4043d12169464869ce3620774cdcc6",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/street-style-group.mp4",
+        "thumbnail": "assets/content/covers/street-style-group.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/street-style-group.mp4",
+          "bytes": 2189987,
+          "sha256": "1748915d9e5e98c412a4d8f4130037cf8f4043d12169464869ce3620774cdcc6",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/street-style-group.webp",
+          "bytes": 43826,
+          "sha256": "2ffa1392cba21ff7ca0b1cf2b6f64a7b5889a1e985370de238cb84aac85ed1d7",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-058",
@@ -1696,12 +2722,30 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/night-plaza-solo.mp4",
-        "thumbnail": "assets/content/covers/night-plaza-solo.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/night-plaza-solo.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/night-plaza-solo.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Night plaza solo",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "965e2cc3c76311986c0b68b02a7f2c644e0330ea5d61a340854ebf36b8861b2f"
+      "runtime_sha256": "965e2cc3c76311986c0b68b02a7f2c644e0330ea5d61a340854ebf36b8861b2f",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/night-plaza-solo.mp4",
+        "thumbnail": "assets/content/covers/night-plaza-solo.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/night-plaza-solo.mp4",
+          "bytes": 2017635,
+          "sha256": "965e2cc3c76311986c0b68b02a7f2c644e0330ea5d61a340854ebf36b8861b2f",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/night-plaza-solo.webp",
+          "bytes": 20386,
+          "sha256": "72c7492228adf143a102620dfbdf288cf833c47c9b5bd383c3163d9b0878d373",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-059",
@@ -1752,12 +2796,30 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/studio-mirror.mp4",
-        "thumbnail": "assets/content/covers/studio-mirror.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/studio-mirror.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/studio-mirror.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Studio mirror session",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "a8ab2ab2e64f7cae5fe5171e67bd07873cc1a1e1559e13c852a6a47530f27480"
+      "runtime_sha256": "a8ab2ab2e64f7cae5fe5171e67bd07873cc1a1e1559e13c852a6a47530f27480",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/studio-mirror.mp4",
+        "thumbnail": "assets/content/covers/studio-mirror.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/studio-mirror.mp4",
+          "bytes": 2446143,
+          "sha256": "a8ab2ab2e64f7cae5fe5171e67bd07873cc1a1e1559e13c852a6a47530f27480",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/studio-mirror.webp",
+          "bytes": 28754,
+          "sha256": "affd83467420866d8ee663645d160faeffce212b93021b1c5aa838b4b2a48faf",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-060",
@@ -1808,12 +2870,30 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/holiday-duet.mp4",
-        "thumbnail": "assets/content/covers/holiday-duet.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/holiday-duet.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/holiday-duet.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Holiday duet",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "7ca6843852433474f6b6387381cfc301f99327df87014777f8547e56031d6ea9"
+      "runtime_sha256": "7ca6843852433474f6b6387381cfc301f99327df87014777f8547e56031d6ea9",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/holiday-duet.mp4",
+        "thumbnail": "assets/content/covers/holiday-duet.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/holiday-duet.mp4",
+          "bytes": 1377174,
+          "sha256": "7ca6843852433474f6b6387381cfc301f99327df87014777f8547e56031d6ea9",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/holiday-duet.webp",
+          "bytes": 24404,
+          "sha256": "b42959984f4499e5f75f325e34d800e0ea54c59e09faae7e1bcecb26112fa679",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-061",
@@ -1864,12 +2944,30 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/room-formation.mp4",
-        "thumbnail": "assets/content/covers/room-formation.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/room-formation.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/room-formation.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Room formation practice",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "b9b8beac7e653ea02c02d9647bbbe8508dd94bf8bc2345e1d4113ff28d83aacd"
+      "runtime_sha256": "b9b8beac7e653ea02c02d9647bbbe8508dd94bf8bc2345e1d4113ff28d83aacd",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/room-formation.mp4",
+        "thumbnail": "assets/content/covers/room-formation.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/room-formation.mp4",
+          "bytes": 1074184,
+          "sha256": "b9b8beac7e653ea02c02d9647bbbe8508dd94bf8bc2345e1d4113ff28d83aacd",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/room-formation.webp",
+          "bytes": 20926,
+          "sha256": "08c33da078e2f2c8c4d5a8531880b0032c29bd8b0ef70c8e3f4aa99a32dd2473",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-062",
@@ -1913,12 +3011,30 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/evening-plaza-duet.mp4",
-        "thumbnail": "assets/content/covers/evening-plaza-duet.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/evening-plaza-duet.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/evening-plaza-duet.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Evening plaza duet",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "47b2377416500b113e6764e46df4bab1e727402ce78003d67ef539e06a61c819"
+      "runtime_sha256": "47b2377416500b113e6764e46df4bab1e727402ce78003d67ef539e06a61c819",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/evening-plaza-duet.mp4",
+        "thumbnail": "assets/content/covers/evening-plaza-duet.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/evening-plaza-duet.mp4",
+          "bytes": 2163632,
+          "sha256": "47b2377416500b113e6764e46df4bab1e727402ce78003d67ef539e06a61c819",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/evening-plaza-duet.webp",
+          "bytes": 27478,
+          "sha256": "68748788b8d41d38f07056748e9a3decea4307e80280e2babbb008acb465e246",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-063",
@@ -1962,12 +3078,30 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/studio-partner.mp4",
-        "thumbnail": "assets/content/covers/studio-partner.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/studio-partner.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/studio-partner.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Studio partner sequence",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "ac57370cff2304e4ed219bcb71b568c69f770fbf27520b6fa9d64e1a60e790a2"
+      "runtime_sha256": "ac57370cff2304e4ed219bcb71b568c69f770fbf27520b6fa9d64e1a60e790a2",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/studio-partner.mp4",
+        "thumbnail": "assets/content/covers/studio-partner.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/studio-partner.mp4",
+          "bytes": 3989801,
+          "sha256": "ac57370cff2304e4ed219bcb71b568c69f770fbf27520b6fa9d64e1a60e790a2",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/studio-partner.webp",
+          "bytes": 23712,
+          "sha256": "70c078f30f3020b3b60fd49d1747ad35d35ddf3af995960ed6236aaa400e2944",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-064",
@@ -2011,12 +3145,30 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/group-studio.mp4",
-        "thumbnail": "assets/content/covers/group-studio.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/group-studio.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/group-studio.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Group studio run",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "23fa733b28a2173233dafb0ea7b1cebec65cec16917ec64dfae417b94e4c1268"
+      "runtime_sha256": "23fa733b28a2173233dafb0ea7b1cebec65cec16917ec64dfae417b94e4c1268",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/group-studio.mp4",
+        "thumbnail": "assets/content/covers/group-studio.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/group-studio.mp4",
+          "bytes": 2115035,
+          "sha256": "23fa733b28a2173233dafb0ea7b1cebec65cec16917ec64dfae417b94e4c1268",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/group-studio.webp",
+          "bytes": 16064,
+          "sha256": "4bd69cacf7b3084fda00525faf47a024b5ef02c3fec7158a7136879ae89da921",
+          "content_type": "image/webp"
+        }
+      }
     },
     {
       "id": "media-065",
@@ -2067,12 +3219,32 @@
       "encoding": "H.264 CRF27 slow, width 576 with original aspect, original frame timing, AAC audio copied, faststart",
       "full_decode": "passed",
       "runtime": {
-        "optimized": "assets/content/videos/hallway-take.mp4",
-        "thumbnail": "assets/content/covers/hallway-take.webp"
+        "optimized": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/hallway-take.mp4",
+        "thumbnail": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/hallway-take.webp"
       },
       "reachable_route": "Studio \u2192 Explore the dance video library \u2192 Hallway close-up take",
       "rights": "publisher_confirmed",
-      "runtime_sha256": "448af2ac0bd11b1fbaf2c9e0876d55ea45972fa2142db274318fa092c7f8a968"
+      "runtime_sha256": "448af2ac0bd11b1fbaf2c9e0876d55ea45972fa2142db274318fa092c7f8a968",
+      "legacy_asset_keys": {
+        "optimized": "assets/content/videos/hallway-take.mp4",
+        "thumbnail": "assets/content/covers/hallway-take.webp"
+      },
+      "cloud_resources": {
+        "optimized": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/videos/hallway-take.mp4",
+          "bytes": 2551270,
+          "sha256": "448af2ac0bd11b1fbaf2c9e0876d55ea45972fa2142db274318fa092c7f8a968",
+          "content_type": "video/mp4"
+        },
+        "thumbnail": {
+          "url": "https://hgxbfgcdfsalavdfyvjr.supabase.co/storage/v1/object/public/dance-library/v1/covers/hallway-take.webp",
+          "bytes": 18780,
+          "sha256": "71a0cf95dbbb8b8ebb3f246c7884460df3d0b14d268549f1905bec65daef7adf",
+          "content_type": "image/webp"
+        }
+      }
     }
-  ]
+  ],
+  "cloud_objects": 128,
+  "cloud_bytes": 30324892
 }

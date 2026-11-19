@@ -9,6 +9,9 @@ STAGING = ROOT / 'ProjectMaterials/Supplied'
 
 
 def main():
+    active = ROOT / 'assets/data/media_library.json'
+    if active.exists() and json.loads(active.read_text()).get('version') == 2:
+        raise SystemExit('The cloud publisher library is active. Local media copies were removed at the publisher’s request; bundled installation is disabled.')
     rights = json.loads((ROOT / 'docs/media/supplied-media-rights.json').read_text())
     assert rights['status'] == 'publisher_confirmed'
     prepared = json.loads((STAGING / 'prepared.json').read_text())

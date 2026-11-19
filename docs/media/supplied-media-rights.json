@@ -5,5 +5,10 @@
   "response": "已获授权，可以全部接入",
   "scope": "All 55 images and 10 videos selected from Downloads, including commercial App display, installation-package distribution, likenesses and existing audio",
   "source_urls_and_individual_licenses": "Not provided; publisher retains the underlying permission and attribution records",
-  "independent_rights_clearance": false
+  "independent_rights_clearance": false,
+  "delivery_update": {
+    "date": "2026-11-19",
+    "source": "User explicitly selected migration to Supabase followed by removal of bundled copies after verification",
+    "response": "迁到云端，验证后移除本地（推荐）"
+  }
 }

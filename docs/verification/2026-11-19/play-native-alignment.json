@@ -1,6 +1,6 @@
 {
   "artifact": "dist/Vimi-1.0.0-arm64-preview.apk",
-  "sha256": "499c6c9880ea09f7026c10d907dbf9a0fc8c7b374e1ae69d957669672230a69d",
+  "sha256": "193f1daf0f6161b77f5a5df61e28a6a51f8b3d27a2f95eeb368fedacc4199c3a",
   "libraries": [
     {
       "library": "lib/arm64-v8a/libapp.so",

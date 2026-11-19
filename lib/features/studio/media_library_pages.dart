@@ -3,6 +3,7 @@ import '../../core/app_controller.dart';
 import '../../core/media_library.dart';
 import '../../core/dance_repository.dart';
 import '../../design/vimi_ui.dart';
+import '../../design/library_image.dart';
 import '../profile/help_pages.dart';
 import 'rehearsal_player.dart';
 
@@ -81,7 +82,7 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
                       ),
                       const SizedBox(height: 12),
                       const Text(
-                        'Slow down a take, try it mirrored and keep a note for your next rehearsal. Every clip is available offline.',
+                        'Slow down a take, try it mirrored and keep a note for your next rehearsal. Clips stream online; your practice notes stay on this device.',
                       ),
                       const SizedBox(height: 20),
                       ChoiceStrip(
@@ -110,7 +111,7 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
                   sliver: SliverToBoxAdapter(
                     child: EmptyNote(
                       'Keep a take for later.',
-                      'Open a clip and tap Save clip. Your saved clips stay with this account on this device.',
+                      'Open a clip and tap Save clip. Saved bookmarks stay with this account on this device.',
                     ),
                   ),
                 )
@@ -213,21 +214,27 @@ class _ClipLibraryDetailState extends State<ClipLibraryDetail> {
             glyph: Glyph.add,
             onPressed: () => openPage(context, widget.practiceBuilder(clip)),
           ),
-          VButton(
-            saved ? 'Saved · tap to remove' : 'Save clip',
-            glyph: Glyph.save,
-            quiet: true,
-            busy: busy,
-            onPressed: toggleSaved,
-          ),
-          VButton(
-            'Report a concern',
-            glyph: Glyph.report,
-            quiet: true,
-            onPressed: () => openPage(
-              context,
-              HelpCenterPage(libraryItem: '${clip.id} · ${clip.title}'),
-            ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              VIconButton(
+                Glyph.save,
+                label: saved ? 'Saved · tap to remove' : 'Save clip',
+                selected: saved,
+                filled: true,
+                busy: busy,
+                onPressed: toggleSaved,
+              ),
+              VIconButton(
+                Glyph.report,
+                label: 'Report a concern',
+                onPressed: () => openPage(
+                  context,
+                  HelpCenterPage(libraryItem: '${clip.id} · ${clip.title}'),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 20),
           const Text(
@@ -323,12 +330,10 @@ class _PortraitPreview extends StatelessWidget {
           child: InteractiveViewer(
             minScale: 1,
             maxScale: 4,
-            child: Image.asset(
-              portrait.asset,
+            child: LibraryImage(
+              portrait.url,
               fit: BoxFit.contain,
-              semanticLabel: portrait.title,
-              errorBuilder: (_, _, _) =>
-                  const Center(child: Text('This image could not be opened.')),
+              label: portrait.title,
             ),
           ),
         ),
@@ -337,8 +342,9 @@ class _PortraitPreview extends StatelessWidget {
         const SizedBox(height: 16),
         Center(
           child: ClipOval(
-            child: Image.asset(
-              portrait.asset,
+            child: LibraryImage(
+              portrait.url,
+              compact: true,
               width: 96,
               height: 96,
               fit: BoxFit.cover,
@@ -351,13 +357,15 @@ class _PortraitPreview extends StatelessWidget {
           glyph: Glyph.check,
           onPressed: () => Navigator.pop(context, portrait),
         ),
-        VButton(
-          'Report a concern',
-          glyph: Glyph.report,
-          quiet: true,
-          onPressed: () => openPage(
-            context,
-            HelpCenterPage(libraryItem: '${portrait.id} · ${portrait.title}'),
+        Align(
+          alignment: Alignment.centerRight,
+          child: VIconButton(
+            Glyph.report,
+            label: 'Report a concern',
+            onPressed: () => openPage(
+              context,
+              HelpCenterPage(libraryItem: '${portrait.id} · ${portrait.title}'),
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -392,13 +400,11 @@ class _LibraryTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: Image.asset(
+                child: LibraryImage(
                   image,
+                  compact: true,
                   fit: BoxFit.cover,
                   cacheWidth: 320,
-                  excludeFromSemantics: true,
-                  errorBuilder: (_, _, _) =>
-                      const Center(child: Text('Image unavailable')),
                 ),
               ),
               Padding(

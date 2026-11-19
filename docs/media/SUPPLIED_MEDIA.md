@@ -4,18 +4,18 @@ All **55 images and 10 complete videos** selected from the top level of `/Users/
 
 The publisher confirmed commercial App display/distribution, likeness and existing soundtrack rights in the current conversation. The confirmation is recorded in `supplied-media-rights.json`; original source URLs, creator credits and underlying licence documents were not supplied and must be retained by the publisher. This records permission provided by the publisher, not independent legal clearance.
 
-Original files remain unchanged in Downloads and have byte-verified backups under ignored `ProjectMaterials/Supplied/Originals`. Only the optimized runtime files in `assets/content/` and the catalogue `assets/data/media_library.json` are registered in Flutter. No source backup, inspection contact sheet or local input path is an app asset.
+The publisher subsequently requested deletion of project media backups. The entire `ProjectMaterials/Supplied` staging tree (original and optimized copies plus staging metadata) has been removed; input files in Downloads were not part of this deletion. The optimized runtime files are now served from Supabase `dance-library/v1/`. The lightweight URL/hash catalogue `assets/data/media_library.json` is bundled; all 128 local media files and their four Flutter folder registrations were removed after public-download and Android verification. No project media backup is retained. No source backup, inspection contact sheet or local input path is an app asset.
 
 ## Placement
 
-- Studio → Explore the dance video library: all ten videos, grouped as Solo, Duets and Groups. Each opens the existing native rehearsal controls and can be saved locally or attached to a practice note. A saved note references the bundled clip instead of creating another video copy.
+- Studio → Dance video library: all ten videos, grouped as Solo, Duets and Groups. Each opens the existing native rehearsal controls and can be saved locally or attached to a practice note. A saved note stores a stable library ID rather than video bytes. Existing bundled-asset references in old notes, drafts and recovery copies resolve to the same cloud clip without rewriting private data. Video playback now requires an internet connection.
 - Me → Edit dance profile → Browse profile images: all 55 photos, including full-image zoom and the exact centered avatar crop preview. Selecting an image returns to the editor; it uploads through the genuine profile workflow only after Save profile.
 - Library-item concerns open Help & safety with the item identifier included in the support-email draft. Sending remains an explicit action in the email application.
 - The existing neon brand art, real-user community, account/relationship/message flows and payment contracts are preserved. The supplied people do not become seeded members, follows or fabricated posts.
 
 ## Compression and media checks
 
-Inputs: **54,009,823 bytes**. Runtime media, including thumbnails/covers: **30,324,892 bytes**, a **43.9%** reduction across **128** distinct files.
+Inputs: **54,009,823 bytes**. Cloud-served optimized media, including thumbnails/covers: **30,324,892 bytes**, a **43.9%** reduction across **128** distinct files.
 
 Photos use oriented sRGB WebP Q80 up to 960 × 1280, with 320 × 400 Q78 list thumbnails. Two already compact inputs are retained after compression trials because adding a converted full image and thumbnail would increase size; the list reuses those files with bounded decode width. All full photos and thumbnails decode. No runtime photo has GPS EXIF data.
 
@@ -25,9 +25,9 @@ All 55 optimized photos and first/middle/last source/output pairs from all ten v
 
 ## Source-to-runtime mapping
 
-The Source column is relative to Downloads. Byte counts include any dedicated thumbnail/cover. Full machine-readable dimensions, timings, hashes, encoding decisions and reachable routes are in `supplied-media-inventory.json`.
+The Source column is relative to Downloads. Byte counts include any dedicated thumbnail/cover. Full machine-readable dimensions, timings, hashes, encoding decisions, current public URLs and reachable routes are in `supplied-media-inventory.json`. The old asset keys in the table below identify the exact optimized source and compatibility references; those files are no longer bundled.
 
-| ID | Source | Runtime media | Source bytes | Runtime bytes | Entry |
+| ID | Source | Legacy optimized key | Source bytes | Runtime bytes | Entry |
 | --- | --- | --- | ---: | ---: | --- |
 | portrait-001 | 861207994_18648425419041220_8970153999952672386_n.jpg | assets/content/portraits/portrait-001.webp | 162,449 | 122,032 | Profile image library → Portrait 01 |
 | portrait-002 | 870245983_18646673185042079_7204562931023644677_n.jpg | assets/content/portraits/portrait-002.webp | 532,730 | 50,434 | Profile image library → Portrait 02 |
@@ -94,3 +94,9 @@ The Source column is relative to Downloads. Byte counts include any dedicated th
 | studio-partner | AQPBrca6xp5SyWQddCRphrrF2xjuZGvk4xeCZx-H95w0EUJ3FjM07T-yo_X2ci5ldDUV7uSpILv21enVjO7Zg92-H4pOHbxRq3zoikU.mp4 | assets/content/videos/studio-partner.mp4 | 7,145,603 | 4,013,513 | Studio video library → Studio partner sequence |
 | group-studio | AQPi1_fULKAyi8_G5GOopyC-7xPQwSiNFIws51T0_3eGBPpnjkbnxL0KnfFpfAoH188_rmMeRh4zybBrCMt5mI04q7MHNq85aWVB3H4.mp4 | assets/content/videos/group-studio.mp4 | 3,614,284 | 2,131,099 | Studio video library → Group studio run |
 | hallway-take | AQPXSJVc_SRZDYzrTD5xptbNkBSg-4eELuxU7BpHc3lpVal-INd1_iOWklpWfp3cO9Xn9ZsS0RUGlLJHp5XkAig79JnddEu1cQeeVN0.mp4 | assets/content/videos/hallway-take.mp4 | 4,396,335 | 2,570,050 | Studio video library → Hallway close-up take |
+
+## Cloud migration acceptance
+
+The user explicitly approved Supabase migration and removal of package copies after verification. All 128 public downloads byte-match the optimized sources, and all ten videos return correct HTTP 206 byte ranges. An Android API-35 run downloaded/decoded every full portrait, streamed every video through the native network decoder, resolved an old asset note, saved/reopened a cloud note and bookmark, and selected/downloaded/uploaded the last portrait through real profile saving. The temporary account and private avatar were deleted through the actual account-deletion flow. Evidence is in `../verification/2026-11-19/cloud-library/`.
+
+`dance-library` is public publisher content; member uploads remain in private `dance-media`. The temporary moderator INSERT policy was removed after import. Anonymous callers, ordinary members and the operator were all denied new library uploads. There is no client write permission for this bucket. Original and optimized project backups were deleted on the publisher’s instruction. Request/delivery logging and the need for internet are reflected in the bundled privacy text and matching local policy HTML.

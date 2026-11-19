@@ -91,5 +91,11 @@
     "docs/verification/2026-11-19/supplied-avatar/native-results.json"
   ],
   "visual_native_screenshots": "Video library, clip controls, reopened note, portrait grid/full preview and rendered saved avatar inspected.",
-  "physical_device": "not performed"
+  "physical_device": "not performed",
+  "delivery_update": {
+    "cloud_objects": 128,
+    "package_media_files": 0,
+    "bytes_unchanged_from_compression_results": true,
+    "verification": "../verification/2026-11-19/cloud-library/public-object-verification.json"
+  }
 }

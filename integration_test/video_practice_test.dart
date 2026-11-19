@@ -53,9 +53,10 @@ void main() {
       expect(player.value.isInitialized, isTrue);
       expect(player.value.duration.inSeconds, 12);
       await press(tester, 'Mirror off');
-      expect(find.text('Mirror on'), findsOneWidget);
+      expect(find.byTooltip('Mirror on'), findsOneWidget);
       await press(tester, 'Loop off');
       expect(player.value.isLooping, isTrue);
+      await press(tester, '1.0×');
       await press(tester, '0.5×');
       expect(player.value.playbackSpeed, 0.5);
       await reveal(tester, find.byTooltip('Play video'));

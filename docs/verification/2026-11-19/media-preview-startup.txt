@@ -1,0 +1,7 @@
+Starting: Intent { cmp=com.vimistudio.vimi/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.vimistudio.vimi/.MainActivity
+TotalTime: 1192
+WaitTime: 1197
+Complete

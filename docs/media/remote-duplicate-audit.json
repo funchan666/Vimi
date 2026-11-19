@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-11-19",
+  "project": "hgxbfgcdfsalavdfyvjr",
+  "server_buckets": [
+    {
+      "id": "dance-media",
+      "public": false,
+      "objects": 0
+    }
+  ],
+  "catalog": {
+    "portraits": 55,
+    "videos": 10,
+    "remote_urls": 0,
+    "local_files": 128,
+    "local_bytes": 30324892,
+    "missing_files": 0,
+    "unreferenced_content_files": 0
+  },
+  "community_media": "Signed Supabase URLs; no bundled member-media replicas",
+  "deleted_files": [],
+  "decision": "No eligible server-backed local duplicates. A separate scope question asks whether to migrate the supplied library before removing its package files.",
+  "verification": "Source/configuration/reference inspection and a live read-only storage bucket/object count. No application build or tests in this audit.",
+  "subsequent_action": "User explicitly approved cloud migration; completed with all 128 package files removed after hash/native verification. See verification/2026-11-19/cloud-library/verification.json."
+}

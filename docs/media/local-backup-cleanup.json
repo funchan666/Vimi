@@ -1,0 +1,11 @@
+{
+  "requested_by": "Publisher explicitly requested deletion of project media backups",
+  "deleted_directory": "ProjectMaterials/Supplied",
+  "deleted_files": 196,
+  "deleted_bytes": 84465898,
+  "cloud_assets_modified": false,
+  "runtime_sources_modified": false,
+  "current_apk_modified": false,
+  "downloads_input_files_modified": false,
+  "verification": "Current 128 cloud references match the completed migration receipt; backup directory is absent; catalogue hash is unchanged. No build or runtime test performed for this local cleanup."
+}

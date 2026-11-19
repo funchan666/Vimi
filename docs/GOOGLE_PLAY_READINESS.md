@@ -16,7 +16,7 @@
 
 | Area | Observed evidence | What remains |
 | --- | --- | --- |
-| Target API | Current 36,522,345-byte preview targets API 36; source pins 36 | Check the final submitted AAB again |
+| Target API | Current 36,909,069-byte preview targets API 36; source pins 36 | Check the final submitted AAB again |
 | Permissions | Current preview has Internet, Billing, network state, wake lock and an app-private receiver permission; no broad gallery, contacts, location, all-files or advertising-ID permission | Reinspect every final merged release manifest after SDK changes |
 | Billing SDK | Existing preview and pinned plugin use Play Billing 8.0.0 | Real products, verifier credential, license testing and refund reconciliation; billing is disabled |
 | 16 KB pages | Current ARM64 preview ELF load segments and APK zip alignment pass static 16 KB checks | A final AAB and actual 16 KB device/runtime run are separate checks |
@@ -24,6 +24,7 @@
 | Account deletion | Genuine deletion was previously verified; a suspended actor also completed real native deletion in this pass | Support must verify and fulfill emailed deletion requests without requiring reinstallation |
 | Policy URLs | Source and standard HTML pages are complete | Public hosting without login/geofencing/download behavior, then match app and Console URLs |
 | Store access | An ordinary reusable account is provisioned in private config/play-review-access.json; provide it in App access | Never provide the content-moderator password as the ordinary member login |
+| Supplied reference media | All 55 photos/ten complete videos are compressed, bundled and covered by native checks; publisher confirmed commercial/likeness/audio rights | Keep underlying rights and required attribution records; confirmation is not independent legal clearance. See media/SUPPLIED_MEDIA.md |
 | Data safety | Source-based mapping in GOOGLE_PLAY_DATA_SAFETY.md | Confirm against final SDKs, provider logs, support practices and billing state |
 | Developer / store forms | No operator company or legal jurisdiction was invented; the publisher confirmed there is none to supply yet | Genuine developer identity/package registration, audience 18+, IARC, child-safety declaration and access instructions |
 
@@ -56,7 +57,10 @@ Vimi includes dance-specific eight-count prompts, rehearsal speed/mirror/loop co
 - [16 KB packaging and runtime verification](https://developer.android.com/guide/practices/page-sizes)
 - [Maintained review login requirements](https://support.google.com/googleplay/android-developer/answer/15748846?hl=en)
 - [Enforcement and related accounts](https://support.google.com/googleplay/android-developer/answer/9899234?hl=en)
+- [Intellectual property and evidence of content rights](https://support.google.com/googleplay/android-developer/answer/9888072?hl=en)
 
 ## Name screening
 
 Google Play currently lists other apps using “Vimi”, including [Vimi by ACR Tech](https://play.google.com/store/apps/details?hl=en-US&id=ai.videophoto.generator) and [Vimi: AI Photo to Video](https://play.google.com/store/apps/details?hl=en-US&id=art.vimi.ai). This is a same-name finding, not an infringement finding or trademark clearance. Do not treat the name as exclusive or imply affiliation with those products. Confirm naming/rights and a distinctive, accurate store identity before submission; no package, product ID or approved branding was silently renamed in this audit.
+
+Publisher media now streams from a separate public Supabase bucket. The local privacy text, matching HTML and Data safety worksheet disclose delivery requests and provider network logs. Member uploads remain private and follow their existing approval/access rules. The migration did not enable billing, publish policy URLs or create a store release.

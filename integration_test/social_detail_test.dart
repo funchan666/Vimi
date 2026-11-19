@@ -177,7 +177,7 @@ void main() {
       await openTestPage(tester, DancerPage(id: peerId));
       await waitFor(
         tester,
-        () => find.text('Block dancer').evaluate().isNotEmpty,
+        () => action('Block dancer').evaluate().isNotEmpty,
       );
       await press(tester, 'Block dancer');
       await press(tester, 'Block dancer');

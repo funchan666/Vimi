@@ -19,7 +19,7 @@ Local practice and drafts
 
 Private practice notes, rehearsal-video copies, drill progress and unsent drafts remain on the device in the account where you made them. They are not automatically uploaded or synced to other devices. Sharing a practice video as a social post is a separate action. Local practice drafts and recovery copies use device storage; they are not represented as encrypted cloud backups.
 
-The reference-video and profile-image libraries are included with the app. Saved library selections and practice notes referring to a library clip stay on the current device/account. Choosing a library profile image does not upload it until you save the profile; that saved image then follows the same public-profile and account-media rules as a photo you select yourself.
+Publisher-provided reference videos and profile-library images load from public Supabase Storage URLs and require an internet connection. Anyone with a library media URL can retrieve that publisher content; this does not make member uploads public. Requests expose network information such as an IP address to the provider for delivery and security, as described below. Saved library bookmarks and practice-note references stay on the current device/account and do not download videos for offline use. Choosing a library profile image downloads its bytes; it is copied into your account media only when you save the profile. That saved image then follows the same profile and account-media rules as a photo you select yourself.
 
 Purchases
 
