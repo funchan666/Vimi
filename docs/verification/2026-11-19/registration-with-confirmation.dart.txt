@@ -1,0 +1,70 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:vimi/main.dart' as vimi;
+import 'package:vimi/features/auth/account_security_pages.dart';
+import 'package:vimi/features/auth/auth_pages.dart';
+import 'package:vimi/features/shell.dart';
+import 'support.dart';
+
+void main() {
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  testWidgets(
+    'native email registration and confirmed deep link',
+    (tester) async {
+      await vimi.main();
+      await waitFor(
+        tester,
+        () => find.byType(WelcomePage).evaluate().isNotEmpty,
+      );
+      await binding.convertFlutterSurfaceToImage();
+      await tester.pump();
+      await press(tester, 'Get started');
+      await enter(tester, 'Display name', 'Vimi Email Test');
+      await enter(
+        tester,
+        'Email',
+        const String.fromEnvironment('QA_REGISTRATION_EMAIL'),
+      );
+      await enter(
+        tester,
+        'Password',
+        const String.fromEnvironment('QA_REGISTRATION_PASSWORD'),
+      );
+      // A labelled test fixture date, never inferred as the owner's date of birth.
+      await enter(tester, 'Date of birth · YYYY-MM-DD', '2000-01-01');
+      final consent = find.byTooltip('Accept Terms and Privacy Policy');
+      await reveal(tester, consent);
+      await tester.tap(consent);
+      await press(tester, 'Create account');
+      await waitFor(
+        tester,
+        () => find.byType(EmailConfirmationPage).evaluate().isNotEmpty,
+        reason:
+            'The real registration request did not reach email confirmation.',
+      );
+      await capture(binding, tester, 'native-email-confirmation');
+      // The host reads only this test email and opens its genuine verification link.
+      // ignore: avoid_print
+      print('VIMI_QA_REGISTRATION_AWAITING_EMAIL');
+      await waitFor(
+        tester,
+        () => find.byType(DanceShell).evaluate().isNotEmpty,
+        timeout: const Duration(minutes: 6),
+        reason: 'Email verification did not return to Vimi.',
+      );
+      expect(
+        appController(tester).repo!.client.auth.currentUser!.email,
+        const String.fromEnvironment('QA_REGISTRATION_EMAIL'),
+      );
+      await capture(binding, tester, 'native-registration-complete');
+      binding.reportData ??= {};
+      binding.reportData!.addAll({
+        'registration': 'passed',
+        'email_callback': 'passed',
+      });
+      await appController(tester).signOut();
+      await tester.pump(const Duration(seconds: 1));
+    },
+    timeout: const Timeout(Duration(minutes: 10)),
+  );
+}

@@ -1,0 +1,25 @@
+{
+  "revision": "neon-social-v3",
+  "date": "2026-11-19",
+  "scope": "Source roles and sampled original raster colors only. Not a native render, accessibility/runtime acceptance or exhaustive photograph/disabled-state check.",
+  "flat_role_ratios": {
+    "ink/background": 18.06,
+    "ink/surface": 16.35,
+    "muted/surface": 8.74,
+    "ink/tonal": 13.32,
+    "muted/tonal": 7.12,
+    "accent/surface": 8.24,
+    "cyan/surface": 12.63,
+    "danger/surface": 9.55,
+    "line/surface": 3.73
+  },
+  "onAccent_over_bright_gradient_min_sampled": 6.93,
+  "illuminated_panel_muted_min_sampled": 6.54,
+  "background_wash_muted_min_sampled": 8.67,
+  "notes": [
+    "Normal text uses a 4.5:1 target; control boundaries use a 3:1 target.",
+    "The field boundary was raised from its initial 2.09:1 to 3.73:1 against the field surface.",
+    "The gradient primary label is dark purple rather than white; the sampled minimum is over 6.9:1.",
+    "Text over the dance photograph and actual font scaling/crops remain unrendered."
+  ]
+}

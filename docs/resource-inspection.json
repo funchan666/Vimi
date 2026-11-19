@@ -1,0 +1,29 @@
+{
+  "revision": "neon-social-v3",
+  "runtime_asset_bytes": {
+    "ui": 1368972,
+    "data": 1480,
+    "legal": 4542,
+    "fonts": 244646
+  },
+  "total_bytes": 1619640,
+  "runtime_rasters": 7,
+  "missing_references": [],
+  "dart_files": 19,
+  "checks": "static resource decode/reference/XML/JSON inspection and Dart formatting only; no build/analyze/test/run",
+  "preview": "docs/design-preview/vimi-neon-floor-v3-concept.png is generated, uses illustrative member names/content, and is not a runtime screenshot",
+  "xml_files_parsed": 9,
+  "current_json_files_parsed": 13,
+  "source_changes_from_snapshot": [
+    "lib/main.dart",
+    "lib/design/vimi_ui.dart",
+    "lib/features/shell.dart",
+    "lib/features/studio/studio_pages.dart",
+    "lib/features/messages/inbox_pages.dart",
+    "lib/features/auth/auth_pages.dart",
+    "lib/features/profile/profile_pages.dart",
+    "lib/features/wallet/wallet_page.dart",
+    "lib/features/community/community_pages.dart"
+  ],
+  "core_repository_and_local_storage_unchanged": true
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "vimi-flutter-android/v1",
+  "apps": [
+    {
+      "name": "Vimi",
+      "framework": "Flutter",
+      "language": "Dart",
+      "platforms": [
+        "android"
+      ],
+      "application_id": "com.vimistudio.vimi",
+      "ui_stack": "Flutter widgets",
+      "backend": "Supabase",
+      "project_ref": "hgxbfgcdfsalavdfyvjr",
+      "tabs": [
+        "Floor",
+        "Studio",
+        "Inbox",
+        "Me"
+      ],
+      "media_delivery": "bundled original UI; private Supabase member media",
+      "coin_products": [
+        "vimi_coins_100",
+        "vimi_coins_350",
+        "vimi_coins_600",
+        "vimi_coins_1300",
+        "vimi_coins_2800",
+        "vimi_coins_7500",
+        "vimi_coins_16000"
+      ],
+      "billing_enabled": false,
+      "visual_revision": "neon-social-v3",
+      "visual_style": "Midnight violet surfaces, luminous orchid-pink/violet/cyan raster gradients, natural neon-lit dance imagery, DM Sans and original utility glyphs"
+    }
+  ],
+  "user_overrides": [
+    "Flutter / Android overrides RN / iOS",
+    "Supabase real social overrides local-only default",
+    "Generate planned Google Play IDs; user will create them in Play Console",
+    "User rejected monochrome photography and explicitly requested a cool neon-gradient dance-social direction on November 19, 2026"
+  ],
+  "verification": "source/configuration/resource/diff only; no app build/analyze/test/run"
+}

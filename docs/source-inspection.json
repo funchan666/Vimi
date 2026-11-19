@@ -1,0 +1,13 @@
+{
+  "text_files": 68,
+  "trailing_whitespace": [
+    "assets/fonts/spacegrotesk-OFL.txt:21",
+    "assets/fonts/dmsans-OFL.txt:21"
+  ],
+  "missing_imports": [],
+  "missing_rpc": [],
+  "verification": "manual/API source review plus reference and whitespace inspection; no analyzer/compile/test/run",
+  "revision": "neon-social-v3",
+  "current_visual_evidence": "resource-inspection.json; VISUAL_REVISION_V3.md; contrast-inspection-v3.json",
+  "prior_scope": "RPC review and original source counts were recorded for initial delivery. Current revision changes native UI/resources and adds a read-only home dancer strip through the existing repository; runtime remains unverified."
+}

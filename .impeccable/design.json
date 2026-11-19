@@ -1,0 +1,65 @@
+{
+  "project": "Vimi",
+  "platform": "android",
+  "implementation": "Flutter widgets",
+  "source": "lib/design/vimi_ui.dart",
+  "colors": {
+    "background": "#0C0716",
+    "surface": "#1B122B",
+    "ink": "#F7F2FF",
+    "muted": "#BBB0CD",
+    "selected": "#322143",
+    "line": "#806899",
+    "accent": "#F58BDD",
+    "violet": "#BBA4FF",
+    "cyan": "#86E7F4",
+    "onAccent": "#170C24",
+    "danger": "#FFA3B5"
+  },
+  "typography": {
+    "display": {
+      "family": "DMSans",
+      "size": 40,
+      "lineHeight": 1.12,
+      "weight": 700
+    },
+    "heading": {
+      "family": "DMSans",
+      "size": 32,
+      "lineHeight": 1.16,
+      "weight": 600
+    },
+    "body": {
+      "family": "DMSans",
+      "size": 16,
+      "lineHeight": 1.5
+    },
+    "label": {
+      "family": "DMSans",
+      "size": 14,
+      "lineHeight": 1.3,
+      "weight": 700
+    }
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48
+  ],
+  "touchTarget": 48,
+  "navigationBreakpoint": 760,
+  "artwork": "Original neon-lit fictional adult dance photography, pink-violet-cyan raster gradient and matching gradient monogram; retained original line-glyph atlas",
+  "verification": "Static source/resource checks. Generated community concept uses illustrative members/content, not runtime data or a native screenshot.",
+  "revision": "neon-social-v3",
+  "approval": {
+    "status": "user-approved-visual-direction",
+    "date": "2026-11-19",
+    "user_statement": "这个不错，就按这个方向来。",
+    "reference": "docs/design-preview/vimi-neon-floor-v3-concept.png",
+    "scope": "Vimi visual identity and direction for all screens/controls/assets; no runtime, end-to-end or payment acceptance implied"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "review_visibility_save_like_comment": "passed",
+  "edit_returns_to_review": "passed",
+  "profile_edit_persisted": "passed",
+  "native_practice_save_reopen_edit": "passed",
+  "block_unblock_no_automatic_follow": "passed",
+  "report_hides_content": "passed",
+  "report_status_resolve": "passed",
+  "reauthenticated_password_change": "passed",
+  "native_account_delete": "passed",
+  "temporary_actors_cleaned": "passed"
+}

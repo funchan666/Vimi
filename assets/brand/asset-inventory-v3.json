@@ -1,0 +1,100 @@
+[
+  {
+    "id": "glyphs-clean",
+    "role": "32 original clean utility glyphs",
+    "source": "assets/brand/sources/editorial-v2/glyphs-clean.png",
+    "runtime": "assets/ui/glyphs-clean.webp",
+    "source_bytes": 421014,
+    "runtime_bytes": 264278,
+    "dimensions": [
+      1774,
+      887
+    ],
+    "alpha": true,
+    "origin": "original host-native generated graphic"
+  },
+  {
+    "id": "control-fill",
+    "role": "original clean button skin",
+    "source": "assets/brand/sources/editorial-v2/control-fill.png",
+    "runtime": "assets/ui/control-fill.webp",
+    "source_bytes": 1048996,
+    "runtime_bytes": 212910,
+    "dimensions": [
+      1280,
+      349
+    ],
+    "alpha": true,
+    "origin": "original host-native generated graphic"
+  },
+  {
+    "id": "surface-clean",
+    "role": "original untextured panel surface",
+    "source": "assets/brand/sources/editorial-v2/surface-clean.png",
+    "runtime": "assets/ui/surface-clean.webp",
+    "source_bytes": 978729,
+    "runtime_bytes": 507484,
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "alpha": false,
+    "origin": "original host-native generated graphic"
+  },
+  {
+    "id": "neon-spectrum",
+    "role": "Original pink-violet-cyan gradient for actions, filters and ambient backgrounds",
+    "source": "assets/brand/sources/neon-v3/neon-spectrum.png",
+    "runtime": "assets/ui/neon-spectrum.webp",
+    "source_bytes": 1348845,
+    "runtime_bytes": 21786,
+    "dimensions": [
+      1280,
+      853
+    ],
+    "alpha": false,
+    "origin": "original built-in host image generation; fictional adults where pictured"
+  },
+  {
+    "id": "neon-welcome",
+    "role": "Original neon-lit adult dance welcome photograph",
+    "source": "assets/brand/sources/neon-v3/neon-welcome.png",
+    "runtime": "assets/ui/neon-welcome.webp",
+    "source_bytes": 2046195,
+    "runtime_bytes": 188292,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "alpha": false,
+    "origin": "original built-in host image generation; fictional adults where pictured"
+  },
+  {
+    "id": "neon-floor",
+    "role": "Original neon-lit dance challenge cover",
+    "source": "assets/brand/sources/neon-v3/neon-floor.png",
+    "runtime": "assets/ui/neon-floor.webp",
+    "source_bytes": 1932437,
+    "runtime_bytes": 133488,
+    "dimensions": [
+      1280,
+      853
+    ],
+    "alpha": false,
+    "origin": "original built-in host image generation; fictional adults where pictured"
+  },
+  {
+    "id": "neon-mark",
+    "role": "Original gradient Vimi monogram / Android launcher source",
+    "source": "assets/brand/sources/neon-v3/neon-mark.png",
+    "runtime": "assets/ui/neon-mark.webp",
+    "source_bytes": 1330998,
+    "runtime_bytes": 40734,
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "alpha": false,
+    "origin": "original built-in host image generation; fictional adults where pictured"
+  }
+]

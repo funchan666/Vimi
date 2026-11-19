@@ -1,0 +1,16 @@
+project_id = "Vimi"
+[auth]
+site_url = "com.vimistudio.vimi://auth-callback/"
+additional_redirect_urls = ["com.vimistudio.vimi://auth-callback/"]
+enable_signup = true
+[auth.email]
+enable_signup = true
+enable_confirmations = false
+[functions.verify-play-purchase]
+verify_jwt = false
+[functions.delete-account]
+verify_jwt = false
+[functions.moderate-content]
+verify_jwt = false
+[functions.reconcile-play]
+verify_jwt = false

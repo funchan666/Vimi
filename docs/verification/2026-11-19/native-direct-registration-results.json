@@ -1,0 +1,6 @@
+{
+  "native_signup_without_verification": "passed",
+  "wrong_password_rejected": "passed",
+  "direct_signup_fixture_deleted": "passed",
+  "separate_fixed_reviewer_signin_settings_queue": "passed"
+}

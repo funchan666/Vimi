@@ -1,0 +1,55 @@
+{
+  "project": "Vimi",
+  "platform": "android",
+  "implementation": "Flutter widgets",
+  "source": "lib/design/vimi_ui.dart",
+  "colors": {
+    "background": "#F8F9FB",
+    "surface": "#FCFCFD",
+    "ink": "#15171B",
+    "muted": "#666D77",
+    "accent": "#15171B",
+    "selected": "#ECEEF1",
+    "line": "#E0E3E8",
+    "danger": "#AD3543"
+  },
+  "typography": {
+    "display": {
+      "family": "DMSans",
+      "size": 40,
+      "lineHeight": 1.12,
+      "weight": 700
+    },
+    "heading": {
+      "family": "DMSans",
+      "size": 32,
+      "lineHeight": 1.16,
+      "weight": 600
+    },
+    "body": {
+      "family": "DMSans",
+      "size": 16,
+      "lineHeight": 1.5
+    },
+    "label": {
+      "family": "DMSans",
+      "size": 14,
+      "lineHeight": 1.3,
+      "weight": 700
+    }
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48
+  ],
+  "touchTarget": 48,
+  "navigationBreakpoint": 760,
+  "artwork": "Original monochrome photographic assets, typographic icon, line-glyph atlas and untextured control/panel skins",
+  "verification": "Static source/resource inspection; generated concept is not a runtime capture",
+  "revision": "photographic-monochrome-v2"
+}

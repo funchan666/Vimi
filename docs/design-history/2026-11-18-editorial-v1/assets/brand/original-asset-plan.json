@@ -1,0 +1,201 @@
+{
+  "schema_version": 6,
+  "app": "Vimi",
+  "platform": "Android",
+  "required_screens": [
+    "Welcome",
+    "Create account",
+    "Sign in",
+    "Recover account",
+    "Update password",
+    "Floor",
+    "Challenges",
+    "Challenge detail",
+    "Publish",
+    "Post detail",
+    "Edit post/comment",
+    "Dancer directory",
+    "Dancer profile",
+    "Relationships",
+    "Studio",
+    "Practice editor",
+    "Video player",
+    "Studio pack",
+    "Inbox",
+    "Chat",
+    "Me",
+    "Edit profile",
+    "Saved posts",
+    "Wallet",
+    "Settings",
+    "Blocked dancers",
+    "Delete account",
+    "Policies",
+    "Licenses"
+  ],
+  "assets": [
+    {
+      "id": "app_icon",
+      "source": "assets/brand/sources/app_icon.png",
+      "runtime": "assets/ui/app_icon.webp",
+      "source_bytes": 1778331,
+      "runtime_bytes": 150902,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alpha": false,
+      "origin": "host-native generated original illustration",
+      "role": "launcher and brand",
+      "generated_with": "built-in host-native image generator",
+      "referenced_by": [
+        "lib/features",
+        "lib/main.dart",
+        "android/app/src/main/res"
+      ],
+      "interactive": false
+    },
+    {
+      "id": "floor",
+      "source": "assets/brand/sources/floor.png",
+      "runtime": "assets/ui/floor.webp",
+      "source_bytes": 3462691,
+      "runtime_bytes": 598790,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "alpha": false,
+      "origin": "host-native generated original illustration",
+      "role": "Floor / welcome original dance scene",
+      "generated_with": "built-in host-native image generator",
+      "referenced_by": [
+        "lib/features",
+        "lib/main.dart",
+        "android/app/src/main/res"
+      ],
+      "interactive": false
+    },
+    {
+      "id": "studio",
+      "source": "assets/brand/sources/studio.png",
+      "runtime": "assets/ui/studio.webp",
+      "source_bytes": 2490151,
+      "runtime_bytes": 270014,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "alpha": false,
+      "origin": "host-native generated original illustration",
+      "role": "Studio rehearsal background",
+      "generated_with": "built-in host-native image generator",
+      "referenced_by": [
+        "lib/features",
+        "lib/main.dart",
+        "android/app/src/main/res"
+      ],
+      "interactive": false
+    },
+    {
+      "id": "inbox",
+      "source": "assets/brand/sources/inbox.png",
+      "runtime": "assets/ui/inbox.webp",
+      "source_bytes": 2139100,
+      "runtime_bytes": 128198,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "alpha": false,
+      "origin": "host-native generated original illustration",
+      "role": "Inbox background",
+      "generated_with": "built-in host-native image generator",
+      "referenced_by": [
+        "lib/features",
+        "lib/main.dart",
+        "android/app/src/main/res"
+      ],
+      "interactive": false
+    },
+    {
+      "id": "profile",
+      "source": "assets/brand/sources/profile.png",
+      "runtime": "assets/ui/profile.webp",
+      "source_bytes": 2740998,
+      "runtime_bytes": 320098,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "alpha": false,
+      "origin": "host-native generated original illustration",
+      "role": "Me / profile background",
+      "generated_with": "built-in host-native image generator",
+      "referenced_by": [
+        "lib/features",
+        "lib/main.dart",
+        "android/app/src/main/res"
+      ],
+      "interactive": false
+    },
+    {
+      "id": "icons",
+      "source": "assets/brand/sources/icons.png",
+      "runtime": "assets/ui/icons.webp",
+      "source_bytes": 625020,
+      "runtime_bytes": 397058,
+      "dimensions": [
+        1774,
+        887
+      ],
+      "alpha": true,
+      "origin": "host-native generated original illustration",
+      "role": "32 original control glyphs in an 8 by 4 transparent atlas",
+      "generated_with": "built-in host-native image generator",
+      "referenced_by": [
+        "lib/design/vimi_ui.dart"
+      ],
+      "interactive": true
+    },
+    {
+      "id": "button",
+      "source": "assets/brand/sources/button.png",
+      "runtime": "assets/ui/button.webp",
+      "source_bytes": 1310044,
+      "runtime_bytes": 207396,
+      "dimensions": [
+        1280,
+        269
+      ],
+      "alpha": true,
+      "origin": "host-native generated original illustration",
+      "role": "shared original button skin",
+      "generated_with": "built-in host-native image generator",
+      "referenced_by": [
+        "lib/design/vimi_ui.dart"
+      ],
+      "interactive": true,
+      "optimization": "trimmed transparent margins including near-invisible alpha noise; kept the original artwork"
+    },
+    {
+      "id": "paper",
+      "source": "assets/brand/sources/paper.png",
+      "runtime": "assets/ui/paper.webp",
+      "source_bytes": 2078461,
+      "runtime_bytes": 104498,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "alpha": false,
+      "origin": "host-native generated original illustration",
+      "role": "shared original panel surface",
+      "generated_with": "built-in host-native image generator",
+      "referenced_by": [
+        "lib/design/vimi_ui.dart"
+      ],
+      "interactive": false
+    }
+  ]
+}

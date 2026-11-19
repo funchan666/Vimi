@@ -1,0 +1,75 @@
+{
+  "local_widget_storage_tests": 11,
+  "analyzer": "no issues",
+  "native_suites": {
+    "fixed_reviewer": {
+      "status": "passed",
+      "checks": {
+        "existing_member_password_signin": "passed",
+        "native_delete_account": "passed",
+        "fixed_reviewer_settings_moderation_access": "passed"
+      }
+    },
+    "social_detail": {
+      "status": "passed",
+      "checks": {
+        "review_visibility_save_like_comment": "passed",
+        "edit_returns_to_review": "passed",
+        "profile_edit_persisted": "passed",
+        "native_practice_save_reopen_edit": "passed",
+        "block_unblock_no_automatic_follow": "passed",
+        "report_hides_content": "passed",
+        "report_status_resolve": "passed",
+        "reauthenticated_password_change": "passed",
+        "native_account_delete": "passed",
+        "temporary_actors_cleaned": "passed"
+      }
+    },
+    "video_practice": {
+      "status": "passed",
+      "checks": {
+        "native_video_pick_play_speed_mirror_loop_retention": "passed",
+        "practice_reopen_delete": "passed",
+        "expanded_larger_type": "passed"
+      }
+    },
+    "authentication_retry": {
+      "status": "passed",
+      "checks": {
+        "same_screen_wrong_password_correction": "passed"
+      }
+    },
+    "password_recovery": {
+      "status": "passed",
+      "checks": {
+        "password_recovery_email_callback_update_reauthentication": "passed"
+      }
+    },
+    "direct_registration": {
+      "status": "passed",
+      "checks": {
+        "native_signup_without_verification": "passed",
+        "wrong_password_rejected": "passed",
+        "direct_signup_fixture_deleted": "passed",
+        "separate_fixed_reviewer_signin_settings_queue": "passed"
+      }
+    }
+  },
+  "foundation_steps": {
+    "challenge_auth_continuation": "passed",
+    "native_picker_storage_publish_pending": "passed",
+    "mutual_follow_chat_realtime_read_receipt": "passed"
+  },
+  "database_contract": "passed; transaction rollback",
+  "hosted_final_state": {
+    "temporary_qa_accounts": 0,
+    "temporary_email_test_accounts": 0,
+    "fixed_reviewers": 1,
+    "posts": 0,
+    "messages": 0,
+    "reports": 0,
+    "media_objects": 0,
+    "follows": 0,
+    "wallet_balance": "0"
+  }
+}

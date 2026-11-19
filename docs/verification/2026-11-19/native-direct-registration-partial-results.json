@@ -1,0 +1,4 @@
+{
+  "native_signup_without_verification": "passed",
+  "wrong_password_rejected": "passed"
+}

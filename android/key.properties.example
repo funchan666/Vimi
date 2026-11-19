@@ -1,0 +1,4 @@
+storePassword=YOUR_LOCAL_STORE_PASSWORD
+keyPassword=YOUR_LOCAL_KEY_PASSWORD
+keyAlias=vimi-upload
+storeFile=/absolute/path/to/vimi-upload.jks

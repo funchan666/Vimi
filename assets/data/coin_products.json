@@ -1,0 +1,9 @@
+[
+  {"id":"vimi_coins_100","coins":100,"suggested_usd":"0.99"},
+  {"id":"vimi_coins_350","coins":350,"suggested_usd":"2.99"},
+  {"id":"vimi_coins_600","coins":600,"suggested_usd":"4.99"},
+  {"id":"vimi_coins_1300","coins":1300,"suggested_usd":"9.99"},
+  {"id":"vimi_coins_2800","coins":2800,"suggested_usd":"19.99"},
+  {"id":"vimi_coins_7500","coins":7500,"suggested_usd":"49.99"},
+  {"id":"vimi_coins_16000","coins":16000,"suggested_usd":"99.99"}
+]

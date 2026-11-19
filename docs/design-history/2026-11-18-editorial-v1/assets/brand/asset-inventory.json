@@ -1,0 +1,107 @@
+[
+  {
+    "id": "app_icon",
+    "source": "assets/brand/sources/app_icon.png",
+    "runtime": "assets/ui/app_icon.webp",
+    "source_bytes": 1778331,
+    "runtime_bytes": 150902,
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "alpha": false,
+    "origin": "host-native generated original illustration"
+  },
+  {
+    "id": "floor",
+    "source": "assets/brand/sources/floor.png",
+    "runtime": "assets/ui/floor.webp",
+    "source_bytes": 3462691,
+    "runtime_bytes": 598790,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "alpha": false,
+    "origin": "host-native generated original illustration"
+  },
+  {
+    "id": "studio",
+    "source": "assets/brand/sources/studio.png",
+    "runtime": "assets/ui/studio.webp",
+    "source_bytes": 2490151,
+    "runtime_bytes": 270014,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "alpha": false,
+    "origin": "host-native generated original illustration"
+  },
+  {
+    "id": "inbox",
+    "source": "assets/brand/sources/inbox.png",
+    "runtime": "assets/ui/inbox.webp",
+    "source_bytes": 2139100,
+    "runtime_bytes": 128198,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "alpha": false,
+    "origin": "host-native generated original illustration"
+  },
+  {
+    "id": "profile",
+    "source": "assets/brand/sources/profile.png",
+    "runtime": "assets/ui/profile.webp",
+    "source_bytes": 2740998,
+    "runtime_bytes": 320098,
+    "dimensions": [
+      1024,
+      1536
+    ],
+    "alpha": false,
+    "origin": "host-native generated original illustration"
+  },
+  {
+    "id": "icons",
+    "source": "assets/brand/sources/icons.png",
+    "runtime": "assets/ui/icons.webp",
+    "source_bytes": 625020,
+    "runtime_bytes": 397058,
+    "dimensions": [
+      1774,
+      887
+    ],
+    "alpha": true,
+    "origin": "host-native generated original illustration"
+  },
+  {
+    "id": "button",
+    "source": "assets/brand/sources/button.png",
+    "runtime": "assets/ui/button.webp",
+    "source_bytes": 1310044,
+    "runtime_bytes": 207396,
+    "dimensions": [
+      1280,
+      269
+    ],
+    "alpha": true,
+    "origin": "host-native generated original illustration",
+    "optimization": "trimmed transparent margins including near-invisible alpha noise; kept the original artwork"
+  },
+  {
+    "id": "paper",
+    "source": "assets/brand/sources/paper.png",
+    "runtime": "assets/ui/paper.webp",
+    "source_bytes": 2078461,
+    "runtime_bytes": 104498,
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "alpha": false,
+    "origin": "host-native generated original illustration"
+  }
+]

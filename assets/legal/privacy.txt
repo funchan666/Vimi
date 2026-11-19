@@ -1,0 +1,14 @@
+Vimi Privacy Policy
+Effective November 18, 2026
+
+Vimi uses your email address and encrypted authentication session to provide your account. Your display name, dance styles, bio, avatar and approved dance posts are visible to signed-in members. Your date of birth is stored privately to enforce the adult-only community rule.
+
+Supabase processes account, profile, media, relationship, message, moderation and wallet data for Vimi. Private messages are accessible to their participants and authorized moderation or support processing; they are not end-to-end encrypted. Reports, blocks and unpublished posts are not public community content.
+
+Camera and photo-library access is requested only when you choose to capture or select media. Practice notes and personal rehearsal-video selections are saved on your device. Gallery files selected for a social post or avatar are uploaded only when you submit that action. Vimi does not collect precise location or an address book.
+
+Google Play processes purchases. Vimi's server verifies purchase tokens and keeps a purchase and coin ledger. Payment-card details are not collected by Vimi. Coins are virtual items with no cash-out or user-to-user transfer.
+
+You may edit your profile, remove your posts and comments, block users, sign out or request account deletion in Settings. Account deletion removes your profile, messages, community content and uploaded media. Financial audit records may be retained with personal account links removed where required for accounting and fraud prevention. Device practice data is cleared when you delete your account.
+
+Use the app's reporting tools for content concerns. For support, privacy requests or account questions, contact funchan7777777@gmail.com.

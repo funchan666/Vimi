@@ -1,0 +1,32 @@
+{
+  "security": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"result\":{\"lints\":[{\"name\":\"rls_enabled_no_policy\",\"title\":\"RLS Enabled No Policy\",\"level\":\"INFO\",\"facing\":\"EXTERNAL\",\"categories\":[\"SECURITY\"],\"description\":\"Detects cases where row level security (RLS) has been enabled on a table but no RLS policies have been created.\",\"remediation\":\"https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy\",\"count\":4,\"findings\":[{\"detail\":\"Table \\\\`private.accounts\\\\` has RLS enabled, but no policies exist\",\"metadata\":{\"name\":\"accounts\",\"type\":\"table\",\"schema\":\"private\"},\"observed_at\":\"2026-11-19T03:45:06.693Z\"},{\"detail\":\"Table \\\\`private.api_limits\\\\` has RLS enabled, but no policies exist\",\"metadata\":{\"name\":\"api_limits\",\"type\":\"table\",\"schema\":\"private\"},\"observed_at\":\"2026-11-19T03:45:06.693Z\"},{\"detail\":\"Table \\\\`private.moderation_audit\\\\` has RLS enabled, but no policies exist\",\"metadata\":{\"name\":\"moderation_audit\",\"type\":\"table\",\"schema\":\"private\"},\"observed_at\":\"2026-11-19T03:45:06.693Z\"},{\"detail\":\"Table \\\\`private.play_purchases\\\\` has RLS enabled, but no policies exist\",\"metadata\":{\"name\":\"play_purchases\",\"type\":\"table\",\"schema\":\"private\"},\"observed_at\":\"2026-11-19T03:45:06.693Z\"}]},{\"name\":\"auth_leaked_password_protection\",\"title\":\"Leaked Password Protection Disabled\",\"level\":\"WARN\",\"facing\":\"EXTERNAL\",\"categories\":[\"SECURITY\"],\"description\":\"Leaked password protection is currently disabled.\",\"remediation\":\"https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection\",\"count\":1,\"findings\":[{\"detail\":\"Supabase Auth prevents the use of compromised passwords by checking against HaveIBeenPwned.org. Enable this feature to enhance security.\",\"metadata\":{\"type\":\"auth\",\"entity\":\"Auth\"}}]}]}}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "performance": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"result\":{\"lints\":[{\"name\":\"unused_index\",\"title\":\"Unused Index\",\"level\":\"INFO\",\"facing\":\"EXTERNAL\",\"categories\":[\"PERFORMANCE\"],\"description\":\"Detects if an index has never been used and may be a candidate for removal.\",\"remediation\":\"https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index\",\"count\":10,\"findings\":[{\"detail\":\"Index \\\\`moderation_actor\\\\` on table \\\\`private.moderation_audit\\\\` has not been used\",\"metadata\":{\"name\":\"moderation_audit\",\"type\":\"table\",\"schema\":\"private\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"},{\"detail\":\"Index \\\\`posts_feed\\\\` on table \\\\`public.posts\\\\` has not been used\",\"metadata\":{\"name\":\"posts\",\"type\":\"table\",\"schema\":\"public\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"},{\"detail\":\"Index \\\\`posts_author\\\\` on table \\\\`public.posts\\\\` has not been used\",\"metadata\":{\"name\":\"posts\",\"type\":\"table\",\"schema\":\"public\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"},{\"detail\":\"Index \\\\`comments_author\\\\` on table \\\\`public.comments\\\\` has not been used\",\"metadata\":{\"name\":\"comments\",\"type\":\"table\",\"schema\":\"public\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"},{\"detail\":\"Index \\\\`saves_post\\\\` on table \\\\`public.saves\\\\` has not been used\",\"metadata\":{\"name\":\"saves\",\"type\":\"table\",\"schema\":\"public\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"},{\"detail\":\"Index \\\\`reports_queue\\\\` on table \\\\`public.reports\\\\` has not been used\",\"metadata\":{\"name\":\"reports\",\"type\":\"table\",\"schema\":\"public\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"},{\"detail\":\"Index \\\\`unlocks_pack\\\\` on table \\\\`public.pack_unlocks\\\\` has not been used\",\"metadata\":{\"name\":\"pack_unlocks\",\"type\":\"table\",\"schema\":\"public\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"},{\"detail\":\"Index \\\\`ledger_user\\\\` on table \\\\`public.wallet_ledger\\\\` has not been used\",\"metadata\":{\"name\":\"wallet_ledger\",\"type\":\"table\",\"schema\":\"public\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"},{\"detail\":\"Index \\\\`purchases_user\\\\` on table \\\\`private.play_purchases\\\\` has not been used\",\"metadata\":{\"name\":\"play_purchases\",\"type\":\"table\",\"schema\":\"private\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"},{\"detail\":\"Index \\\\`purchases_product\\\\` on table \\\\`private.play_purchases\\\\` has not been used\",\"metadata\":{\"name\":\"play_purchases\",\"type\":\"table\",\"schema\":\"private\"},\"observed_at\":\"2026-11-19T03:45:06.875Z\"}]}]}}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  },
+  "health": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"result\":{\"lints\":[]}}"
+      }
+    ],
+    "structuredContent": null,
+    "isError": false
+  }
+}
