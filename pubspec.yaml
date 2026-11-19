@@ -29,6 +29,10 @@ flutter:
     - assets/ui/
     - assets/data/
     - assets/legal/
+    - assets/content/portraits/
+    - assets/content/thumbnails/
+    - assets/content/videos/
+    - assets/content/covers/
     - assets/fonts/dmsans-OFL.txt
   fonts:
     - family: DMSans

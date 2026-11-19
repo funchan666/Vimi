@@ -23,7 +23,8 @@ class AppController extends ChangeNotifier {
   bool resumingGuestAction = false;
   String? journalError;
   String? cloudError;
-  int revision = 0, _generation = 0;
+  int revision = 0, messageRevision = 0, _generation = 0;
+  Timer? _messageRefresh;
   bool _disposed = false;
   StreamSubscription<AuthState>? _auth;
   RealtimeChannel? _channel;
@@ -78,6 +79,8 @@ class AppController extends ChangeNotifier {
     unlocked = {};
     practices = [];
     revision++;
+    messageRevision++;
+    _messageRefresh?.cancel();
     final old = _channel;
     _channel = null;
     if (old != null) await repo?.client.removeChannel(old);
@@ -88,6 +91,7 @@ class AppController extends ChangeNotifier {
       practices = saved;
       journalError = null;
     } catch (e) {
+      if (generation != _generation || owner != account) return;
       journalError =
           'Your journal could not be opened. Your saved data has been kept.';
     }
@@ -123,7 +127,10 @@ class AppController extends ChangeNotifier {
                 column: 'recipient_id',
                 value: owner,
               ),
-              callback: (_) => changed(),
+              callback: (_) {
+                if (generation == _generation && owner == account)
+                  messagesChanged();
+              },
             )
             .onPostgresChanges(
               event: PostgresChangeEvent.all,
@@ -134,7 +141,10 @@ class AppController extends ChangeNotifier {
                 column: 'sender_id',
                 value: owner,
               ),
-              callback: (_) => changed(),
+              callback: (_) {
+                if (generation == _generation && owner == account)
+                  messagesChanged();
+              },
             )
             .subscribe();
         cloudError = null;
@@ -152,7 +162,16 @@ class AppController extends ChangeNotifier {
 
   void changed() {
     revision++;
+    messageRevision++;
     _emit();
+  }
+
+  void messagesChanged() {
+    _messageRefresh?.cancel();
+    _messageRefresh = Timer(const Duration(milliseconds: 180), () {
+      messageRevision++;
+      _emit();
+    });
   }
 
   Future<void> refreshWallet() async {
@@ -207,6 +226,7 @@ class AppController extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _generation++;
+    _messageRefresh?.cancel();
     _auth?.cancel();
     if (_channel != null) repo?.client.removeChannel(_channel!);
     super.dispose();

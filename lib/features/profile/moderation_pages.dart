@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
 import '../../core/models.dart';
+import '../../core/pagination.dart';
+import '../../design/page_footer.dart';
 import '../../design/vimi_ui.dart';
 import '../studio/rehearsal_player.dart';
 
@@ -12,28 +15,54 @@ class ModerationPage extends StatefulWidget {
 }
 
 class _ModerationPageState extends State<ModerationPage> {
-  Future<Json>? queue;
+  CursorPager<Json>? pager;
   String section = 'Posts';
+  bool childSafetyOnly = false;
+  String? owner;
   int revision = -1;
-  Future<Json> fetch() async {
-    final response = await VimiScope.of(context).repo!.client.functions.invoke(
-      'moderate-content',
-      body: {'action': 'queue'},
-    );
-    return jsonMap(response.data);
+  void select(String value) {
+    final app = VimiScope.of(context);
+    pager?.dispose();
+    owner = app.account;
+    final currentOwner = owner;
+    final target = value.toLowerCase();
+    final urgentOnly = value == 'Reports' && childSafetyOnly;
+    setState(() {
+      section = value;
+      pager = CursorPager(
+        fetch: (cursor) => app.repo!.reviewPage(
+          target,
+          cursor: cursor,
+          childSafetyOnly: urgentOnly,
+        ),
+        identity: (row) => row['id'] as String,
+        ascending: true,
+        isCurrent: () => app.isModerator && app.account == currentOwner,
+      );
+    });
+    unawaited(pager!.refresh());
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final app = VimiScope.of(context);
-    if (app.isModerator && revision != app.revision) {
+    if (app.isModerator && (pager == null || owner != app.account)) {
       revision = app.revision;
-      queue = fetch();
+      select(section);
+    } else if (app.isModerator && revision != app.revision) {
+      revision = app.revision;
+      unawaited(pager!.refresh());
     }
   }
 
-  void reload() => setState(() => queue = fetch());
+  void reload() => unawaited(pager!.refresh());
+  @override
+  void dispose() {
+    pager?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!VimiScope.of(context).isModerator)
@@ -66,30 +95,36 @@ class _ModerationPageState extends State<ModerationPage> {
           ChoiceStrip(
             options: const ['Posts', 'Comments', 'Reports'],
             value: section,
-            onChanged: (value) => setState(() => section = value),
+            onChanged: select,
           ),
+          if (section == 'Reports') ...[
+            const SizedBox(height: 16),
+            ChoiceStrip(
+              options: const ['All reports', 'Child safety'],
+              value: childSafetyOnly ? 'Child safety' : 'All reports',
+              onChanged: (value) {
+                childSafetyOnly = value == 'Child safety';
+                select('Reports');
+              },
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Check child safety concerns promptly. Remove confirmed violations and follow the child safety response procedure.',
+            ),
+          ],
           const SizedBox(height: 24),
-          FutureBuilder<Json>(
-            future: queue,
-            builder: (context, snapshot) {
-              if (snapshot.hasError)
-                return ErrorNote(
-                  readableError(snapshot.error!),
-                  onRetry: reload,
-                );
-              if (!snapshot.hasData)
-                return const Text('Opening the review queue…');
-              final items = jsonRows(
-                snapshot.data![section.toLowerCase()] ?? [],
-              );
-              if (items.isEmpty)
-                return const EmptyNote(
-                  'Queue is clear.',
-                  'New items awaiting review will appear here.',
-                );
+          AnimatedBuilder(
+            animation: pager!,
+            builder: (context, _) {
+              final items = pager!.items;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  if (pager!.loaded && items.isEmpty && pager!.error == null)
+                    const EmptyNote(
+                      'Queue is clear.',
+                      'New items awaiting review will appear here.',
+                    ),
                   for (final item in items)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16),
@@ -132,6 +167,11 @@ class _ModerationPageState extends State<ModerationPage> {
                         ),
                       ),
                     ),
+                  PageFooter(
+                    pager: pager!,
+                    moreLabel: 'More review items',
+                    loadingLabel: 'Opening the review queue…',
+                  ),
                 ],
               );
             },
@@ -161,7 +201,11 @@ class _ReviewItemPageState extends State<ReviewItemPage> {
   Future<void> decide(String status, {String? kind, String? id}) async {
     if (busy) return;
     final targetKind = kind ?? widget.kind;
-    final action = status == 'approved'
+    final action = status == 'removed'
+        ? targetKind == 'user'
+              ? 'Clear profile'
+              : 'Remove content permanently'
+        : status == 'approved'
         ? 'Approve'
         : status == 'rejected'
         ? 'Reject'
@@ -173,7 +217,11 @@ class _ReviewItemPageState extends State<ReviewItemPage> {
     if (!await confirmAction(
           context,
           title: '$action?',
-          body: targetKind == 'user'
+          body: status == 'removed'
+              ? targetKind == 'user'
+                    ? 'The display name, bio and avatar will be cleared. Use Suspend reported account to restrict access as well.'
+                    : 'This content and its attached media will be deleted. This cannot be undone.'
+              : targetKind == 'user'
               ? 'This changes the dancer’s access to the community.'
               : 'Your decision will be saved to the moderation record.',
           action: action,
@@ -302,7 +350,33 @@ class _ReviewItemPageState extends State<ReviewItemPage> {
               tonal: true,
               onPressed: busy ? null : () => decide('rejected'),
             ),
+            const SizedBox(height: 12),
+            VButton(
+              'Remove content permanently',
+              glyph: Glyph.delete,
+              quiet: true,
+              onPressed: busy ? null : () => decide('removed'),
+            ),
           ] else ...[
+            if (target != null) ...[
+              VButton(
+                item['target_type'] == 'user'
+                    ? 'Clear reported profile'
+                    : 'Remove reported content permanently',
+                glyph: Glyph.delete,
+                quiet: true,
+                onPressed: busy
+                    ? null
+                    : () => decide(
+                        'removed',
+                        kind: item['target_type'] as String,
+                        id: item['target_id'] as String,
+                      ),
+              ),
+              const SizedBox(height: 12),
+              const Text('After taking action, complete the report review.'),
+              const SizedBox(height: 12),
+            ],
             VButton(
               'Complete report review',
               busy: busy,

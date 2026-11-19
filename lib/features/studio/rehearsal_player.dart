@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import '../../core/media_library.dart';
 import '../../design/vimi_ui.dart';
 
 abstract final class PlaybackCoordinator {
@@ -48,10 +49,31 @@ class RehearsalPlayer extends StatefulWidget {
     this.practice = false,
     this.fullscreen = false,
     this.onReady,
-  });
+  }) : _sharedController = null,
+       _initialMirror = false,
+       _onMirrorChanged = null,
+       _onRetry = null;
+  const RehearsalPlayer._expanded({
+    required this.source,
+    required this.network,
+    required this.practice,
+    required VideoPlayerController controller,
+    required bool mirrored,
+    required ValueChanged<bool> onMirrorChanged,
+    required VoidCallback onRetry,
+  }) : fullscreen = true,
+       onReady = null,
+       _sharedController = controller,
+       _initialMirror = mirrored,
+       _onMirrorChanged = onMirrorChanged,
+       _onRetry = onRetry;
   final String source;
   final bool network, practice, fullscreen;
   final VoidCallback? onReady;
+  final VideoPlayerController? _sharedController;
+  final bool _initialMirror;
+  final ValueChanged<bool>? _onMirrorChanged;
+  final VoidCallback? _onRetry;
   @override
   State<RehearsalPlayer> createState() => _RehearsalPlayerState();
 }
@@ -60,12 +82,12 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
     with WidgetsBindingObserver {
   VideoPlayerController? player;
   String? error;
-  bool mirror = false, loop = false;
-  double speed = 1;
+  bool mirror = false, ownsPlayer = true;
   int seek = 0;
   @override
   void initState() {
     super.initState();
+    mirror = widget._initialMirror;
     WidgetsBinding.instance.addObserver(this);
     unawaited(load());
   }
@@ -73,7 +95,9 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
   @override
   void didUpdateWidget(covariant RehearsalPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.source != widget.source) {
+    if (oldWidget.source != widget.source ||
+        oldWidget.network != widget.network ||
+        oldWidget._sharedController != widget._sharedController) {
       release();
       unawaited(load());
     }
@@ -81,12 +105,17 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
 
   Future<void> load() async {
     release();
-    final current = widget.network
-        ? VideoPlayerController.networkUrl(Uri.parse(widget.source))
-        : VideoPlayerController.file(File(widget.source));
+    final current =
+        widget._sharedController ??
+        (widget.network
+            ? VideoPlayerController.networkUrl(Uri.parse(widget.source))
+            : isLibraryVideo(widget.source)
+            ? VideoPlayerController.asset(widget.source.substring(6))
+            : VideoPlayerController.file(File(widget.source)));
     player = current;
+    ownsPlayer = widget._sharedController == null;
     try {
-      await current.initialize();
+      if (!current.value.isInitialized) await current.initialize();
       if (!mounted || player != current) return;
       current.addListener(changed);
       setState(() => error = null);
@@ -111,9 +140,11 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
     final current = player;
     player = null;
     if (current != null) {
-      PlaybackCoordinator.remove(current);
       current.removeListener(changed);
-      unawaited(current.dispose());
+      if (ownsPlayer) {
+        PlaybackCoordinator.remove(current);
+        unawaited(current.dispose());
+      }
     }
   }
 
@@ -148,6 +179,23 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
     }
   }
 
+  Future<void> control(Future<void> Function() change) async {
+    try {
+      await change();
+    } catch (_) {
+      if (mounted)
+        setState(
+          () => error = 'Playback was interrupted. Open the video again.',
+        );
+    }
+  }
+
+  void retry() {
+    release();
+    setState(() => error = null);
+    unawaited(load());
+  }
+
   @override
   Widget build(BuildContext context) {
     final current = player;
@@ -155,9 +203,12 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
       return ErrorNote(
         error!,
         onRetry: () {
-          release();
-          setState(() => error = null);
-          unawaited(load());
+          if (widget._onRetry != null) {
+            Navigator.pop(context);
+            widget._onRetry!();
+          } else {
+            retry();
+          }
         },
       );
     if (current == null || !current.value.isInitialized)
@@ -166,6 +217,7 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
         child: Text('Opening video…'),
       );
     final value = current.value;
+    final loop = value.isLooping, speed = value.playbackSpeed;
     final maxSeconds = value.duration.inSeconds;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -205,14 +257,16 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
                     VButton(
                       mirror ? 'Mirror on' : 'Mirror off',
                       quiet: true,
-                      onPressed: () => setState(() => mirror = !mirror),
+                      onPressed: () {
+                        setState(() => mirror = !mirror);
+                        widget._onMirrorChanged?.call(mirror);
+                      },
                     ),
                     VButton(
                       loop ? 'Loop on' : 'Loop off',
                       quiet: true,
                       onPressed: () async {
-                        loop = !loop;
-                        await current.setLooping(loop);
+                        await control(() => current.setLooping(!loop));
                         if (mounted) setState(() {});
                       },
                     ),
@@ -230,11 +284,17 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
                               title: 'Your movement',
                               child: Center(
                                 child: SingleChildScrollView(
-                                  child: RehearsalPlayer(
+                                  child: RehearsalPlayer._expanded(
                                     source: widget.source,
                                     network: widget.network,
                                     practice: widget.practice,
-                                    fullscreen: true,
+                                    controller: current,
+                                    mirrored: mirror,
+                                    onMirrorChanged: (value) {
+                                      if (mounted)
+                                        setState(() => mirror = value);
+                                    },
+                                    onRetry: retry,
                                   ),
                                 ),
                               ),
@@ -249,8 +309,8 @@ class _RehearsalPlayerState extends State<RehearsalPlayer>
                   options: const ['0.5×', '0.75×', '1.0×', '1.25×'],
                   value: '${speed == 1 ? '1.0' : speed}×',
                   onChanged: (v) async {
-                    speed = double.parse(v.replaceAll('×', ''));
-                    await current.setPlaybackSpeed(speed);
+                    final next = double.parse(v.replaceAll('×', ''));
+                    await control(() => current.setPlaybackSpeed(next));
                     if (mounted) setState(() {});
                   },
                 ),

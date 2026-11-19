@@ -1,0 +1,12 @@
+{
+  "ordinary_member_moderation_denied": true,
+  "service_rpc_denied": true,
+  "child_safety_reports_and_filter": true,
+  "reported_avatar_review_url": true,
+  "permanent_post_comment_message_removal": true,
+  "repeat_removal_idempotent": true,
+  "profile_text_and_avatar_cleared": true,
+  "uploaded_media_physically_removed": true,
+  "account_suspension": true,
+  "fixture_notice": "Harmless original QA content only; no illegal or child content used."
+}

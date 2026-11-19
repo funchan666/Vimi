@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "source": "supabase/tests/play_safety.sql",
+  "environment": "hosted Supabase hgxbfgcdfsalavdfyvjr",
+  "fixtures": "transaction and rollback; no persistent QA rows",
+  "checks": [
+    "Child safety report reason",
+    "Active owner can read owned media metadata",
+    "Suspended owner cannot read owned media metadata",
+    "Ordinary member cannot call service-only moderation RPCs",
+    "Active server-managed moderator accepted",
+    "Ordinary actor denied",
+    "Permanent post/comment/message removal",
+    "Idempotent removal audit",
+    "Profile name, bio and avatar reset",
+    "Suspended moderator denied",
+    "Deleted account UUID removed from pack-ledger references"
+  ],
+  "signed_url_boundary": "Already issued signed URLs keep their original short expiry; denied owners cannot obtain new access through Storage RLS."
+}

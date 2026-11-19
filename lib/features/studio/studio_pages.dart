@@ -9,11 +9,13 @@ import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
 import '../../core/models.dart';
 import '../../core/local_studio.dart';
+import '../../core/media_library.dart';
 import '../../design/vimi_ui.dart';
 import '../auth/auth_pages.dart';
 import '../wallet/wallet_page.dart';
 import 'rehearsal_player.dart';
 import 'journal_recovery_page.dart';
+import 'media_library_pages.dart';
 
 class StudioPage extends StatelessWidget {
   const StudioPage({super.key});
@@ -48,6 +50,18 @@ class StudioPage extends StatelessWidget {
           glyph: Glyph.add,
 
           onPressed: () => openPage(context, const PracticeEditor()),
+        ),
+        const SizedBox(height: 12),
+        VButton(
+          'Explore the dance video library',
+          glyph: Glyph.video,
+          quiet: true,
+          onPressed: () => openPage(
+            context,
+            MediaLibraryPage(
+              practiceBuilder: (clip) => PracticeEditor(initialClip: clip),
+            ),
+          ),
         ),
         const SizedBox(height: 32),
         Row(
@@ -145,9 +159,10 @@ class StudioPage extends StatelessWidget {
 }
 
 class PracticeEditor extends StatefulWidget {
-  const PracticeEditor({super.key, this.session, this.pack});
+  const PracticeEditor({super.key, this.session, this.pack, this.initialClip});
   final PracticeSession? session;
   final StudioPack? pack;
+  final LibraryClip? initialClip;
   @override
   State<PracticeEditor> createState() => _PracticeEditorState();
 }
@@ -194,7 +209,7 @@ class _PracticeEditorState extends State<PracticeEditor> {
     preferences = app.studio.preferences;
     draftStore = app.studio;
     draftKey =
-        'practice-draft.v1.${app.account}.${widget.session?.id ?? widget.pack?.id ?? 'new'}';
+        'practice-draft.v1.${app.account}.${widget.session?.id ?? widget.pack?.id ?? widget.initialClip?.id ?? 'new'}';
     final raw = preferences!.getString(draftKey!);
     if (raw != null) {
       try {
@@ -234,6 +249,9 @@ class _PracticeEditorState extends State<PracticeEditor> {
     } else if (widget.pack != null) {
       routine.text = widget.pack!.title;
       notes.text = widget.pack!.drills.join('\n\n');
+    } else if (widget.initialClip != null) {
+      routine.text = widget.initialClip!.title;
+      video = widget.initialClip!.source;
     }
   }
 
@@ -355,7 +373,7 @@ class _PracticeEditorState extends State<PracticeEditor> {
               ),
             ),
             SizedBox(
-              width: 135,
+              width: 175,
               child: VField(
                 'Eight-count phrases',
                 controller: counts,
@@ -381,7 +399,8 @@ class _PracticeEditorState extends State<PracticeEditor> {
           lines: 6,
           maxLength: 4000,
         ),
-        if (video != null && File(video!).existsSync()) ...[
+        if (video != null &&
+            (isLibraryVideo(video!) || File(video!).existsSync())) ...[
           RehearsalPlayer(source: video!, practice: true),
           VButton(
             'Remove video from this note',

@@ -1,0 +1,18 @@
+{
+  "source": "current registered Flutter assets; source art/history/policy website excluded",
+  "runtime_asset_bytes": {
+    "ui": 1368972,
+    "data": 1480,
+    "legal": 14591,
+    "fonts": 244646
+  },
+  "total_bytes": 1629689,
+  "legal_files": [
+    "child-safety.txt",
+    "community.txt",
+    "deletion.txt",
+    "privacy.txt",
+    "terms.txt"
+  ],
+  "bundled_policies_match_source": true
+}

@@ -12,16 +12,17 @@ On November 19, 2026 the user approved the neon social direction: midnight viole
 
 - Floor: browse approved dance photos/videos, filter by style, discover dancers, join original eight-count challenges, publish with gallery/camera, comment, save, report and block.
 - Studio: keep practice sessions with routine, style, tempo, eight counts and notes. Replay a personal video with speed, mirror and loop controls. Optional coin-unlocked practice packs provide concrete reusable drills and planning prompts.
+- The free offline video library includes all ten publisher-supplied clips, with Solo/Duets/Groups filters, account-scoped local saves, native rehearsal controls and reusable clip references in practice notes. All 55 supplied photos are available in the profile image library with full preview and avatar-crop preview before an explicit profile save.
 - Inbox: real Supabase direct messages between mutually following adults; no pretend replies or online indicators. New conversations and every send check the relationship on the server.
 - Me: dance identity, own posts including review states, relationships, saved posts, practice history, wallet ledger and settings.
 
 ## Contracts
 
-Email/password authentication and recovery use Supabase Auth. Sessions use encrypted device storage. Accounts are 18+; date of birth is checked during server provisioning, not advertised as identity verification. All uploads are private, posts/comments enter a moderator queue, reports hide reported content for the reporter, blocks take effect across queries and messaging. Account deletion removes owned Storage objects and Auth data, while financial audit records are anonymized and retained.
+Email/password authentication and recovery use Supabase Auth. Sessions use encrypted device storage. Accounts are 18+; date of birth is checked during server provisioning, not advertised as identity verification. All uploads are private, posts/comments enter a moderator queue, reports hide reported content for the reporter, blocks take effect across queries and messaging. Account deletion removes owned Storage objects and Auth data. Limited financial and safety records may remain with direct profile links removed; transaction identifiers and restricted metadata are not described as fully anonymous.
 
 Coins have seven planned Google Play consumable IDs. Local prices come exclusively from Play. The backend verifies the purchase token and the obfuscated account ID, grants an idempotent credit in a locked database transaction, and consumes the token after crediting. No client balance writes. Basic social actions are free. Refunded purchase handling and Play service credentials are required release configuration.
 
-No copyrighted K-pop tracks, choreography videos, idol likenesses or imported fake community posts are supplied. Authored challenges and generated photographic assets are clearly editorial app content. Members must have permission to upload media and audio.
+The publisher supplied 55 photos and ten videos and confirmed commercial App distribution, likeness and existing soundtrack rights on November 19, 2026. All are compressed and bundled; the rights confirmation and source/runtime inventory are in `docs/media/`. This is publisher confirmation, not independent rights clearance. Library performances and images do not create registered dancers, posts or engagement. The library is for viewing/private rehearsal and does not grant members a licence to republish another person's music or performance. Authored challenges and original brand photographs remain editorial app content. Members must have permission to upload media and audio.
 
 ## Functional completeness and acceptance
 

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "rollback": true,
+  "posts": 137,
+  "thread_messages": 241,
+  "inbox_threads": 29,
+  "timestamp_ties_and_microseconds": true,
+  "unfollow_history": true,
+  "block_rls": true,
+  "unrelated_account_denied": true,
+  "anonymous_grants_denied": true
+}

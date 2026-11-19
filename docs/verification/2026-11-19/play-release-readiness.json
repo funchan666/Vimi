@@ -1,0 +1,23 @@
+{
+  "automated_configuration_ready": false,
+  "blockers": [
+    "PRIVACY_URL is missing or not a real HTTPS URL",
+    "TERMS_URL is missing or not a real HTTPS URL",
+    "CHILD_SAFETY_URL is missing or not a real HTTPS URL",
+    "DELETE_ACCOUNT_URL is missing or not a real HTTPS URL",
+    "Coin-product billing is not configured and enabled for release",
+    "Publisher upload signing is not configured"
+  ],
+  "public_urls": {},
+  "manual_release_requirements": [
+    "Real developer identity and package registration",
+    "Data safety and IARC declarations match the submitted build",
+    "Named child-safety contact and actual response/reporting process",
+    "Ordinary reusable Play review login and full access instructions",
+    "Production recovery email delivery",
+    "Play-track billing acceptance if billing is enabled",
+    "Release AAB and final Play pre-launch report"
+  ],
+  "billing_enabled": false,
+  "google_approval_guaranteed": false
+}

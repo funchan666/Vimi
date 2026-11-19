@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'models.dart';
+import 'pagination.dart';
 
 class DanceRepository {
   DanceRepository(this.client);
@@ -267,6 +268,171 @@ class DanceRepository {
   Future<Set<String>> unlocks() async => jsonRows(
     await client.from('pack_unlocks').select('pack_id').eq('user_id', account),
   ).map((r) => r['pack_id'] as String).toSet();
+
+  Future<CursorPage<DancePost>> feedPage({
+    String? style,
+    String? author,
+    bool saved = false,
+    String? challenge,
+    TimelineCursor? cursor,
+  }) async => CursorPage.rows(
+    jsonRows(
+      await client.rpc(
+        'get_feed_page',
+        params: {
+          'p_style': style,
+          'p_author': author,
+          'p_saved': saved,
+          'p_challenge': challenge,
+          ...?cursor?.beforeParameters,
+        },
+      ),
+    ),
+    DancePost.fromJson,
+    size: 20,
+  );
+
+  Future<CursorPage<Dancer>> dancerPage(
+    String query, {
+    TimelineCursor? cursor,
+  }) async {
+    final safe = query.replaceAll(RegExp(r'[%_\\]'), '').trim();
+    var request = client.from('profiles').select().neq('id', account);
+    if (safe.isNotEmpty) request = request.ilike('display_name', '%$safe%');
+    if (cursor != null) request = request.or(cursor.filter());
+    return CursorPage.rows(
+      jsonRows(
+        await request
+            .order('created_at', ascending: false)
+            .order('id', ascending: false)
+            .limit(26),
+      ),
+      Dancer.fromJson,
+    );
+  }
+
+  Future<CursorPage<Dancer>> relationPage(
+    String id, {
+    required bool followers,
+    TimelineCursor? cursor,
+  }) async {
+    final field = followers ? 'follower_id' : 'following_id';
+    final foreignKey = 'follows_${field}_fkey';
+    var request = client
+        .from('follows')
+        .select('created_at,$field,peer:profiles!$foreignKey!inner(*)')
+        .eq(followers ? 'following_id' : 'follower_id', id);
+    if (cursor != null) request = request.or(cursor.filter(idField: field));
+    return CursorPage.rows(
+      jsonRows(
+        await request
+            .order('created_at', ascending: false)
+            .order(field, ascending: false)
+            .limit(26),
+      ),
+      (row) => Dancer.fromJson(jsonMap(row['peer'])),
+      idField: field,
+    );
+  }
+
+  Future<CursorPage<Json>> commentPage(
+    String post, {
+    TimelineCursor? cursor,
+  }) async {
+    var request = client
+        .from('comments')
+        .select('*,author:profiles!author_id(*)')
+        .eq('post_id', post);
+    if (cursor != null) request = request.or(cursor.filter());
+    return CursorPage.rows(
+      jsonRows(
+        await request
+            .order('created_at', ascending: false)
+            .order('id', ascending: false)
+            .limit(26),
+      ),
+      (row) => row,
+    );
+  }
+
+  Future<CursorPage<Json>> reportPage({TimelineCursor? cursor}) async {
+    var request = client
+        .from('reports')
+        .select('id,target_type,target_id,reason,status,created_at')
+        .eq('reporter_id', account);
+    if (cursor != null) request = request.or(cursor.filter());
+    return CursorPage.rows(
+      jsonRows(
+        await request
+            .order('created_at', ascending: false)
+            .order('id', ascending: false)
+            .limit(26),
+      ),
+      (row) => row,
+    );
+  }
+
+  Future<CursorPage<Json>> ledgerPage({TimelineCursor? cursor}) async {
+    var request = client.from('wallet_ledger').select().eq('user_id', account);
+    if (cursor != null) request = request.or(cursor.filter());
+    return CursorPage.rows(
+      jsonRows(
+        await request
+            .order('created_at', ascending: false)
+            .order('id', ascending: false)
+            .limit(26),
+      ),
+      (row) => row,
+    );
+  }
+
+  Future<CursorPage<Json>> inboxPage({TimelineCursor? cursor}) async =>
+      CursorPage.rows(
+        jsonRows(
+          await client.rpc(
+            'get_inbox_page',
+            params: {...?cursor?.beforeParameters},
+          ),
+        ),
+        (row) => row,
+      );
+
+  Future<CursorPage<Json>> threadPage(
+    String peer, {
+    TimelineCursor? cursor,
+  }) async => CursorPage.rows(
+    jsonRows(
+      await client.rpc(
+        'get_thread_page',
+        params: {'p_peer': peer, ...?cursor?.beforeParameters},
+      ),
+    ),
+    (row) => row,
+    size: 50,
+  );
+
+  Future<CursorPage<Json>> reviewPage(
+    String section, {
+    TimelineCursor? cursor,
+    bool childSafetyOnly = false,
+  }) async {
+    final response = await client.functions.invoke(
+      'moderate-content',
+      body: {
+        'action': 'queue',
+        'section': section,
+        'child_safety_only': childSafetyOnly,
+        if (cursor != null)
+          'after_created': cursor.createdAt.toUtc().toIso8601String(),
+        if (cursor != null) 'after_id': cursor.id,
+      },
+    );
+    return CursorPage.rows(
+      jsonRows(jsonMap(response.data)['items']),
+      (row) => row,
+    );
+  }
+
   Future<void> unlock(String pack) async =>
       client.rpc('unlock_studio_pack', params: {'p_pack': pack});
 }

@@ -18,7 +18,7 @@
         "Inbox",
         "Me"
       ],
-      "media_delivery": "bundled original UI; private Supabase member media",
+      "media_delivery": "bundled original UI and all 65 publisher-supplied reference items; private Supabase member uploads",
       "coin_products": [
         "vimi_coins_100",
         "vimi_coins_350",
@@ -30,7 +30,14 @@
       ],
       "billing_enabled": false,
       "visual_revision": "neon-social-v3",
-      "visual_style": "Midnight violet surfaces, luminous orchid-pink/violet/cyan raster gradients, natural neon-lit dance imagery, DM Sans and original utility glyphs"
+      "visual_style": "Midnight violet surfaces, luminous orchid-pink/violet/cyan raster gradients, natural neon-lit dance imagery, DM Sans and original utility glyphs",
+      "supplied_library": {
+        "images": 55,
+        "videos": 10,
+        "catalog": "assets/data/media_library.json",
+        "rights": "publisher_confirmed on 2026-11-19",
+        "inventory": "docs/media/supplied-media-inventory.json"
+      }
     }
   ],
   "user_overrides": [
@@ -39,5 +46,5 @@
     "Generate planned Google Play IDs; user will create them in Play Console",
     "User rejected monochrome photography and explicitly requested a cool neon-gradient dance-social direction on November 19, 2026"
   ],
-  "verification": "source/configuration/resource/diff only; no app build/analyze/test/run"
+  "verification": "Journey-specific source, Android and hosted evidence is in docs/VERIFICATION.md; no signed store release or real Play transaction."
 }

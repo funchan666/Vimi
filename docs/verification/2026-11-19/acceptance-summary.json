@@ -1,5 +1,5 @@
 {
-  "local_widget_storage_tests": 11,
+  "local_widget_storage_tests": 22,
   "analyzer": "no issues",
   "native_suites": {
     "fixed_reviewer": {
@@ -53,6 +53,36 @@
         "direct_signup_fixture_deleted": "passed",
         "separate_fixed_reviewer_signin_settings_queue": "passed"
       }
+    },
+    "history": {
+      "status": "passed",
+      "checks": {
+        "directory_paging_and_query_reset": "passed",
+        "followers_and_following_paging": "passed",
+        "post_archive_paging_and_refresh_preserves_depth": "passed",
+        "comment_history_and_unsent_draft": "passed",
+        "127_message_history_live_arrival_and_draft": "passed",
+        "private_report_history": "passed",
+        "ledger_history_balance_unchanged": "passed",
+        "review_queue_paging_section_reset_and_role_denial": "passed"
+      }
+    },
+    "inbox_player_continuity": {
+      "status": "passed",
+      "checks": {
+        "native_32_inbox_conversations": "passed",
+        "real_native_network_decoder": "passed",
+        "full_screen_shared_controller_position_speed_loop_mirror": "passed",
+        "return_preserves_changes_and_pauses": "passed"
+      }
+    },
+    "play_safety": {
+      "status": "passed",
+      "checks": {
+        "child_safety_readable_without_login": "passed",
+        "child_safety_filter_on_real_reports": "passed",
+        "suspended_actor_native_account_deletion": "passed"
+      }
     }
   },
   "foundation_steps": {
@@ -62,14 +92,51 @@
   },
   "database_contract": "passed; transaction rollback",
   "hosted_final_state": {
+    "auth_accounts": 2,
     "temporary_qa_accounts": 0,
     "temporary_email_test_accounts": 0,
     "fixed_reviewers": 1,
+    "ordinary_play_review_accounts": 1,
     "posts": 0,
     "messages": 0,
     "reports": 0,
     "media_objects": 0,
     "follows": 0,
-    "wallet_balance": "0"
-  }
+    "wallet_balance": 0,
+    "qa_ledger_rows": 0,
+    "migrations": 10
+  },
+  "previous_native_suite_note": "Other suites were observed at their recorded earlier source snapshots; retained as historical journey evidence, not rerun on the final AOT profile preview.",
+  "history_database_contract": "passed; 137 posts, 241 messages, 29 threads; transaction rollback",
+  "history_edge_contract": "passed; queue page cursors retain microseconds; guest/member/invalid input denied",
+  "moderation_function_version": 4,
+  "preview": {
+    "file": "dist/Vimi-1.0.0-arm64-preview.apk",
+    "mode": "profile",
+    "signing": "local debug key; preview only",
+    "bytes": 36522345,
+    "sha256": "499c6c9880ea09f7026c10d907dbf9a0fc8c7b374e1ae69d957669672230a69d",
+    "qa_credentials_present": false,
+    "private_configs_present": false,
+    "qa_fixture_labels_present": false,
+    "actual_distinct_passwords_checked": 4,
+    "arm64": true,
+    "installed": true,
+    "cold_launch": "passed",
+    "signature_v2_verified": true,
+    "startup_screenshot": "play-final-preview.png",
+    "target_api": 36,
+    "min_api": 24
+  },
+  "private_qa_configuration_removed": true,
+  "play_safety_sql_contract": "passed; active/suspended owner Storage access and service-only moderation; transaction rollback",
+  "play_safety_backend_contract": "passed; actual harmless media and role/removal checks",
+  "google_play_release_ready": false,
+  "history_native_suites": [
+    "history",
+    "inbox_player_continuity"
+  ],
+  "current_hardening_native_suites": [
+    "play_safety"
+  ]
 }

@@ -72,6 +72,25 @@ void main() {
     },
   );
 
+  test(
+    'one damaged recovery envelope preserves valid copies and its original bytes',
+    () async {
+      const broken = 'practice-backup.v1.a.1';
+      SharedPreferences.setMockInitialValues({broken: '{broken-envelope'});
+      final store = LocalStudio(await SharedPreferences.getInstance());
+      await store.save('a', [note('original')]);
+      await store.backupAndReset('a');
+      final copies = store.recoveryCopies('a');
+      expect(copies, hasLength(2));
+      expect(copies.first['damaged'], isNot(true));
+      expect(copies.last['damaged'], isTrue);
+      expect(copies.last['raw'], '{broken-envelope');
+      expect(store.preferences.getString(broken), '{broken-envelope');
+      await store.restoreBackup('a', copies.first['key'] as String);
+      expect((await store.load('a')).single.id, 'original');
+    },
+  );
+
   test('concurrent note saves retain both notes on reopening', () async {
     SharedPreferences.setMockInitialValues({});
     final studio = LocalStudio(await SharedPreferences.getInstance());

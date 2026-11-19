@@ -1,0 +1,140 @@
+{
+  "recorded_at": "2026-11-19",
+  "security": {
+    "lints": [
+      {
+        "name": "rls_enabled_no_policy",
+        "title": "RLS Enabled No Policy",
+        "level": "INFO",
+        "facing": "EXTERNAL",
+        "categories": [
+          "SECURITY"
+        ],
+        "description": "Detects cases where row level security (RLS) has been enabled on a table but no RLS policies have been created.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+        "count": 4,
+        "findings": [
+          {
+            "detail": "Table \\`private.accounts\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "accounts",
+              "type": "table",
+              "schema": "private"
+            },
+            "observed_at": "2026-11-19T06:58:57.377Z"
+          },
+          {
+            "detail": "Table \\`private.api_limits\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "api_limits",
+              "type": "table",
+              "schema": "private"
+            },
+            "observed_at": "2026-11-19T06:58:57.377Z"
+          },
+          {
+            "detail": "Table \\`private.moderation_audit\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "moderation_audit",
+              "type": "table",
+              "schema": "private"
+            },
+            "observed_at": "2026-11-19T06:58:57.377Z"
+          },
+          {
+            "detail": "Table \\`private.play_purchases\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "play_purchases",
+              "type": "table",
+              "schema": "private"
+            },
+            "observed_at": "2026-11-19T06:58:57.377Z"
+          }
+        ]
+      },
+      {
+        "name": "auth_leaked_password_protection",
+        "title": "Leaked Password Protection Disabled",
+        "level": "WARN",
+        "facing": "EXTERNAL",
+        "categories": [
+          "SECURITY"
+        ],
+        "description": "Leaked password protection is currently disabled.",
+        "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+        "count": 1,
+        "findings": [
+          {
+            "detail": "Supabase Auth prevents the use of compromised passwords by checking against HaveIBeenPwned.org. Enable this feature to enhance security.",
+            "metadata": {
+              "type": "auth",
+              "entity": "Auth"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "performance": {
+    "lints": [
+      {
+        "name": "unused_index",
+        "title": "Unused Index",
+        "level": "INFO",
+        "facing": "EXTERNAL",
+        "categories": [
+          "PERFORMANCE"
+        ],
+        "description": "Detects if an index has never been used and may be a candidate for removal.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index",
+        "count": 4,
+        "findings": [
+          {
+            "detail": "Index \\`profiles_timeline\\` on table \\`public.profiles\\` has not been used",
+            "metadata": {
+              "name": "profiles",
+              "type": "table",
+              "schema": "public"
+            },
+            "observed_at": "2026-11-19T06:58:55.869Z"
+          },
+          {
+            "detail": "Index \\`posts_feed\\` on table \\`public.posts\\` has not been used",
+            "metadata": {
+              "name": "posts",
+              "type": "table",
+              "schema": "public"
+            },
+            "observed_at": "2026-11-19T06:58:55.869Z"
+          },
+          {
+            "detail": "Index \\`unlocks_pack\\` on table \\`public.pack_unlocks\\` has not been used",
+            "metadata": {
+              "name": "pack_unlocks",
+              "type": "table",
+              "schema": "public"
+            },
+            "observed_at": "2026-11-19T06:58:55.869Z"
+          },
+          {
+            "detail": "Index \\`purchases_product\\` on table \\`private.play_purchases\\` has not been used",
+            "metadata": {
+              "name": "play_purchases",
+              "type": "table",
+              "schema": "private"
+            },
+            "observed_at": "2026-11-19T06:58:55.869Z"
+          }
+        ]
+      }
+    ]
+  },
+  "notes": [
+    "Private-schema RLS without client policies is intentional: no direct client table access.",
+    "Unused indexes retained for actual production query patterns; QA and app traffic are small.",
+    "Leaked password protection remains disabled. Paid-plan requirements and Auth settings must be verified before any change; no plan upgrade authorized."
+  ],
+  "health": {
+    "lints": []
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "child_safety_readable_without_login": "passed",
+  "child_safety_filter_on_real_reports": "passed",
+  "suspended_actor_native_account_deletion": "passed"
+}

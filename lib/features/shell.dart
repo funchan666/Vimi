@@ -10,13 +10,20 @@ import 'studio/rehearsal_player.dart';
 import 'studio/studio_pages.dart';
 
 class DanceShell extends StatefulWidget {
-  const DanceShell({super.key});
+  const DanceShell({super.key, this.initialTab = 0});
+  final int initialTab;
   @override
   State<DanceShell> createState() => _DanceShellState();
 }
 
 class _DanceShellState extends State<DanceShell> {
-  int tab = 0;
+  late int tab;
+  @override
+  void initState() {
+    super.initState();
+    tab = widget.initialTab;
+  }
+
   static const titles = ['Floor', 'Studio', 'Inbox', 'Me'];
   static const icons = [Glyph.floor, Glyph.studio, Glyph.inbox, Glyph.person];
   void select(int next) {

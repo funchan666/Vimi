@@ -2,6 +2,8 @@
 config/app.json
 config/qa-*
 config/reviewer-*
+config/play-review-access.json
+/ProjectMaterials/Supplied/
 android/key.properties
 *.jks
 *.keystore

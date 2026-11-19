@@ -59,16 +59,38 @@ class LocalStudio {
     return updated;
   });
 
-  List<Json> recoveryCopies(String account) =>
-      preferences
-          .getKeys()
-          .where((key) => key.startsWith('practice-backup.v1.$account.'))
-          .map((key) => jsonMap(jsonDecode(preferences.getString(key)!)))
-          .toList()
-        ..sort(
-          (a, b) =>
-              (b['created_at'] as String).compareTo(a['created_at'] as String),
-        );
+  List<Json> recoveryCopies(String account) {
+    final copies = <Json>[];
+    for (final key in preferences.getKeys().where(
+      (key) => key.startsWith('practice-backup.v1.$account.'),
+    )) {
+      final stored = preferences.get(key);
+      try {
+        final copy = jsonMap(jsonDecode(stored as String));
+        if (copy['raw'] is! String ||
+            copy['created_at'] is! String ||
+            DateTime.tryParse(copy['created_at'] as String) == null)
+          throw const FormatException();
+        copies.add({...copy, 'key': key});
+      } catch (_) {
+        // One damaged envelope must not hide the other copies or erase its bytes.
+        copies.add({
+          'key': key,
+          'raw': stored?.toString() ?? '',
+          'created_at': DateTime.fromMillisecondsSinceEpoch(
+            0,
+            isUtc: true,
+          ).toIso8601String(),
+          'damaged': true,
+        });
+      }
+    }
+    return copies..sort(
+      (a, b) => DateTime.parse(
+        b['created_at'] as String,
+      ).compareTo(DateTime.parse(a['created_at'] as String)),
+    );
+  }
 
   Future<void> _backupCurrent(String account) async {
     final raw = preferences.getString('practice.v1.$account');

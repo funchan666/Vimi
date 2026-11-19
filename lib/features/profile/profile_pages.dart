@@ -1,11 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
 import '../../core/models.dart';
+import '../../core/pagination.dart';
+import '../../core/media_library.dart';
+import '../../design/page_footer.dart';
 import '../../design/vimi_ui.dart';
 import '../auth/auth_pages.dart';
 import '../community/community_pages.dart';
@@ -15,6 +20,7 @@ import 'license_page.dart';
 import 'help_pages.dart';
 import 'moderation_pages.dart';
 import '../auth/account_security_pages.dart';
+import '../studio/media_library_pages.dart';
 
 class MePage extends StatelessWidget {
   const MePage({super.key});
@@ -146,7 +152,7 @@ class MePage extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         PostCollection(
-          key: ValueKey('mine-${app.account}-${app.revision}'),
+          key: ValueKey('mine-${app.account}'),
           author: app.account,
         ),
       ],
@@ -162,26 +168,37 @@ class DancerDirectory extends StatefulWidget {
 
 class _DancerDirectoryState extends State<DancerDirectory> {
   final query = TextEditingController();
-  Future<List<Dancer>>? future;
-  bool started = false;
+  CursorPager<Dancer>? pager;
+  String? owner;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!started) {
-      started = true;
-      search();
-    }
+    final app = VimiScope.of(context);
+    if (app.signedIn && owner != app.account) search();
   }
 
   void search() {
     final app = VimiScope.of(context);
-    if (app.signedIn)
-      setState(() => future = app.repo!.searchDancers(query.text));
+    if (!app.signedIn) return;
+    pager?.dispose();
+    owner = app.account;
+    final currentOwner = owner;
+    final term = query.text;
+    final repo = app.repo!;
+    setState(
+      () => pager = CursorPager(
+        fetch: (cursor) => repo.dancerPage(term, cursor: cursor),
+        identity: (dancer) => dancer.id,
+        isCurrent: () => app.signedIn && app.account == currentOwner,
+      ),
+    );
+    unawaited(pager!.refresh());
   }
 
   @override
   void dispose() {
     query.dispose();
+    pager?.dispose();
     super.dispose();
   }
 
@@ -201,29 +218,28 @@ class _DancerDirectoryState extends State<DancerDirectory> {
               'Sign in to meet the community',
               onPressed: () => openPage(context, const AuthPage(signUp: false)),
             )
-          else
-            FutureBuilder<List<Dancer>>(
-              future: future,
-              builder: (context, snapshot) {
-                if (snapshot.hasError)
-                  return ErrorNote(
-                    readableError(snapshot.error!),
-                    onRetry: search,
-                  );
-                if (snapshot.connectionState != ConnectionState.done)
-                  return const Text('Finding dancers…');
-                final dancers = (snapshot.data ?? [])
-                    .where((p) => p.id != app.account)
-                    .toList();
-                if (dancers.isEmpty)
-                  return const EmptyNote(
-                    'Room for a new dance circle.',
-                    'No dancers found yet. Share your own cover to get the floor started.',
-                  );
-                return Column(
-                  children: dancers.map((p) => DancerRow(p)).toList(),
-                );
-              },
+          else if (pager != null)
+            AnimatedBuilder(
+              animation: pager!,
+              builder: (context, _) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (pager!.loaded &&
+                      pager!.items.isEmpty &&
+                      pager!.error == null)
+                    const EmptyNote(
+                      'Room for a new dance circle.',
+                      'No dancers found yet. Try another name or share your own cover.',
+                    ),
+                  for (final dancer in pager!.items)
+                    DancerRow(dancer, key: ValueKey(dancer.id)),
+                  PageFooter(
+                    pager: pager!,
+                    moreLabel: 'More dancers',
+                    loadingLabel: 'Finding dancers…',
+                  ),
+                ],
+              ),
             ),
         ],
       ),
@@ -264,29 +280,75 @@ class DancerRow extends StatelessWidget {
   );
 }
 
-class RelationsPage extends StatelessWidget {
+class RelationsPage extends StatefulWidget {
   const RelationsPage({super.key, required this.id, required this.followers});
   final String id;
   final bool followers;
   @override
+  State<RelationsPage> createState() => _RelationsPageState();
+}
+
+class _RelationsPageState extends State<RelationsPage> {
+  CursorPager<Dancer>? pager;
+  String? owner;
+  int revision = -1;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final app = VimiScope.of(context);
+    if (owner != app.account || pager == null) {
+      pager?.dispose();
+      owner = app.account;
+      final currentOwner = owner;
+      pager = CursorPager(
+        fetch: (cursor) => app.repo!.relationPage(
+          widget.id,
+          followers: widget.followers,
+          cursor: cursor,
+        ),
+        identity: (dancer) => dancer.id,
+        isCurrent: () => app.signedIn && app.account == currentOwner,
+      );
+    }
+    if (revision != app.revision) {
+      revision = app.revision;
+      unawaited(pager!.refresh());
+    }
+  }
+
+  @override
+  void dispose() {
+    pager?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => VPage(
-    title: followers ? 'Followers' : 'Following',
-    child: FutureBuilder<List<Dancer>>(
-      future: VimiScope.of(context).repo!.relations(id, followers: followers),
-      builder: (context, snapshot) => ListView(
+    title: widget.followers ? 'Followers' : 'Following',
+    actions: [
+      VIconButton(
+        Glyph.refresh,
+        label: 'Refresh dancers',
+        onPressed: () => pager!.refresh(),
+      ),
+    ],
+    child: AnimatedBuilder(
+      animation: pager!,
+      builder: (context, _) => ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          if (snapshot.hasError)
-            ErrorNote(readableError(snapshot.error!))
-          else if (!snapshot.hasData)
-            const Text('Opening dancers…')
-          else if (snapshot.data!.isEmpty)
+          if (pager!.loaded && pager!.items.isEmpty && pager!.error == null)
             const EmptyNote(
               'The circle starts small.',
               'Follow dancers whose work you want to keep up with.',
-            )
-          else
-            ...snapshot.data!.map((p) => DancerRow(p)),
+            ),
+          for (final dancer in pager!.items)
+            DancerRow(dancer, key: ValueKey(dancer.id)),
+          PageFooter(
+            pager: pager!,
+            moreLabel: 'More dancers',
+            loadingLabel: 'Opening dancers…',
+          ),
         ],
       ),
     ),
@@ -331,7 +393,8 @@ class _DancerPageState extends State<DancerPage> {
                 onRetry: app.changed,
               ),
             );
-          if (snapshot.connectionState != ConnectionState.done)
+          if (!snapshot.hasData &&
+              snapshot.connectionState != ConnectionState.done)
             return const Center(child: Text('Opening dancer…'));
           final profile = snapshot.data;
           if (profile == null)
@@ -430,7 +493,7 @@ class _DancerPageState extends State<DancerPage> {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               PostCollection(
-                key: ValueKey('${profile.id}-${app.revision}'),
+                key: ValueKey('${profile.id}-${app.account}'),
                 author: profile.id,
               ),
             ],
@@ -452,6 +515,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late final TextEditingController name, bio;
   late Set<String> styles;
   File? photo;
+  LibraryPortrait? libraryPhoto;
   String? error;
   bool busy = false;
   @override
@@ -478,9 +542,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
         maxWidth: 800,
         maxHeight: 800,
       );
-      if (file != null && mounted) setState(() => photo = File(file.path));
+      if (file != null && mounted) {
+        setState(() {
+          photo = File(file.path);
+          libraryPhoto = null;
+        });
+      }
     } catch (e) {
       if (mounted) setState(() => error = readableError(e));
+    }
+  }
+
+  Future<void> chooseLibraryPhoto() async {
+    if (busy) return;
+    final selected = await openPage<LibraryPortrait>(
+      context,
+      const PortraitPickerPage(),
+    );
+    if (selected != null && mounted) {
+      setState(() {
+        libraryPhoto = selected;
+        photo = null;
+      });
     }
   }
 
@@ -491,11 +574,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
     final app = VimiScope.of(context);
+    final owner = app.account;
+    Directory? temporary;
     setState(() => busy = true);
     try {
-      final path = photo == null
+      var chosen = photo;
+      if (libraryPhoto != null) {
+        final asset = libraryPhoto!.asset;
+        final bytes = await rootBundle.load(asset);
+        temporary = await (await getTemporaryDirectory()).createTemp(
+          'vimi-avatar-',
+        );
+        chosen =
+            await File(
+              '${temporary.path}/portrait.${asset.split('.').last}',
+            ).writeAsBytes(
+              bytes.buffer.asUint8List(
+                bytes.offsetInBytes,
+                bytes.lengthInBytes,
+              ),
+            );
+      }
+      if (!mounted || app.account != owner) return;
+      final path = chosen == null
           ? widget.profile.avatar
-          : await app.repo!.upload(photo!, avatar: true, video: false);
+          : await app.repo!.upload(chosen, avatar: true, video: false);
+      if (!mounted || app.account != owner) return;
       await app.repo!.updateProfile(
         name.text.trim(),
         bio.text.trim(),
@@ -507,6 +611,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       if (mounted) setState(() => error = readableError(e));
     } finally {
+      if (temporary != null) {
+        try {
+          await temporary.delete(recursive: true);
+        } on FileSystemException {
+          // A cache-cleanup failure must not misreport a completed profile save.
+        }
+      }
       if (mounted) setState(() => busy = false);
     }
   }
@@ -518,32 +629,66 @@ class _EditProfilePageState extends State<EditProfilePage> {
     child: ListView(
       padding: const EdgeInsets.all(24),
       children: [
-        if (photo == null)
-          SignedAvatar(widget.profile, size: 96)
+        const Text(
+          'Your saved name, bio, styles and profile photo are visible to other members. Your selected photo uploads when you save.',
+        ),
+        const SizedBox(height: 20),
+        if (libraryPhoto != null)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: ClipOval(
+              child: Image.asset(
+                libraryPhoto!.asset,
+                width: 96,
+                height: 96,
+                fit: BoxFit.cover,
+              ),
+            ),
+          )
+        else if (photo == null)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: SignedAvatar(widget.profile, size: 96),
+          )
         else
-          ClipOval(
-            child: Image.file(photo!, width: 96, height: 96, fit: BoxFit.cover),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: ClipOval(
+              child: Image.file(
+                photo!,
+                width: 96,
+                height: 96,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         Wrap(
           children: [
             VButton(
+              'Browse profile images',
+              glyph: Glyph.photo,
+              quiet: true,
+              onPressed: busy ? null : chooseLibraryPhoto,
+            ),
+            VButton(
               'Choose photo',
               glyph: Glyph.photo,
               quiet: true,
-              onPressed: () => choose(ImageSource.gallery),
+              onPressed: busy ? null : () => choose(ImageSource.gallery),
             ),
             VButton(
               'Take photo',
               glyph: Glyph.camera,
               quiet: true,
-              onPressed: () => choose(ImageSource.camera),
+              onPressed: busy ? null : () => choose(ImageSource.camera),
             ),
           ],
         ),
-        VField('Display name', controller: name, maxLength: 40),
+        VField('Display name', controller: name, maxLength: 40, enabled: !busy),
         VField(
           'A little about your dancing',
           controller: bio,
+          enabled: !busy,
           lines: 3,
           maxLength: 280,
         ),
@@ -557,9 +702,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   s.label,
 
                   quiet: !styles.contains(s.label),
-                  onPressed: () => setState(() {
-                    if (!styles.add(s.label)) styles.remove(s.label);
-                  }),
+                  onPressed: busy
+                      ? null
+                      : () => setState(() {
+                          if (!styles.add(s.label)) styles.remove(s.label);
+                        }),
                 ),
               )
               .toList(),
@@ -582,7 +729,7 @@ class SavedPostsPage extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          PostCollection(key: ValueKey('saved-${app.revision}'), saved: true),
+          PostCollection(key: ValueKey('saved-${app.account}'), saved: true),
         ],
       ),
     );
@@ -637,6 +784,22 @@ class SettingsPage extends StatelessWidget {
             onPressed: () => openPage(
               context,
               const LegalPage('Community guidelines', 'community'),
+            ),
+          ),
+          VButton(
+            'Child safety standards',
+            quiet: true,
+            onPressed: () => openPage(
+              context,
+              const LegalPage('Child safety standards', 'child-safety'),
+            ),
+          ),
+          VButton(
+            'Account deletion & data',
+            quiet: true,
+            onPressed: () => openPage(
+              context,
+              const LegalPage('Account deletion & data', 'deletion'),
             ),
           ),
           VButton(

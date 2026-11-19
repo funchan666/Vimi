@@ -1,0 +1,10 @@
+{
+  "source": "edge_logs",
+  "window": "tool default previous 24 hours at audit time",
+  "requests": 2848,
+  "with_city": 2848,
+  "with_country": 2848,
+  "with_tls_client_fingerprint": 2848,
+  "with_search_filter_in_request_url": 17,
+  "only_aggregate_counts_and_field_names_retrieved": true
+}

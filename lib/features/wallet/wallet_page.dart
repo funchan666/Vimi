@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
 import '../../core/models.dart';
+import '../../core/pagination.dart';
+import '../../design/page_footer.dart';
 import '../../design/vimi_ui.dart';
 import 'play_coins.dart';
 
@@ -14,17 +16,32 @@ class WalletPage extends StatefulWidget {
 
 class _WalletPageState extends State<WalletPage> {
   late final PlayCoins billing;
-  Future<List<Json>>? ledger;
+  CursorPager<Json>? ledger;
+  bool loading = false;
+  int? shownBalance, shownDebt;
   String? error;
   bool initialized = false;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final app = VimiScope.of(context);
     if (!initialized) {
       initialized = true;
       billing = PlayCoins.current!;
       billing.addListener(changed);
+      final owner = app.account;
+      ledger = CursorPager(
+        fetch: (cursor) => app.repo!.ledgerPage(cursor: cursor),
+        identity: (row) => row['id'] as String,
+        isCurrent: () => app.signedIn && app.account == owner,
+      );
       unawaited(load());
+    }
+    if (shownBalance != app.coins || shownDebt != app.reversalDebt) {
+      final previouslyShown = shownBalance != null;
+      shownBalance = app.coins;
+      shownDebt = app.reversalDebt;
+      if (previouslyShown) unawaited(ledger!.refresh());
     }
   }
 
@@ -33,19 +50,29 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   Future<void> load() async {
+    if (loading) return;
+    setState(() {
+      loading = true;
+      error = null;
+    });
+    final app = VimiScope.of(context);
     try {
-      final app = VimiScope.of(context);
-      await billing.loadCatalog();
-      await app.refreshWallet();
-      if (mounted) setState(() => ledger = app.repo!.ledger());
+      await Future.wait([
+        billing.loadCatalog(),
+        app.refreshWallet(),
+        ledger!.refresh(),
+      ]);
     } catch (e) {
       if (mounted) setState(() => error = readableError(e));
+    } finally {
+      if (mounted) setState(() => loading = false);
     }
   }
 
   @override
   void dispose() {
     if (initialized) billing.removeListener(changed);
+    ledger?.dispose();
     super.dispose();
   }
 
@@ -155,49 +182,57 @@ class _WalletPageState extends State<WalletPage> {
           const SizedBox(height: 32),
           Text('Your ledger', style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 16),
-          FutureBuilder<List<Json>>(
-            future: ledger,
-            builder: (context, snapshot) {
-              if (snapshot.hasError)
-                return ErrorNote(readableError(snapshot.error!), onRetry: load);
-              final entries = snapshot.data;
-              if (entries == null) return const Text('Opening your ledger…');
-              if (entries.isEmpty)
-                return const Text(
-                  'Coin purchases and pack unlocks will appear here.',
-                );
+          AnimatedBuilder(
+            animation: ledger!,
+            builder: (context, _) {
+              final entries = ledger!.items;
               return Column(
-                children: entries
-                    .map(
-                      (e) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(e['description'] as String),
-                                  Text(
-                                    displayDate(
-                                      DateTime.parse(e['created_at'] as String),
+                children: [
+                  if (ledger!.loaded &&
+                      entries.isEmpty &&
+                      ledger!.error == null)
+                    const Text(
+                      'Coin purchases and pack unlocks will appear here.',
+                    ),
+                  ...entries
+                      .map(
+                        (e) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(e['description'] as String),
+                                    Text(
+                                      displayDate(
+                                        DateTime.parse(
+                                          e['created_at'] as String,
+                                        ),
+                                      ),
+                                      style: const TextStyle(
+                                        color: VimiColors.muted,
+                                      ),
                                     ),
-                                    style: const TextStyle(
-                                      color: VimiColors.muted,
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            Text(
-                              '${(e['delta'] as num) > 0 ? '+' : ''}${e['delta']}',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ],
+                              Text(
+                                '${(e['delta'] as num) > 0 ? '+' : ''}${e['delta']}',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                    .toList(),
+                      )
+                      .toList(),
+                  PageFooter(
+                    pager: ledger!,
+                    moreLabel: 'Earlier transactions',
+                    loadingLabel: 'Opening your ledger…',
+                  ),
+                ],
               );
             },
           ),

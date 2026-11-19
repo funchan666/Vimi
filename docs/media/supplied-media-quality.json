@@ -1,0 +1,95 @@
+{
+  "source_count": 65,
+  "source_originals_unchanged": true,
+  "videos": [
+    {
+      "id": "open-air-group",
+      "decoded_frames": 445,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 0,
+      "full_video_decode": "passed"
+    },
+    {
+      "id": "street-style-group",
+      "decoded_frames": 350,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 1,
+      "full_video_decode": "passed"
+    },
+    {
+      "id": "night-plaza-solo",
+      "decoded_frames": 678,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 0,
+      "full_video_decode": "passed"
+    },
+    {
+      "id": "studio-mirror",
+      "decoded_frames": 672,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 1,
+      "full_video_decode": "passed"
+    },
+    {
+      "id": "holiday-duet",
+      "decoded_frames": 284,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 1,
+      "full_video_decode": "passed"
+    },
+    {
+      "id": "room-formation",
+      "decoded_frames": 352,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 1,
+      "full_video_decode": "passed"
+    },
+    {
+      "id": "evening-plaza-duet",
+      "decoded_frames": 620,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 0,
+      "full_video_decode": "passed"
+    },
+    {
+      "id": "studio-partner",
+      "decoded_frames": 965,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 0,
+      "full_video_decode": "passed"
+    },
+    {
+      "id": "group-studio",
+      "decoded_frames": 730,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 0,
+      "full_video_decode": "passed"
+    },
+    {
+      "id": "hallway-take",
+      "decoded_frames": 450,
+      "max_frame_timing_difference_seconds": 0.0,
+      "audio_packet_hashes_identical": true,
+      "original_audio_tracks": 1,
+      "full_video_decode": "passed"
+    }
+  ],
+  "visual_review": "All 55 optimized photos and 30 source/optimized video frame pairs inspected; original first/middle/last content, colors and readable movement retained at the inspected sizes. Compression is lossy; this is not a pixel-lossless claim.",
+  "device_playback": "Android API35 ARM64: all 55 full images decoded; all 10 bundled videos initialized and advanced playback without decoder errors. Saved filter, clip-reference practice persistence/reopen, actual profile upload/download hash and account/media deletion passed. Separate focused native check verified a rendered network avatar frame.",
+  "runtime_gps_metadata_found": false,
+  "native_evidence": [
+    "docs/verification/2026-11-19/supplied-media/native-results.json",
+    "docs/verification/2026-11-19/supplied-avatar/native-results.json"
+  ],
+  "visual_native_screenshots": "Video library, clip controls, reopened note, portrait grid/full preview and rendered saved avatar inspected.",
+  "physical_device": "not performed"
+}

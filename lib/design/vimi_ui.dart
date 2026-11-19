@@ -693,7 +693,12 @@ String displayDate(DateTime date) {
     'Dec',
   ];
   final local = date.toLocal();
-  return '${months[local.month - 1]} ${local.day}';
+  return '${months[local.month - 1]} ${local.day}${local.year == DateTime.now().year ? '' : ', ${local.year}'}';
+}
+
+String displayMessageTime(DateTime date) {
+  final local = date.toLocal();
+  return '${displayDate(local)} · ${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
 }
 
 class Avatar extends StatelessWidget {
@@ -709,6 +714,10 @@ class Avatar extends StatelessWidget {
           : Image.network(
               url!,
               fit: BoxFit.cover,
+              frameBuilder: (context, child, frame, synchronous) =>
+                  frame == null
+                  ? Image.asset('assets/ui/neon-mark.webp', fit: BoxFit.cover)
+                  : child,
               errorBuilder: (_, __, ___) =>
                   Image.asset('assets/ui/neon-mark.webp', fit: BoxFit.cover),
             ),

@@ -1,6 +1,6 @@
 # Vimi media inventory · neon social
 
-The current runtime includes seven original rasters. Four new original assets were produced with the built-in host image tool for the explicit neon-gradient revision; the three utility rasters are retained original project assets. New photographs depict fictional adults and are brand/challenge imagery, never claimed member uploads. No commercial music, idol images, external stock photographs or dance videos were downloaded.
+The brand system retains seven original rasters. Four original assets were produced with the built-in host image tool for the explicit neon-gradient revision; the three utility rasters are retained original project assets. Those brand photographs depict fictional adults and are never claimed member uploads. The publisher subsequently supplied **55 photos and ten videos**, confirmed commercial distribution/likeness/audio rights, and required every valid item to be used. All 65 are registered in the native video library and profile image library; the full source/optimized/path/entry ledger is [SUPPLIED_MEDIA.md](media/SUPPLIED_MEDIA.md), with exact hashes and dimensions in `media/supplied-media-inventory.json`.
 
 | Asset | Original source bytes | Runtime bytes | Role |
 | --- | ---: | ---: | --- |
@@ -18,6 +18,6 @@ New full-color WebP uses quality 94 (96 for the mark). Utility rasters retain th
 
 Source and optimized new photography, the original gradient/mark and the 48px launcher were visually inspected. Generated people retain photographic skin, ordinary clothes and credible anatomy; no manga/comic art is used. App crops and actual native text/controls have not been rendered or exercised.
 
-`docs/design-preview/vimi-neon-floor-v3-concept.png` is a generated visual reference with illustrative names/avatars/post content. It is not a Flutter screenshot and is not loaded as a page or inserted as fake community data. The running app queries real profiles/posts and keeps real loading, empty and error states.
+`docs/design-preview/vimi-neon-floor-v3-concept.png` is a generated visual reference with illustrative names/avatars/post content. It is not a Flutter screenshot and is not loaded as a page or inserted as fake community data. The running community queries real profiles/posts and keeps meaningful loading, empty and error states. Supplied-library people are not inserted as registered members; profile images change only when a member explicitly selects and saves one.
 
-Rejected illustration and monochrome source/asset snapshots are preserved under `docs/design-history/`, outside the bundle. Only DM Sans and its upstream OFL notice remain registered as fonts. No build, tests, app launch, emulator or device check was performed.
+Rejected illustration and monochrome snapshots are preserved under `docs/design-history/`, outside the bundle. Only DM Sans and its OFL notice are registered as fonts. Original supplied files are preserved in Downloads and byte-verified backups under ignored `ProjectMaterials/Supplied/Originals`; only optimized content is registered. Static/full-stream decoding, frame timing and unchanged audio-packet checks are in `media/supplied-media-quality.json`. Native/runtime results are recorded separately in `VERIFICATION.md`; the original design-pass concept is not runtime evidence.

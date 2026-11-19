@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:integration_test/integration_test_driver_extended.dart';
 
 Future<void> main() async {
-  final directory = Directory('docs/verification/2026-11-19');
+  final directory = Directory(
+    Platform.environment['VIMI_QA_OUTPUT'] ?? 'docs/verification/2026-11-19',
+  );
   await directory.create(recursive: true);
   await integrationDriver(
     onScreenshot: (name, bytes, [args]) async {

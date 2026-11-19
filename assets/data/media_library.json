@@ -1,0 +1,427 @@
+{
+  "version": 1,
+  "clips": [
+    {
+      "id": "open-air-group",
+      "title": "Open-air group routine",
+      "asset": "assets/content/videos/open-air-group.mp4",
+      "thumbnail": "assets/content/covers/open-air-group.webp",
+      "category": "Groups",
+      "duration": 14.833333,
+      "has_audio": false
+    },
+    {
+      "id": "street-style-group",
+      "title": "Street-style group take",
+      "asset": "assets/content/videos/street-style-group.mp4",
+      "thumbnail": "assets/content/covers/street-style-group.webp",
+      "category": "Groups",
+      "duration": 11.666667,
+      "has_audio": true
+    },
+    {
+      "id": "night-plaza-solo",
+      "title": "Night plaza solo",
+      "asset": "assets/content/videos/night-plaza-solo.mp4",
+      "thumbnail": "assets/content/covers/night-plaza-solo.webp",
+      "category": "Solo",
+      "duration": 22.6,
+      "has_audio": false
+    },
+    {
+      "id": "studio-mirror",
+      "title": "Studio mirror session",
+      "asset": "assets/content/videos/studio-mirror.mp4",
+      "thumbnail": "assets/content/covers/studio-mirror.webp",
+      "category": "Solo",
+      "duration": 22.477007,
+      "has_audio": true
+    },
+    {
+      "id": "holiday-duet",
+      "title": "Holiday duet",
+      "asset": "assets/content/videos/holiday-duet.mp4",
+      "thumbnail": "assets/content/covers/holiday-duet.webp",
+      "category": "Duets",
+      "duration": 9.466667,
+      "has_audio": true
+    },
+    {
+      "id": "room-formation",
+      "title": "Room formation practice",
+      "asset": "assets/content/videos/room-formation.mp4",
+      "thumbnail": "assets/content/covers/room-formation.webp",
+      "category": "Groups",
+      "duration": 11.748005,
+      "has_audio": true
+    },
+    {
+      "id": "evening-plaza-duet",
+      "title": "Evening plaza duet",
+      "asset": "assets/content/videos/evening-plaza-duet.mp4",
+      "thumbnail": "assets/content/covers/evening-plaza-duet.webp",
+      "category": "Duets",
+      "duration": 20.666016,
+      "has_audio": false
+    },
+    {
+      "id": "studio-partner",
+      "title": "Studio partner sequence",
+      "asset": "assets/content/videos/studio-partner.mp4",
+      "thumbnail": "assets/content/covers/studio-partner.webp",
+      "category": "Duets",
+      "duration": 32.198866,
+      "has_audio": false
+    },
+    {
+      "id": "group-studio",
+      "title": "Group studio run",
+      "asset": "assets/content/videos/group-studio.mp4",
+      "thumbnail": "assets/content/covers/group-studio.webp",
+      "category": "Groups",
+      "duration": 24.333333,
+      "has_audio": false
+    },
+    {
+      "id": "hallway-take",
+      "title": "Hallway close-up take",
+      "asset": "assets/content/videos/hallway-take.mp4",
+      "thumbnail": "assets/content/covers/hallway-take.webp",
+      "category": "Solo",
+      "duration": 15.021995,
+      "has_audio": true
+    }
+  ],
+  "portraits": [
+    {
+      "id": "portrait-001",
+      "title": "Portrait 01",
+      "asset": "assets/content/portraits/portrait-001.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-001.webp"
+    },
+    {
+      "id": "portrait-002",
+      "title": "Portrait 02",
+      "asset": "assets/content/portraits/portrait-002.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-002.webp"
+    },
+    {
+      "id": "portrait-003",
+      "title": "Portrait 03",
+      "asset": "assets/content/portraits/portrait-003.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-003.webp"
+    },
+    {
+      "id": "portrait-004",
+      "title": "Portrait 04",
+      "asset": "assets/content/portraits/portrait-004.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-004.webp"
+    },
+    {
+      "id": "portrait-005",
+      "title": "Portrait 05",
+      "asset": "assets/content/portraits/portrait-005.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-005.webp"
+    },
+    {
+      "id": "portrait-006",
+      "title": "Portrait 06",
+      "asset": "assets/content/portraits/portrait-006.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-006.webp"
+    },
+    {
+      "id": "portrait-007",
+      "title": "Portrait 07",
+      "asset": "assets/content/portraits/portrait-007.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-007.webp"
+    },
+    {
+      "id": "portrait-008",
+      "title": "Portrait 08",
+      "asset": "assets/content/portraits/portrait-008.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-008.webp"
+    },
+    {
+      "id": "portrait-009",
+      "title": "Portrait 09",
+      "asset": "assets/content/portraits/portrait-009.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-009.webp"
+    },
+    {
+      "id": "portrait-010",
+      "title": "Portrait 10",
+      "asset": "assets/content/portraits/portrait-010.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-010.webp"
+    },
+    {
+      "id": "portrait-011",
+      "title": "Portrait 11",
+      "asset": "assets/content/portraits/portrait-011.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-011.webp"
+    },
+    {
+      "id": "portrait-012",
+      "title": "Portrait 12",
+      "asset": "assets/content/portraits/portrait-012.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-012.webp"
+    },
+    {
+      "id": "portrait-013",
+      "title": "Portrait 13",
+      "asset": "assets/content/portraits/portrait-013.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-013.webp"
+    },
+    {
+      "id": "portrait-014",
+      "title": "Portrait 14",
+      "asset": "assets/content/portraits/portrait-014.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-014.webp"
+    },
+    {
+      "id": "portrait-015",
+      "title": "Portrait 15",
+      "asset": "assets/content/portraits/portrait-015.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-015.webp"
+    },
+    {
+      "id": "portrait-016",
+      "title": "Portrait 16",
+      "asset": "assets/content/portraits/portrait-016.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-016.webp"
+    },
+    {
+      "id": "portrait-017",
+      "title": "Portrait 17",
+      "asset": "assets/content/portraits/portrait-017.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-017.webp"
+    },
+    {
+      "id": "portrait-018",
+      "title": "Portrait 18",
+      "asset": "assets/content/portraits/portrait-018.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-018.webp"
+    },
+    {
+      "id": "portrait-019",
+      "title": "Portrait 19",
+      "asset": "assets/content/portraits/portrait-019.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-019.webp"
+    },
+    {
+      "id": "portrait-020",
+      "title": "Portrait 20",
+      "asset": "assets/content/portraits/portrait-020.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-020.webp"
+    },
+    {
+      "id": "portrait-021",
+      "title": "Portrait 21",
+      "asset": "assets/content/portraits/portrait-021.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-021.webp"
+    },
+    {
+      "id": "portrait-022",
+      "title": "Portrait 22",
+      "asset": "assets/content/portraits/portrait-022.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-022.webp"
+    },
+    {
+      "id": "portrait-023",
+      "title": "Portrait 23",
+      "asset": "assets/content/portraits/portrait-023.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-023.webp"
+    },
+    {
+      "id": "portrait-024",
+      "title": "Portrait 24",
+      "asset": "assets/content/portraits/portrait-024.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-024.webp"
+    },
+    {
+      "id": "portrait-025",
+      "title": "Portrait 25",
+      "asset": "assets/content/portraits/portrait-025.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-025.webp"
+    },
+    {
+      "id": "portrait-026",
+      "title": "Portrait 26",
+      "asset": "assets/content/portraits/portrait-026.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-026.webp"
+    },
+    {
+      "id": "portrait-027",
+      "title": "Portrait 27",
+      "asset": "assets/content/portraits/portrait-027.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-027.webp"
+    },
+    {
+      "id": "portrait-028",
+      "title": "Portrait 28",
+      "asset": "assets/content/portraits/portrait-028.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-028.webp"
+    },
+    {
+      "id": "portrait-029",
+      "title": "Portrait 29",
+      "asset": "assets/content/portraits/portrait-029.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-029.webp"
+    },
+    {
+      "id": "portrait-030",
+      "title": "Portrait 30",
+      "asset": "assets/content/portraits/portrait-030.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-030.webp"
+    },
+    {
+      "id": "portrait-031",
+      "title": "Portrait 31",
+      "asset": "assets/content/portraits/portrait-031.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-031.webp"
+    },
+    {
+      "id": "portrait-032",
+      "title": "Portrait 32",
+      "asset": "assets/content/portraits/portrait-032.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-032.webp"
+    },
+    {
+      "id": "portrait-033",
+      "title": "Portrait 33",
+      "asset": "assets/content/portraits/portrait-033.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-033.webp"
+    },
+    {
+      "id": "portrait-034",
+      "title": "Portrait 34",
+      "asset": "assets/content/portraits/portrait-034.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-034.webp"
+    },
+    {
+      "id": "portrait-035",
+      "title": "Portrait 35",
+      "asset": "assets/content/portraits/portrait-035.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-035.webp"
+    },
+    {
+      "id": "portrait-036",
+      "title": "Portrait 36",
+      "asset": "assets/content/portraits/portrait-036.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-036.webp"
+    },
+    {
+      "id": "portrait-037",
+      "title": "Portrait 37",
+      "asset": "assets/content/portraits/portrait-037.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-037.webp"
+    },
+    {
+      "id": "portrait-038",
+      "title": "Portrait 38",
+      "asset": "assets/content/portraits/portrait-038.webp",
+      "thumbnail": "assets/content/portraits/portrait-038.webp"
+    },
+    {
+      "id": "portrait-039",
+      "title": "Portrait 39",
+      "asset": "assets/content/portraits/portrait-039.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-039.webp"
+    },
+    {
+      "id": "portrait-040",
+      "title": "Portrait 40",
+      "asset": "assets/content/portraits/portrait-040.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-040.webp"
+    },
+    {
+      "id": "portrait-041",
+      "title": "Portrait 41",
+      "asset": "assets/content/portraits/portrait-041.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-041.webp"
+    },
+    {
+      "id": "portrait-042",
+      "title": "Portrait 42",
+      "asset": "assets/content/portraits/portrait-042.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-042.webp"
+    },
+    {
+      "id": "portrait-043",
+      "title": "Portrait 43",
+      "asset": "assets/content/portraits/portrait-043.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-043.webp"
+    },
+    {
+      "id": "portrait-044",
+      "title": "Portrait 44",
+      "asset": "assets/content/portraits/portrait-044.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-044.webp"
+    },
+    {
+      "id": "portrait-045",
+      "title": "Portrait 45",
+      "asset": "assets/content/portraits/portrait-045.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-045.webp"
+    },
+    {
+      "id": "portrait-046",
+      "title": "Portrait 46",
+      "asset": "assets/content/portraits/portrait-046.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-046.webp"
+    },
+    {
+      "id": "portrait-047",
+      "title": "Portrait 47",
+      "asset": "assets/content/portraits/portrait-047.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-047.webp"
+    },
+    {
+      "id": "portrait-048",
+      "title": "Portrait 48",
+      "asset": "assets/content/portraits/portrait-048.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-048.webp"
+    },
+    {
+      "id": "portrait-049",
+      "title": "Portrait 49",
+      "asset": "assets/content/portraits/portrait-049.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-049.webp"
+    },
+    {
+      "id": "portrait-050",
+      "title": "Portrait 50",
+      "asset": "assets/content/portraits/portrait-050.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-050.webp"
+    },
+    {
+      "id": "portrait-051",
+      "title": "Portrait 51",
+      "asset": "assets/content/portraits/portrait-051.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-051.webp"
+    },
+    {
+      "id": "portrait-052",
+      "title": "Portrait 52",
+      "asset": "assets/content/portraits/portrait-052.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-052.webp"
+    },
+    {
+      "id": "portrait-053",
+      "title": "Portrait 53",
+      "asset": "assets/content/portraits/portrait-053.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-053.webp"
+    },
+    {
+      "id": "portrait-054",
+      "title": "Portrait 54",
+      "asset": "assets/content/portraits/portrait-054.webp",
+      "thumbnail": "assets/content/portraits/portrait-054.webp"
+    },
+    {
+      "id": "portrait-055",
+      "title": "Portrait 55",
+      "asset": "assets/content/portraits/portrait-055.webp",
+      "thumbnail": "assets/content/thumbnails/portrait-055.webp"
+    }
+  ]
+}

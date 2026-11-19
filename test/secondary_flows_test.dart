@@ -13,6 +13,7 @@ import 'package:vimi/features/community/publish_page.dart';
 import 'package:vimi/features/profile/help_pages.dart';
 import 'package:vimi/features/profile/moderation_pages.dart';
 import 'package:vimi/features/studio/studio_pages.dart';
+import 'package:vimi/features/studio/media_library_pages.dart';
 
 Finder field(String label) => find.byWidgetPredicate(
   (w) => w is TextField && w.decoration?.labelText == label,
@@ -165,9 +166,19 @@ void main() {
           const HelpCenterPage(),
           const ModerationPage(),
           const PracticeEditor(),
+          MediaLibraryPage(
+            practiceBuilder: (clip) => PracticeEditor(initialClip: clip),
+          ),
+          const PortraitPickerPage(),
           const PublishPage(),
         ]) {
           await mount(tester, app, page, scale: 1.3);
+          if (page is MediaLibraryPage) {
+            expect(find.text('10 clips'), findsOneWidget);
+          }
+          if (page is PortraitPickerPage) {
+            expect(find.textContaining('Explore 55 images.'), findsOneWidget);
+          }
           expect(
             tester.takeException(),
             isNull,

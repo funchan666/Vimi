@@ -4,6 +4,8 @@ import 'package:uuid/uuid.dart';
 import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
 import '../../core/models.dart';
+import '../../core/pagination.dart';
+import '../../design/page_footer.dart';
 import '../../core/local_studio.dart';
 import '../../design/vimi_ui.dart';
 import '../auth/auth_pages.dart';
@@ -162,7 +164,7 @@ class _FloorPageState extends State<FloorPage> {
           )
         else
           PostCollection(
-            key: ValueKey('floor-$style-${app.revision}'),
+            key: ValueKey('floor-$style-${app.account}'),
             style: style == 'All' ? null : style,
           ),
       ],
@@ -301,98 +303,123 @@ class PostCollection extends StatefulWidget {
 }
 
 class _PostCollectionState extends State<PostCollection> {
-  List<DancePost> posts = [];
-  bool loading = false, more = true;
-  String? error;
-  bool started = false;
+  CursorPager<DancePost>? pager;
+  String? owner;
+  int revision = -1;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!started) {
-      started = true;
-      unawaited(load());
-    }
-  }
-
-  Future<void> load() async {
-    if (loading) return;
-    setState(() {
-      loading = true;
-      error = null;
-    });
-    try {
-      final repo = VimiScope.of(context).repo!;
-      final next = await repo.feed(
-        style: widget.style,
-        author: widget.author,
-        saved: widget.saved,
-        challenge: widget.challenge,
-        offset: posts.length,
+    final app = VimiScope.of(context);
+    if (owner != app.account || pager == null) {
+      pager?.dispose();
+      owner = app.account;
+      final currentOwner = owner;
+      final repo = app.repo!;
+      pager = CursorPager(
+        fetch: (cursor) => repo.feedPage(
+          style: widget.style,
+          author: widget.author,
+          saved: widget.saved,
+          challenge: widget.challenge,
+          cursor: cursor,
+        ),
+        identity: (post) => post.id,
+        isCurrent: () => app.account == currentOwner && app.signedIn,
       );
-      if (mounted)
-        setState(() {
-          posts.addAll(next.where((p) => !posts.any((old) => old.id == p.id)));
-          more = next.length == 20;
-        });
-    } catch (e) {
-      if (mounted) setState(() => error = readableError(e));
-    } finally {
-      if (mounted) setState(() => loading = false);
+    }
+    if (revision != app.revision) {
+      revision = app.revision;
+      unawaited(pager!.refresh());
     }
   }
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      if (error != null) ErrorNote(error!, onRetry: load),
-      if (!loading && posts.isEmpty && error == null)
-        EmptyNote(
-          widget.saved
-              ? 'Keep a little inspiration.'
-              : 'The next cover could be yours.',
-          widget.saved
-              ? 'Save a dance post to find it here.'
-              : 'Share a photo or a dance video. New posts appear after review.',
-          action: widget.saved
-              ? null
-              : VButton(
-                  'Share your dance',
-                  glyph: Glyph.add,
-                  onPressed: () => openPage(
-                    context,
-                    PublishPage(challenge: widget.challenge),
+  void dispose() {
+    pager?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: pager!,
+    builder: (context, _) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (pager!.loaded && pager!.items.isEmpty && pager!.error == null)
+          EmptyNote(
+            widget.saved
+                ? 'Keep a little inspiration.'
+                : 'The next cover could be yours.',
+            widget.saved
+                ? 'Save a dance post to find it here.'
+                : 'Share a photo or a dance video. New posts appear after review.',
+            action: widget.saved
+                ? null
+                : VButton(
+                    'Share your dance',
+                    glyph: Glyph.add,
+                    onPressed: () => openPage(
+                      context,
+                      PublishPage(challenge: widget.challenge),
+                    ),
                   ),
-                ),
+          ),
+        for (final post in pager!.items)
+          Padding(
+            key: ValueKey(post.id),
+            padding: const EdgeInsets.only(bottom: 24),
+            child: PostTile(post: post),
+          ),
+        PageFooter(
+          pager: pager!,
+          moreLabel: 'More from the floor',
+          loadingLabel: 'Finding the next move…',
         ),
-      for (final post in posts)
-        Padding(
-          padding: const EdgeInsets.only(bottom: 24),
-          child: PostTile(post: post),
-        ),
-      if (loading)
-        const Padding(
-          padding: EdgeInsets.all(24),
-          child: Text('Finding the next move…'),
-        ),
-      if (!loading && more && posts.isNotEmpty)
-        VButton('More from the floor', quiet: true, onPressed: load),
-    ],
+      ],
+    ),
   );
 }
 
-class SignedAvatar extends StatelessWidget {
+class SignedAvatar extends StatefulWidget {
   const SignedAvatar(this.dancer, {super.key, this.size = 48});
   final Dancer dancer;
   final double size;
   @override
-  Widget build(BuildContext context) {
-    if (dancer.avatar == null) return Avatar(size: size);
-    return FutureBuilder<String>(
-      future: VimiScope.of(context).repo!.mediaUrl(dancer.avatar!),
-      builder: (_, snapshot) => Avatar(url: snapshot.data, size: size),
-    );
+  State<SignedAvatar> createState() => _SignedAvatarState();
+}
+
+class _SignedAvatarState extends State<SignedAvatar> {
+  Future<String>? url;
+  String? path, owner;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    refresh();
   }
+
+  @override
+  void didUpdateWidget(covariant SignedAvatar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    refresh();
+  }
+
+  void refresh() {
+    final app = VimiScope.of(context);
+    if (owner != app.account || path != widget.dancer.avatar) {
+      owner = app.account;
+      path = widget.dancer.avatar;
+      url = path == null ? null : app.repo!.mediaUrl(path!);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => path == null
+      ? Avatar(size: widget.size)
+      : FutureBuilder<String>(
+          future: url,
+          builder: (_, snapshot) =>
+              Avatar(url: snapshot.data, size: widget.size),
+        );
 }
 
 class PostTile extends StatefulWidget {
@@ -405,6 +432,12 @@ class PostTile extends StatefulWidget {
 
 class _PostTileState extends State<PostTile> {
   bool busy = false;
+  int mediaRetry = 0;
+  void retryMedia() {
+    VimiScope.of(context).repo!.clearMediaCache();
+    setState(() => mediaRetry++);
+  }
+
   Future<void> act(String action) async {
     if (busy) return;
     final app = VimiScope.of(context);
@@ -469,11 +502,13 @@ class _PostTileState extends State<PostTile> {
           builder: (context, box) => SizedBox(
             height: p.kind == 'image' ? box.maxWidth * 4 / 3 : null,
             child: FutureBuilder<String>(
+              key: ValueKey('${p.mediaPath}-$mediaRetry'),
               future: app.repo!.mediaUrl(p.mediaPath),
               builder: (context, snapshot) {
                 if (snapshot.hasError)
                   return ErrorNote(
-                    'This media is unavailable. Refresh the floor to try again.',
+                    'This media could not be opened.',
+                    onRetry: retryMedia,
                   );
                 if (!snapshot.hasData)
                   return const SurfacePanel(child: Text('Opening media…'));
@@ -485,27 +520,14 @@ class _PostTileState extends State<PostTile> {
                           label: 'Dance photo by ${p.author.name}',
                           button: true,
                           child: GestureDetector(
-                            onTap: () => openPage(
-                              context,
-                              VPage(
-                                title: p.author.name,
-                                child: InteractiveViewer(
-                                  minScale: 1,
-                                  maxScale: 4,
-                                  child: Center(
-                                    child: Image.network(
-                                      snapshot.data!,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            onTap: () =>
+                                openPage(context, DancePhotoPage(post: p)),
                             child: Image.network(
                               snapshot.data!,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => const ErrorNote(
+                              errorBuilder: (_, __, ___) => ErrorNote(
                                 'This photo could not be opened.',
+                                onRetry: retryMedia,
                               ),
                             ),
                           ),
@@ -557,6 +579,62 @@ class _PostTileState extends State<PostTile> {
       ],
     );
   }
+}
+
+class DancePhotoPage extends StatefulWidget {
+  const DancePhotoPage({super.key, required this.post});
+  final DancePost post;
+  @override
+  State<DancePhotoPage> createState() => _DancePhotoPageState();
+}
+
+class _DancePhotoPageState extends State<DancePhotoPage> {
+  Future<String>? url;
+  int attempt = 0;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    url ??= VimiScope.of(context).repo!.mediaUrl(widget.post.mediaPath);
+  }
+
+  void retry() {
+    final repo = VimiScope.of(context).repo!;
+    repo.clearMediaCache();
+    setState(() {
+      attempt++;
+      url = repo.mediaUrl(widget.post.mediaPath);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => VPage(
+    title: widget.post.author.name,
+    child: FutureBuilder<String>(
+      future: url,
+      builder: (context, snapshot) {
+        if (snapshot.hasError)
+          return Center(
+            child: ErrorNote('This photo could not be opened.', onRetry: retry),
+          );
+        if (!snapshot.hasData)
+          return const Center(child: Text('Opening photo…'));
+        return InteractiveViewer(
+          minScale: 1,
+          maxScale: 4,
+          child: Center(
+            child: Image.network(
+              snapshot.data!,
+              key: ValueKey(attempt),
+              fit: BoxFit.contain,
+              semanticLabel: 'Dance photo by ${widget.post.author.name}',
+              errorBuilder: (_, __, ___) =>
+                  ErrorNote('This photo could not be opened.', onRetry: retry),
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }
 
 Future<void> postOptions(BuildContext context, DancePost post) async {
@@ -669,6 +747,7 @@ Future<void> reportContent(BuildContext context, String type, String id) async {
                 ),
                 const SizedBox(height: 16),
                 for (final reason in const [
+                  'Child safety',
                   'Harassment',
                   'Sexual content',
                   'Hate or violence',
@@ -747,8 +826,9 @@ class PostDetailPage extends StatefulWidget {
 
 class _PostDetailPageState extends State<PostDetailPage> {
   final message = TextEditingController();
-  late Future<List<Json>> comments;
+  CursorPager<Json>? comments;
   late Future<DancePost?> post;
+  DancePost? visiblePost;
   bool started = false, busy = false;
   int revision = -1;
   String? error;
@@ -773,7 +853,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
     }
     if (revision != app.revision) {
       revision = app.revision;
-      comments = app.repo!.comments(widget.post.id);
+      comments ??= CursorPager(
+        fetch: (cursor) =>
+            app.repo!.commentPage(widget.post.id, cursor: cursor),
+        identity: (row) => row['id'] as String,
+        isCurrent: () =>
+            draftKey == 'comment.v1.${app.account}.${widget.post.id}' &&
+            app.signedIn,
+      );
+      unawaited(comments!.refresh());
       post = app.repo!.post(widget.post.id);
       started = true;
     }
@@ -781,6 +869,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
   @override
   void dispose() {
+    comments?.dispose();
     message.dispose();
     super.dispose();
   }
@@ -814,7 +903,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
       child: FutureBuilder<DancePost?>(
         future: post,
         builder: (context, currentPost) {
-          if (currentPost.hasError)
+          if (currentPost.connectionState == ConnectionState.done &&
+              !currentPost.hasError) {
+            visiblePost = currentPost.data;
+          }
+          final shown = currentPost.data ?? visiblePost;
+          if (currentPost.hasError && shown == null)
             return Padding(
               padding: const EdgeInsets.all(24),
               child: ErrorNote(
@@ -822,10 +916,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 onRetry: app.changed,
               ),
             );
-          if (!currentPost.hasData &&
+          if (shown == null &&
               currentPost.connectionState != ConnectionState.done)
             return const Center(child: Text('Opening dance…'));
-          if (currentPost.data == null)
+          if (shown == null)
             return const Padding(
               padding: EdgeInsets.all(24),
               child: EmptyNote(
@@ -837,133 +931,151 @@ class _PostDetailPageState extends State<PostDetailPage> {
             padding: const EdgeInsets.all(20),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
-              PostTile(post: currentPost.data!, detail: true),
-              const SizedBox(height: 24),
-              Text(
-                'Talk about the movement',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 16),
-              FutureBuilder<List<Json>>(
-                future: comments,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError)
-                    return ErrorNote(
-                      readableError(snapshot.error!),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (currentPost.hasError)
+                    ErrorNote(
+                      readableError(currentPost.error!),
                       onRetry: app.changed,
-                    );
-                  if (!snapshot.hasData &&
-                      snapshot.connectionState != ConnectionState.done)
-                    return const Text('Opening comments…');
-                  final rows = snapshot.data ?? [];
-                  if (rows.isEmpty)
-                    return const Text('Start with a kind, specific note.');
-                  return Column(
-                    children: rows.map((c) {
-                      final author = Dancer.fromJson(jsonMap(c['author']));
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextButton(
-                                    onPressed: () => openPage(
-                                      context,
-                                      DancerPage(id: author.id),
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(author.name),
-                                    ),
-                                  ),
-                                ),
-                                if (c['author_id'] == app.account)
-                                  VButton(
-                                    'Edit',
-                                    quiet: true,
-                                    onPressed: () => openPage(
-                                      context,
-                                      EditContentPage(
-                                        kind: 'comment',
-                                        id: c['id'] as String,
-                                        text: c['body'] as String,
-                                      ),
-                                    ),
-                                  ),
-                                if (c['status'] == 'pending')
-                                  const Text('In review'),
-                                VIconButton(
-                                  c['author_id'] == app.account
-                                      ? Glyph.delete
-                                      : Glyph.report,
-                                  label: c['author_id'] == app.account
-                                      ? 'Delete comment'
-                                      : 'Report comment',
-                                  onPressed: () async {
-                                    if (c['author_id'] == app.account) {
-                                      if (!await confirmAction(
+                    ),
+                  PostTile(post: shown, detail: true),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Talk about the movement',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 16),
+                  AnimatedBuilder(
+                    animation: comments!,
+                    builder: (context, _) {
+                      final rows = comments!.items.reversed;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          PageFooter(
+                            pager: comments!,
+                            moreLabel: 'Earlier comments',
+                            loadingLabel: 'Opening comments…',
+                          ),
+                          if (comments!.loaded &&
+                              rows.isEmpty &&
+                              comments!.error == null)
+                            const Text('Start with a kind, specific note.'),
+                          ...rows.map((c) {
+                            final author = Dancer.fromJson(
+                              jsonMap(c['author']),
+                            );
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextButton(
+                                          onPressed: () => openPage(
                                             context,
-                                            title: 'Delete this comment?',
-                                            body:
-                                                'Your comment will be removed.',
-                                            action: 'Delete comment',
-                                          ) ||
-                                          !context.mounted)
-                                        return;
-                                      try {
-                                        await app.repo!.deleteComment(
-                                          c['id'] as String,
-                                        );
-                                        app.changed();
-                                      } catch (e) {
-                                        if (context.mounted)
-                                          feedback(context, readableError(e));
-                                      }
-                                    } else {
-                                      await reportContent(
-                                        context,
-                                        'comment',
-                                        c['id'] as String,
-                                      );
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                            Text(c['body'] as String),
-                          ],
-                        ),
+                                            DancerPage(id: author.id),
+                                          ),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(author.name),
+                                          ),
+                                        ),
+                                      ),
+                                      if (c['author_id'] == app.account)
+                                        VButton(
+                                          'Edit',
+                                          quiet: true,
+                                          onPressed: () => openPage(
+                                            context,
+                                            EditContentPage(
+                                              kind: 'comment',
+                                              id: c['id'] as String,
+                                              text: c['body'] as String,
+                                            ),
+                                          ),
+                                        ),
+                                      if (c['status'] == 'pending')
+                                        const Text('In review'),
+                                      VIconButton(
+                                        c['author_id'] == app.account
+                                            ? Glyph.delete
+                                            : Glyph.report,
+                                        label: c['author_id'] == app.account
+                                            ? 'Delete comment'
+                                            : 'Report comment',
+                                        onPressed: () async {
+                                          if (c['author_id'] == app.account) {
+                                            if (!await confirmAction(
+                                                  context,
+                                                  title: 'Delete this comment?',
+                                                  body:
+                                                      'Your comment will be removed.',
+                                                  action: 'Delete comment',
+                                                ) ||
+                                                !context.mounted)
+                                              return;
+                                            try {
+                                              await app.repo!.deleteComment(
+                                                c['id'] as String,
+                                              );
+                                              app.changed();
+                                            } catch (e) {
+                                              if (context.mounted)
+                                                feedback(
+                                                  context,
+                                                  readableError(e),
+                                                );
+                                            }
+                                          } else {
+                                            await reportContent(
+                                              context,
+                                              'comment',
+                                              c['id'] as String,
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  Text(c['body'] as String),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
                       );
-                    }).toList(),
-                  );
-                },
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  VField(
+                    'Add a comment',
+                    controller: message,
+                    enabled: !busy,
+                    lines: 3,
+                    maxLength: 1000,
+                    onChanged: (text) {
+                      nonce = const Uuid().v4();
+                      unawaited(
+                        draftStore!
+                            .writeDraft(draftKey!, {
+                              'body': text,
+                              'client_id': nonce,
+                            })
+                            .catchError((Object e) {
+                              if (mounted)
+                                setState(() => error = readableError(e));
+                            }),
+                      );
+                    },
+                  ),
+                  if (error != null) ErrorNote(error!),
+                  VButton('Submit comment', onPressed: send, busy: busy),
+                ],
               ),
-              const SizedBox(height: 24),
-              VField(
-                'Add a comment',
-                controller: message,
-                enabled: !busy,
-                lines: 3,
-                maxLength: 1000,
-                onChanged: (text) {
-                  nonce = const Uuid().v4();
-                  unawaited(
-                    draftStore!
-                        .writeDraft(draftKey!, {
-                          'body': text,
-                          'client_id': nonce,
-                        })
-                        .catchError((Object e) {
-                          if (mounted) setState(() => error = readableError(e));
-                        }),
-                  );
-                },
-              ),
-              if (error != null) ErrorNote(error!),
-              VButton('Submit comment', onPressed: send, busy: busy),
             ],
           );
         },
@@ -1062,7 +1174,7 @@ class ChallengePage extends StatelessWidget {
           ),
           if (app.signedIn)
             PostCollection(
-              key: ValueKey('${challenge.id}-${app.revision}'),
+              key: ValueKey('${challenge.id}-${app.account}'),
               challenge: challenge.id,
             )
           else

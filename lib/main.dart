@@ -220,26 +220,43 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
         ? const DeleteAccountPage()
         : widget.controller.signedIn &&
               widget.controller.accountStatus != 'active'
-        ? VPage(
-            title: 'Your account',
-            back: false,
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  const Text(
-                    'This account is currently unavailable. You can sign out and return later.',
-                  ),
-                  VButton(
-                    'Sign out',
-                    onPressed: () => widget.controller.signOut(),
-                  ),
-                ],
+        ? Builder(
+            builder: (pageContext) => VPage(
+              title: 'Your account',
+              back: false,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: ListView(
+                  children: [
+                    const Text(
+                      'This account is currently unavailable. You can sign out and return later.',
+                    ),
+                    VButton(
+                      'Sign out',
+                      onPressed: () => widget.controller.signOut(),
+                    ),
+                    VButton(
+                      'Help & safety',
+                      quiet: true,
+                      onPressed: () => openPage(
+                        pageContext,
+                        const LegalPage('Help & account deletion', 'deletion'),
+                      ),
+                    ),
+                    VButton(
+                      'Delete account',
+                      glyph: Glyph.delete,
+                      quiet: true,
+                      onPressed: () =>
+                          openPage(pageContext, const DeleteAccountPage()),
+                    ),
+                  ],
+                ),
               ),
             ),
           )
         : widget.controller.signedIn || widget.controller.exploring
-        ? const DanceShell()
+        ? DanceShell(initialTab: widget.controller.signedIn ? 0 : 1)
         : const WelcomePage(),
   );
 }

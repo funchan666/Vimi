@@ -127,14 +127,18 @@ class _JournalRecoveryPageState extends State<JournalRecoveryPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      displayDate(DateTime.parse(copy['created_at'] as String)),
+                      copy['damaged'] == true
+                          ? 'Damaged recovery copy'
+                          : displayDate(
+                              DateTime.parse(copy['created_at'] as String),
+                            ),
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 12),
                     VButton(
                       'Restore copy',
                       tonal: true,
-                      onPressed: busy
+                      onPressed: busy || copy['damaged'] == true
                           ? null
                           : () => restore(copy['key'] as String),
                     ),

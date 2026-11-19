@@ -1,39 +1,20 @@
 [
   {
-    "file": "build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk",
-    "bytes": 95591706,
-    "sha256": "ab039c604615f60d47d62f807dd9bdb27237cd677cfe3003b15b892b83c9daa6",
-    "qa_credentials_present": false,
-    "private_configs_present": false
-  },
-  {
-    "file": "build/app/outputs/flutter-apk/app-armeabi-v7a-debug.apk",
-    "bytes": 74680868,
-    "sha256": "2a1346828e82d24ac144a49cfd3dc82bd8482149948a93c00fdef0348aed06bf",
-    "qa_credentials_present": false,
-    "private_configs_present": false
-  },
-  {
-    "file": "build/app/outputs/flutter-apk/app-debug.apk",
-    "bytes": 205384289,
-    "sha256": "7ab4ff91101d4464c77d944a58bc18d6845f00767ecc1a4e9ae0b20e13624455",
-    "qa_credentials_present": false,
-    "private_configs_present": false
-  },
-  {
-    "file": "build/app/outputs/flutter-apk/app-x86_64-debug.apk",
-    "bytes": 81597893,
-    "sha256": "d24831c6398fd393e4e46e891f1f55009052c3dae20dd4cf3265ad381a7559f1",
-    "qa_credentials_present": false,
-    "private_configs_present": false
-  },
-  {
     "file": "dist/Vimi-1.0.0-arm64-preview.apk",
     "mode": "profile",
     "signing": "local debug key; preview only",
-    "bytes": 36605739,
-    "sha256": "e7c59ec9018c59086d6dddc26b1270f2ae16a414824e6c02417314af290bc5e9",
+    "bytes": 36522345,
+    "sha256": "499c6c9880ea09f7026c10d907dbf9a0fc8c7b374e1ae69d957669672230a69d",
     "qa_credentials_present": false,
-    "private_configs_present": false
+    "private_configs_present": false,
+    "qa_fixture_labels_present": false,
+    "actual_distinct_passwords_checked": 4,
+    "arm64": true,
+    "installed": true,
+    "cold_launch": "passed",
+    "signature_v2_verified": true,
+    "startup_screenshot": "play-final-preview.png",
+    "target_api": 36,
+    "min_api": 24
   }
 ]

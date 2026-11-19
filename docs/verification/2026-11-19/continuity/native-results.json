@@ -1,0 +1,6 @@
+{
+  "native_32_inbox_conversations": "passed",
+  "real_native_network_decoder": "passed",
+  "full_screen_shared_controller_position_speed_loop_mirror": "passed",
+  "return_preserves_changes_and_pauses": "passed"
+}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
 import '../../design/vimi_ui.dart';
@@ -51,6 +52,26 @@ class WelcomePage extends StatelessWidget {
             onPressed: () => openPage(context, const AuthPage(signUp: false)),
           ),
           VButton('Explore the studio', quiet: true, onPressed: app.explore),
+        ],
+      ),
+      const SizedBox(height: 8),
+      Wrap(
+        spacing: 8,
+        children: [
+          VButton(
+            'Privacy Policy',
+            quiet: true,
+            onPressed: () =>
+                openPage(context, const LegalPage('Privacy Policy', 'privacy')),
+          ),
+          VButton(
+            'Child safety',
+            quiet: true,
+            onPressed: () => openPage(
+              context,
+              const LegalPage('Child safety standards', 'child-safety'),
+            ),
+          ),
         ],
       ),
     ],
@@ -359,6 +380,23 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                         child: const Text('Privacy Policy'),
                       ),
+                      TextButton(
+                        onPressed: () => openPage(
+                          context,
+                          const LegalPage('Community guidelines', 'community'),
+                        ),
+                        child: const Text('Community guidelines'),
+                      ),
+                      TextButton(
+                        onPressed: () => openPage(
+                          context,
+                          const LegalPage(
+                            'Child safety standards',
+                            'child-safety',
+                          ),
+                        ),
+                        child: const Text('Child safety standards'),
+                      ),
                     ],
                   ),
                 ),
@@ -550,21 +588,76 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   );
 }
 
-class LegalPage extends StatelessWidget {
+class LegalPage extends StatefulWidget {
   const LegalPage(this.title, this.file, {super.key});
   final String title, file;
   @override
+  State<LegalPage> createState() => _LegalPageState();
+}
+
+class _LegalPageState extends State<LegalPage> {
+  late Future<String> document;
+  @override
+  void initState() {
+    super.initState();
+    document = read();
+  }
+
+  Future<String> read() =>
+      rootBundle.loadString('assets/legal/${widget.file}.txt');
+  void retry() => setState(() => document = read());
+  String get webUrl => switch (widget.file) {
+    'privacy' => const String.fromEnvironment('PRIVACY_URL'),
+    'terms' => const String.fromEnvironment('TERMS_URL'),
+    'community' => const String.fromEnvironment('COMMUNITY_URL'),
+    'child-safety' => const String.fromEnvironment('CHILD_SAFETY_URL'),
+    'deletion' => const String.fromEnvironment('DELETE_ACCOUNT_URL'),
+    _ => '',
+  };
+  @override
   Widget build(BuildContext context) => VPage(
-    title: title,
+    title: widget.title,
     child: FutureBuilder<String>(
-      future: rootBundle.loadString('assets/legal/$file.txt'),
+      future: document,
       builder: (context, snapshot) => ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          SelectableText(
-            snapshot.data ?? 'Opening…',
-            style: const TextStyle(fontSize: 16, height: 1.65),
-          ),
+          if (snapshot.hasError)
+            ErrorNote('This policy could not be opened.', onRetry: retry)
+          else if (!snapshot.hasData)
+            const Text('Opening policy…')
+          else
+            SelectableText(
+              snapshot.data!,
+              style: const TextStyle(fontSize: 16, height: 1.65),
+            ),
+          if (Uri.tryParse(webUrl)?.scheme == 'https') ...[
+            const SizedBox(height: 24),
+            VButton(
+              'Open public webpage',
+              quiet: true,
+              onPressed: () async {
+                try {
+                  if (!await launchUrl(
+                        Uri.parse(webUrl),
+                        mode: LaunchMode.externalApplication,
+                      ) &&
+                      context.mounted) {
+                    feedback(
+                      context,
+                      'The webpage could not be opened. You can read the policy here.',
+                    );
+                  }
+                } catch (_) {
+                  if (context.mounted)
+                    feedback(
+                      context,
+                      'The webpage could not be opened. You can read the policy here.',
+                    );
+                }
+              },
+            ),
+          ],
         ],
       ),
     ),

@@ -1,0 +1,20 @@
+{
+  "guest_denied": true,
+  "member_denied": true,
+  "invalid_section_denied": true,
+  "invalid_cursor_denied": true,
+  "comments": {
+    "items": 35,
+    "stable_unique_ids": true,
+    "cursor_fractional_seconds": [
+      "2026-11-18T06:00:00.123456Z"
+    ]
+  },
+  "reports": {
+    "items": 31,
+    "stable_unique_ids": true,
+    "cursor_fractional_seconds": [
+      "2026-11-19T06:01:05.059325Z"
+    ]
+  }
+}

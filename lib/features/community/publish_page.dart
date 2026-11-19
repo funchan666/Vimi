@@ -267,6 +267,10 @@ class _PublishPageState extends State<PublishPage> {
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       children: [
         const Text('A cover, a practice moment, a movement you made your own.'),
+        const SizedBox(height: 12),
+        const Text(
+          'Submitting uploads your selected photo or video to Vimi. Approved posts are visible to signed-in members.',
+        ),
         const SizedBox(height: 24),
         if (path == null)
           SurfacePanel(
