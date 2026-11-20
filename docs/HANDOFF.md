@@ -6,7 +6,7 @@ Flutter Android application, English interface, neon-gradient dance-social visua
 
 Core source starts at `lib/main.dart`; screens are grouped under `lib/features`, data contracts in `lib/core`, visual components in `lib/design/vimi_ui.dart`. Dependencies and their lockfile are present. The four main destinations are Floor, Studio, Inbox and Me, now shown as icon-only navigation with long-press and accessible labels. Player/profile/publisher utilities use original glyphs; settings and libraries use clickable destination rows. Only Android is targeted.
 
-The November 20 welcome redesign replaces the generated welcome people with actual publisher group/duet covers, a working duet-preview route and one main registration action. Sign-in, guest and legal links use a lighter hierarchy. Its Android interaction results and installed-preview captures are in `verification/2026-11-20/welcome/`.
+The November 20 welcome redesign replaces the generated welcome people with actual publisher group/duet covers, a working duet-preview route and one main registration action. Sign-in and legal links use a lighter hierarchy. Its Android interaction results and installed-preview captures are in `verification/2026-11-20/welcome/`. The signed-in community refresh gives Floor a media mosaic, first-screen rehearsal clips in Studio, a mutual-follow conversation chooser in Inbox and a real photo library in Me.
 
 ## Publisher inputs/configuration before release
 
@@ -37,7 +37,7 @@ Use the independent reviewer credentials from `config/reviewer-access.json` in t
 
 ## Installable preview
 
-Use `dist/Vimi-1.0.0-arm64-preview.apk` (36.7 MB, profile mode, local test signature), with the redesigned welcome, all 65 supplied source items available online and no bundled publisher media copies. It was installed and cold-launched successfully; current artifact metadata is in `verification/2026-11-20/welcome/`. Earlier artifact measurements retain their dated verification records. These APK files are ignored by Git.
+Use `dist/Vimi-1.0.0-arm64-preview.apk` (37.7 MB, profile mode, local test signature). All 65 publisher-supplied source items are available online through Floor and the media libraries. Current install, screenshots and native route evidence are in `verification/2026-11-20/community-refresh/`. Earlier artifact measurements retain their dated verification records. The APK is ignored by Git.
 
 November 19 supplied-media acceptance decoded all 55 full images on Android, streamed all ten videos, reopened saved filters/practice notes, matched actual avatar upload/download hashes and confirmed a rendered network avatar frame. Both temporary actors and their uploads were deleted. All 128 hosted publisher objects were hash-verified before their local package copies were removed. Optimized media totals 30.3 MB, compared with 54.0 MB before compression, with all source items retained online.
 
@@ -47,4 +47,4 @@ After acceptance the hosted project has one fixed content operator and one ordin
 
 Read `GOOGLE_PLAY_READINESS.md`, `GOOGLE_PLAY_DATA_SAFETY.md` and `CHILD_SAFETY_OPERATIONS.md` before submission. Release builds now reject missing public policy URLs, signing/backend/contact configuration or disabled billing. This is a configuration guard, not a Google approval promise. The local HTML policies are in `policy-site/dist`; no public Site or policy URL is claimed until publication and an unauthenticated HTTP check complete.
 
-The media-migration evidence is `verification/2026-11-19/cloud-library/`: all 128 downloads hash-verified, all 55 full portraits decoded and ten clips streamed on Android, legacy notes retained, real library-to-profile save and temporary account deletion passed. The import write policy is closed; normal clients cannot add or change public library content. Original and optimized project media backups were subsequently deleted at the publisher’s explicit request. Library viewing needs internet. The current artifact is 36,720,586 bytes; the prior bundled artifact was 67,253,150 bytes.
+The media-migration evidence is `verification/2026-11-19/cloud-library/`: all 128 downloads hash-verified, all 55 full portraits decoded and ten clips streamed on Android, legacy notes retained, real library-to-profile save and temporary account deletion passed. The import write policy is closed. Original and optimized project media backups were subsequently deleted at the publisher’s explicit request. Library viewing needs internet.

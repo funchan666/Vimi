@@ -21,16 +21,16 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
-    'guest account refresh preserves the active studio after picker resume',
+    'account refresh preserves notes under the legacy local owner key',
     () async {
       SharedPreferences.setMockInitialValues({});
-      final app = AppController(
-        studio: LocalStudio(await SharedPreferences.getInstance()),
-      )..exploring = true;
+      final studio = LocalStudio(await SharedPreferences.getInstance());
+      await studio.save('guest', [note('legacy')]);
+      final app = AppController(studio: studio);
       addTearDown(app.dispose);
       await app.refreshAccount();
-      expect(app.exploring, isTrue);
-      expect(app.account, 'guest');
+      expect(app.practices.single.id, 'legacy');
+      expect((await studio.load('guest')).single.id, 'legacy');
     },
   );
 

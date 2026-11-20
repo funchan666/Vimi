@@ -1,1 +1,6 @@
-<resources><color name="vimi_background">#0C0716</color><color name="vimi_ink">#F7F2FF</color></resources>
+<resources>
+    <color name="vimi_background">#100B24</color>
+    <color name="vimi_ink">#F7F2FF</color>
+    <color name="vimi_launch_track">#3A3058</color>
+    <color name="vimi_launch_progress">#86E7F4</color>
+</resources>

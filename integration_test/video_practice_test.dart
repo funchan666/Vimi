@@ -2,10 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
-import 'package:vimi/main.dart' as vimi;
 import 'package:vimi/core/app_controller.dart';
-import 'package:vimi/features/auth/auth_pages.dart';
+import 'package:vimi/core/local_studio.dart';
+import 'package:vimi/design/vimi_ui.dart';
+import 'package:vimi/features/shell.dart';
+import 'package:vimi/features/studio/rehearsal_player.dart';
 import 'package:vimi/features/studio/studio_pages.dart';
 import 'support.dart';
 
@@ -14,29 +17,35 @@ void main() {
   testWidgets(
     'real video picker, decoder, practice controls and retained file',
     (tester) async {
-      await vimi.main();
-      await waitFor(tester, () => find.byType(VimiScope).evaluate().isNotEmpty);
-      if (appController(tester).signedIn) await appController(tester).signOut();
-      await waitFor(
-        tester,
-        () => find.byType(WelcomePage).evaluate().isNotEmpty,
+      final app = AppController(
+        studio: LocalStudio(await SharedPreferences.getInstance()),
       );
-      await binding.convertFlutterSurfaceToImage();
-      await tester.pump();
-      final initialApp = appController(tester);
-      for (final note in await initialApp.studio.load('guest')) {
+      addTearDown(app.dispose);
+      await app.initialize();
+      final owner = app.account;
+      final practiceFolder = '/practice/$owner/';
+      for (final note in await app.studio.load(owner)) {
         if (note.routine == 'QA native video rehearsal') {
-          await initialApp.removePractice(note.id);
-          await initialApp.studio.removeDraft(
-            'practice-draft.v1.guest.${note.id}',
-          );
-          if (note.videoPath?.contains('/practice/guest/') == true &&
+          await app.removePractice(note.id);
+          await app.studio.removeDraft('practice-draft.v1.$owner.${note.id}');
+          if (note.videoPath?.contains(practiceFolder) == true &&
               await File(note.videoPath!).exists())
             await File(note.videoPath!).delete();
         }
       }
-      await press(tester, 'Explore the studio');
-      await press(tester, 'Studio');
+      await tester.pumpWidget(
+        VimiScope(
+          controller: app,
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: vimiTheme(),
+            navigatorObservers: [PlaybackRouteObserver()],
+            home: const DanceShell(initialTab: 1),
+          ),
+        ),
+      );
+      await binding.convertFlutterSurfaceToImage();
+      await tester.pump();
       await press(tester, 'Start a practice note');
       await enter(tester, 'Routine or song', 'QA native video rehearsal');
       // ignore: avoid_print
@@ -73,12 +82,11 @@ void main() {
         tester,
         () => find.byType(PracticeEditor).evaluate().isEmpty,
       );
-      final app = appController(tester);
       final saved = (await app.studio.load(
-        'guest',
+        owner,
       )).singleWhere((n) => n.routine == 'QA native video rehearsal');
       expect(await File(saved.videoPath!).exists(), isTrue);
-      expect(saved.videoPath!.contains('/practice/guest/'), isTrue);
+      expect(saved.videoPath, contains(practiceFolder));
       await openTestPage(tester, PracticeEditor(session: saved));
       await waitFor(
         tester,
@@ -100,13 +108,12 @@ void main() {
         () => find.byType(PracticeEditor).evaluate().isEmpty,
       );
       expect(
-        (await app.studio.load('guest')).where((n) => n.id == saved.id),
+        (await app.studio.load(owner)).where((n) => n.id == saved.id),
         isEmpty,
       );
       if (await File(saved.videoPath!).exists())
         await File(saved.videoPath!).delete();
       expect(find.byType(StudioPage), findsOneWidget);
-      expect(find.byType(WelcomePage), findsNothing);
       // Record real wider-container and larger-text rendering on Android.
       // The host changes actual Android display overrides, then restores them.
       // ignore: avoid_print

@@ -1,0 +1,8 @@
+{
+  "both_cloud_performance_covers_decoded": "passed",
+  "signup_blocks_unaccepted_terms_and_rules": "passed",
+  "age_screen_blocks_ineligible_signup": "passed",
+  "signup_and_signin_routes": "passed",
+  "terms_privacy_and_child_safety_readable_without_account": "passed",
+  "signed_out_duet_requires_account_and_supports_back": "passed"
+}

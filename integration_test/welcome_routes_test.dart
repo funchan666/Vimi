@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:video_player/video_player.dart';
 import 'package:vimi/main.dart' as vimi;
 import 'package:vimi/core/media_library.dart';
 import 'package:vimi/design/library_image.dart';
@@ -13,7 +12,7 @@ import 'support.dart';
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets(
-    'welcome photos, real preview and every entry route',
+    'welcome photos, account gate, registration consent and public policies',
     (tester) async {
       final results = <String, Object?>{};
       binding.reportData = results;
@@ -43,17 +42,62 @@ void main() {
       expect(find.byTooltip('Retry image'), findsNothing);
       await capture(binding, tester, 'native-welcome');
       results['both_cloud_performance_covers_decoded'] = 'passed';
+      expect(find.text('Explore the studio'), findsNothing);
+      expect(find.byType(DanceShell), findsNothing);
 
       await press(tester, 'Join the crew');
       expect(tester.widget<AuthPage>(find.byType(AuthPage)).signUp, isTrue);
       expect(input('Display name'), findsOneWidget);
+      await capture(binding, tester, 'native-sign-up');
+      await press(tester, 'Create account');
+      expect(find.text('Agreement required'), findsOneWidget);
+      await press(tester, 'Review agreement');
+      expect(find.text('Agreement required'), findsNothing);
+      await enter(tester, 'Display name', 'Dance tester');
+      await enter(tester, 'Email', 'consent-check@example.invalid');
+      await enter(tester, 'Password', 'only-a-local-ui-check');
+      await enter(tester, 'Date of birth', '2020-01-01');
+      await press(tester, 'Create account');
+      expect(find.text('Agreement required'), findsOneWidget);
+      expect(appController(tester).signedIn, isFalse);
+      await press(tester, 'Review agreement');
+      expect(find.text('Agreement required'), findsNothing);
+      await press(tester, 'Community Guidelines');
+      expect(
+        tester.widget<LegalPage>(find.byType(LegalPage)).file,
+        'community',
+      );
+      await goBack(tester);
+      final agree = find.byTooltip(
+        'Agree to Terms of Use and Community Guidelines',
+      );
+      await reveal(tester, agree);
+      await tester.tap(agree);
+      await tester.pumpAndSettle();
+      await capture(binding, tester, 'native-sign-up-agreement');
+      results['signup_blocks_unaccepted_terms_and_rules'] = 'passed';
+      await press(tester, 'Create account');
+      expect(
+        find.text('You’re not eligible to create an account.'),
+        findsOneWidget,
+      );
+      expect(appController(tester).signedIn, isFalse);
+      results['age_screen_blocks_ineligible_signup'] = 'passed';
       await goBack(tester);
       await press(tester, 'Sign in');
       expect(tester.widget<AuthPage>(find.byType(AuthPage)).signUp, isFalse);
       expect(input('Email'), findsOneWidget);
+      expect(agree, findsNothing);
+      await capture(binding, tester, 'native-sign-in');
+      await press(tester, 'Forgot password?');
+      expect(find.byType(RecoverAccountPage), findsOneWidget);
+      await goBack(tester);
       await goBack(tester);
       results['signup_and_signin_routes'] = 'passed';
 
+      await press(tester, 'Terms of Use');
+      expect(tester.widget<LegalPage>(find.byType(LegalPage)).file, 'terms');
+      await goBack(tester);
       await press(tester, 'Privacy Policy');
       expect(find.byType(LegalPage), findsOneWidget);
       expect(find.textContaining('privacy', findRichText: true), findsWidgets);
@@ -62,36 +106,17 @@ void main() {
       expect(find.byType(LegalPage), findsOneWidget);
       expect(find.text('Child safety standards'), findsOneWidget);
       await goBack(tester);
-      results['privacy_and_child_safety_readable_without_account'] = 'passed';
+      results['terms_privacy_and_child_safety_readable_without_account'] =
+          'passed';
 
-      await press(tester, 'Preview a duet');
-      expect(
-        tester
-            .widget<ClipLibraryDetail>(find.byType(ClipLibraryDetail))
-            .clip
-            .id,
-        'holiday-duet',
-      );
-      await waitFor(
-        tester,
-        () => find.byType(VideoPlayer).evaluate().isNotEmpty,
-      );
-      final player = tester
-          .widget<VideoPlayer>(find.byType(VideoPlayer))
-          .controller;
-      expect(player.value.isInitialized, isTrue);
-      await press(tester, 'Play');
-      await waitFor(tester, () => player.value.position.inMilliseconds > 1000);
-      await press(tester, 'Pause video');
-      await capture(binding, tester, 'native-welcome-duet-preview');
-      results['duet_native_stream_play_pause'] = 'passed';
+      await press(tester, 'Sign in to preview the duet');
+      expect(tester.widget<AuthPage>(find.byType(AuthPage)).signUp, isFalse);
+      expect(find.byType(ClipLibraryDetail), findsNothing);
+      expect(find.byType(DanceShell), findsNothing);
       await goBack(tester);
-
-      await press(tester, 'Explore the studio');
-      expect(find.byType(DanceShell), findsOneWidget);
-      expect(tester.widget<DanceShell>(find.byType(DanceShell)).initialTab, 1);
+      expect(find.byType(WelcomePage), findsOneWidget);
       expect(appController(tester).signedIn, isFalse);
-      results['guest_studio_route'] = 'passed';
+      results['signed_out_duet_requires_account_and_supports_back'] = 'passed';
       expect(tester.takeException(), isNull);
     },
     timeout: const Timeout(Duration(minutes: 4)),

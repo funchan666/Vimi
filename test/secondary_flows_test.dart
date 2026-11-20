@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vimi/core/app_controller.dart';
@@ -211,6 +212,7 @@ void main() {
     'secondary neon pages fit narrow and expanded layouts with larger type',
     (tester) async {
       final app = await controller();
+      rootBundle.evict('assets/data/media_library.json');
       addTearDown(() {
         tester.view.resetPhysicalSize();
         tester.view.resetDevicePixelRatio();
@@ -239,11 +241,23 @@ void main() {
           const PublishPage(),
         ]) {
           await mount(tester, app, page, scale: 1.3);
-          if (page is MediaLibraryPage) {
-            expect(find.text('10 clips'), findsOneWidget);
-          }
-          if (page is PortraitPickerPage) {
-            expect(find.textContaining('Explore 55 images.'), findsOneWidget);
+          if (page is MediaLibraryPage || page is PortraitPickerPage) {
+            // The host asset bundle completes outside the widget test clock.
+            for (
+              var retry = 0;
+              retry < 20 &&
+                  find.text('Opening your library…').evaluate().isNotEmpty;
+              retry++
+            ) {
+              await tester.runAsync(
+                () => Future<void>.delayed(const Duration(milliseconds: 10)),
+              );
+              await tester.pumpAndSettle();
+            }
+            final count = page is MediaLibraryPage
+                ? '10 clips'
+                : 'Explore 55 images.';
+            expect(find.text(count), findsOneWidget);
           }
           expect(
             tester.takeException(),

@@ -5,12 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dance_repository.dart';
 import 'local_studio.dart';
+import 'media_library.dart';
 import 'models.dart';
 
 class AppController extends ChangeNotifier {
   AppController({required this.studio, this.repo});
   final LocalStudio studio;
   final DanceRepository? repo;
+  late final Future<MediaLibrary> avatarLibrary = MediaLibrary.load();
   List<ChoreographyPrompt> challenges = [];
   List<PracticeSession> practices = [];
   Dancer? profile;

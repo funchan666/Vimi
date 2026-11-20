@@ -57,7 +57,7 @@ Future<void> more(
   String label, {
   bool reverse = false,
 }) async {
-  final target = find.text(label);
+  final target = action(label);
   final scrollable = mainScroll();
   if (target.evaluate().isEmpty) {
     await tester.scrollUntilVisible(

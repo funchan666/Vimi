@@ -42,9 +42,9 @@ void main() {
         email: const String.fromEnvironment('QA_EMAIL_B'),
         password: const String.fromEnvironment('QA_PASSWORD_B'),
       );
-      await press(tester, 'Studio');
+      await press(tester, 'Discover');
       await press(tester, 'Challenges');
-      final first = find.text('Open challenge').first;
+      final first = find.byTooltip('Open challenge').first;
       await tester.ensureVisible(first);
       await tester.tap(first);
       await tester.pump(const Duration(milliseconds: 600));
@@ -272,10 +272,7 @@ void main() {
       await capture(binding, tester, 'native-wallet-unconfigured-store');
       await goBack(tester);
       await openTestPage(tester, DancerPage(id: peerId));
-      await waitFor(
-        tester,
-        () => action('Block dancer').evaluate().isNotEmpty,
-      );
+      await waitFor(tester, () => action('Block dancer').evaluate().isNotEmpty);
       await press(tester, 'Block dancer');
       await press(tester, 'Block dancer');
       await waitFor(tester, () => find.byType(DancerPage).evaluate().isEmpty);

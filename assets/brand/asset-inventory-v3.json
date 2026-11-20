@@ -88,7 +88,6 @@
     "id": "neon-mark",
     "role": "Original gradient Vimi monogram / Android launcher source",
     "source": "assets/brand/sources/neon-v3/neon-mark.png",
-    "runtime": "assets/ui/neon-mark.webp",
     "source_bytes": 1330998,
     "runtime_bytes": 40734,
     "dimensions": [
@@ -96,6 +95,23 @@
       1254
     ],
     "alpha": false,
-    "origin": "original built-in host image generation; fictional adults where pictured"
+    "origin": "original built-in host image generation; fictional adults where pictured",
+    "former_runtime": "assets/ui/neon-mark.webp",
+    "status": "retired 2026-11-20; replaced by the supplied Vimi logo"
+  },
+  {
+    "id": "vimi-logo",
+    "role": "Supplied app logo and Play Store artwork",
+    "source": "assets/brand/play-store-icon.png",
+    "runtime": "assets/ui/vimi-logo.png",
+    "source_bytes": 318124,
+    "runtime_bytes": 318124,
+    "dimensions": [
+      512,
+      512
+    ],
+    "encoding": "RGBA PNG",
+    "sha256": "ffa0e2cabde17edb92a883dfb85e9aab51896dccb7c705921a6ecd05c4bbf8c1",
+    "origin": "Image supplied by the user and copied byte for byte"
   }
 ]

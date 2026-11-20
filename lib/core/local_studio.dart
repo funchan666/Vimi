@@ -9,6 +9,8 @@ class LocalStudio {
   final SharedPreferences preferences;
   Future<void> _journalWork = Future.value();
   Future<void> _draftWork = Future.value();
+  Future<void> _libraryClipWork = Future.value();
+  final _unconfirmedLibraryClips = <String, Set<String>>{};
 
   Future<T> _journal<T>(Future<T> Function() action) {
     final next = _journalWork.then((_) => action());
@@ -48,6 +50,33 @@ class LocalStudio {
       );
     }
   });
+
+  Set<String> savedLibraryClips(String account) => {
+    ...?_unconfirmedLibraryClips[account] ??
+        preferences.getStringList('library-saved.v1.$account'),
+  };
+
+  Future<void> toggleLibraryClip(String account, String id) {
+    final next = _libraryClipWork.then((_) async {
+      final saved = savedLibraryClips(account);
+      final updated = {...saved};
+      if (!updated.add(id)) updated.remove(id);
+      // SharedPreferences updates its cache before the platform confirms a write.
+      _unconfirmedLibraryClips[account] = saved;
+      if (!await preferences.setStringList(
+        'library-saved.v1.$account',
+        updated.toList(),
+      )) {
+        throw StateError('Your saved clips could not be updated. Try again.');
+      }
+      _unconfirmedLibraryClips.remove(account);
+    });
+    _libraryClipWork = next.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace __) {},
+    );
+    return next;
+  }
 
   Future<List<PracticeSession>> update(
     String account,
@@ -155,6 +184,8 @@ class LocalStudio {
 
   Future<void> clear(String account) => _journal(() async {
     await _draftWork;
+    await _libraryClipWork;
+    _unconfirmedLibraryClips.remove(account);
     await preferences.remove('practice.v1.$account');
     final root = await getApplicationSupportDirectory();
     final directory = Directory('${root.path}/practice/$account');

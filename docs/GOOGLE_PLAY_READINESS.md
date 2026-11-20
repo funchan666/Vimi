@@ -4,6 +4,8 @@
 
 ## Changes completed in this pass
 
+- The signed-out welcome has terms, privacy and child-safety links. During registration, users actively accept the Terms of Use and Community Guidelines before account creation. The Privacy Policy and Child Safety Standards are independently readable. Returning members sign in with their credentials. Date of birth is entered without a preset or a qualifying-age hint. See [Google Play's neutral age screening guidance](https://support.google.com/googleplay/android-developer/answer/9867159?hl=en#neutral-age-screen).
+
 - Dedicated Child safety report reason and reviewer filter, alongside underage-user reports. Publicly readable in-app child-safety standards and the designated contact `funchan7777777@gmail.com` are available without signing in.
 - Moderators can permanently remove a post and its Storage media, remove comments/messages and clear a profile's name, bio and avatar. Reported avatars have genuine review URLs. Removal and its audit record use a service-only transaction; ordinary members cannot call it. A suspended moderator no longer passes the access check. Existing report completion and suspension remain separate explicit actions.
 - Account-unavailable screens retain deletion and support routes. Account deletion also scrubs account UUIDs from pack-ledger references; restricted transaction/safety records are not inaccurately described as fully anonymous.

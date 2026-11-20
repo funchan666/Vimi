@@ -6,7 +6,7 @@ import shutil
 
 root=Path(__file__).resolve().parents[1]
 out=root/'policy-site/dist';assets=out/'assets';assets.mkdir(parents=True,exist_ok=True)
-for source in ['assets/ui/neon-mark.webp','assets/ui/neon-spectrum.webp','assets/fonts/DMSans.ttf','assets/fonts/dmsans-OFL.txt']:
+for source in ['assets/ui/vimi-logo.png','assets/ui/neon-spectrum.webp','assets/fonts/DMSans.ttf','assets/fonts/dmsans-OFL.txt']:
     shutil.copy2(root/source, assets/Path(source).name)
 pages=[('privacy','Privacy Policy'),('child-safety','Child safety'),('deletion','Account deletion'),('community','Community guidelines'),('terms','Terms of Use')]
 email='funchan7777777@gmail.com'
@@ -14,7 +14,7 @@ def linkify(text):
     return escape(text).replace(email,f'<a href="mailto:{email}">{email}</a>')
 def shell(title,body,current=''):
     nav=''.join(f'<a href="{slug}.html"'+(' aria-current="page"' if slug==current else '')+f'>{label}</a>' for slug,label in pages[:3])
-    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{escape(title)} · Vimi</title><meta name="description" content="Vimi dance community policies, child safety standards and account deletion requests."><link rel="icon" href="assets/neon-mark.webp"><link rel="stylesheet" href="assets/policy.css"></head><body><a class="skip" href="#content">Skip to content</a><header><a class="brand" href="index.html"><img src="assets/neon-mark.webp" width="48" height="48" alt=""><span>vimi</span></a><nav aria-label="Policies">{nav}</nav></header><main id="content">{body}</main><footer><a href="index.html">Vimi safety & privacy</a><a href="mailto:{email}">Contact support</a><a href="assets/dmsans-OFL.txt">Font license</a></footer></body></html>'''
+    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{escape(title)} · Vimi</title><meta name="description" content="Vimi dance community policies, child safety standards and account deletion requests."><link rel="icon" href="assets/vimi-logo.png"><link rel="stylesheet" href="assets/policy.css"></head><body><a class="skip" href="#content">Skip to content</a><header><a class="brand" href="index.html"><img src="assets/vimi-logo.png" width="48" height="48" alt=""><span>vimi</span></a><nav aria-label="Policies">{nav}</nav></header><main id="content">{body}</main><footer><a href="index.html">Vimi safety & privacy</a><a href="mailto:{email}">Contact support</a><a href="assets/dmsans-OFL.txt">Font license</a></footer></body></html>'''
 for slug,label in pages:
     groups=(root/f'assets/legal/{slug}.txt').read_text().strip().split('\n\n')
     first=groups.pop(0).splitlines();sections=[];toc=[]

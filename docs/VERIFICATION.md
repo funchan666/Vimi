@@ -2,6 +2,24 @@
 
 The current user request authorized runnable verification for this task. Android builds, emulator runs, focused tests and isolated hosted checks were executed. This supersedes the earlier source-only review; it does not establish a signed store release or a Google Play payment result.
 
+## Signed-in community refresh · November 20
+
+The Android debug route suite verified that cloud photos and videos are visible on the signed-in screens. It decoded the Floor mosaic, advanced and paused the Holiday duet video, opened a clip-linked practice note, opened a challenge's real reference, decoded and previewed the 55th gallery photo, opened saved clips and the conversation chooser, and decoded and opened profile images. It did not submit new community content, send a message or save a profile change. Source analysis and all 26 widget/storage tests passed.
+
+The cloud check downloaded and matched sizes, MIME types and hashes for all 128 public objects. The full publisher library contains 55 photos and ten videos, and the video objects support HTTP range requests. The main ARM64 preview packages the catalog and supplied app mark. The actual publisher photos and video files stream from Supabase. Local preview signing and 16 KB ZIP alignment were checked. The exact profile APK was installed and started on the API 35 emulator. See `verification/2026-11-20/community-refresh/`.
+
+The initial Android driver run automatically uninstalled its test app. The emulator was signed in again with the ordinary QA account, and the final driver run preserved the installation and session. No hosted accounts, posts or media were changed.
+
+## Account photo layout · November 20
+
+The account-layout revision uses real dance photography on the sign-in and registration screens. See `verification/2026-11-20/auth-redesign/` for the installed APK identity and both captures. The analyzer and focused narrow/expanded layout test passed. The native route suite checked registration consent and eligibility, recovery routing and public policy access without creating an account. The preview was opened on Android and the sign-in keyboard checked.
+
+## Account entry revision · November 20
+
+The signed-out app shows welcome, authentication and readable policy pages. The duet opens authentication before the video detail. A native debug run verified both cloud covers, sign-in and signup navigation, recovery entry, readable policies, rejection of signup without agreement or eligibility, and returning from the duet's sign-in gate. This run did not create or authenticate an account. The analyzer and 26 local tests passed, including narrow and expanded layouts with larger text.
+
+The updated 36,720,506-byte ARM64 profile APK was installed and cold-launched on the Android emulator. Its current capture and artifact identity are in `verification/2026-11-20/account-entry/`. The earlier welcome and cloud-library results below apply to their original build snapshots.
+
 ## Welcome revision · November 20
 
 The redesigned welcome uses actual publisher duet/group covers with one primary registration action. Active-source analysis and all 26 widget/storage tests passed again, including narrow/expanded secondary layouts at larger type. `integration_test/welcome_routes_test.dart` passed on Android: both cover files decoded, signup/sign-in forms opened, Privacy and Child safety were readable as a guest, the genuine duet stream advanced and paused, and Explore entered Studio. The test did not register an account, submit content or change hosted data.

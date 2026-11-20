@@ -56,7 +56,7 @@ class _DanceWelcomeSceneState extends State<DanceWelcomeScene> {
   Widget actions() => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      _JoinCrewButton(onPressed: widget.onJoin),
+      AccountEntryButton('Join the crew', onPressed: widget.onJoin),
       const SizedBox(height: 8),
       Wrap(
         alignment: WrapAlignment.center,
@@ -122,7 +122,9 @@ class _DanceWelcomeSceneState extends State<DanceWelcomeScene> {
                     url: duet?.thumbnail,
                     alignment: Alignment.topCenter,
                     label: 'Duet covers',
-                    onPreview: duet == null ? null : () => widget.onPreview(duet),
+                    onPreview: duet == null
+                        ? null
+                        : () => widget.onPreview(duet),
                   ),
                 ),
                 if (snapshot.hasError)
@@ -200,7 +202,9 @@ class _DanceWelcomeSceneState extends State<DanceWelcomeScene> {
                 constraints: BoxConstraints(minHeight: box.maxHeight),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: expanded ? 1240 : 540),
+                    constraints: BoxConstraints(
+                      maxWidth: expanded ? 1240 : 540,
+                    ),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: expanded ? 28 : 20,
@@ -216,9 +220,12 @@ class _DanceWelcomeSceneState extends State<DanceWelcomeScene> {
                                 Expanded(
                                   flex: 5,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                     children: [
-                                      introduction((content.maxWidth - 32) * 5 / 11),
+                                      introduction(
+                                        (content.maxWidth - 32) * 5 / 11,
+                                      ),
                                       const SizedBox(height: 24),
                                       actions(),
                                     ],
@@ -265,12 +272,12 @@ class _PerformancePhoto extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, box) => _buildPhoto(
-      context,
-      playAboveLabel: box.maxWidth < MediaQuery.textScalerOf(context).scale(156),
+      playAboveLabel:
+          box.maxWidth < MediaQuery.textScalerOf(context).scale(156),
     ),
   );
 
-  Widget _buildPhoto(BuildContext context, {required bool playAboveLabel}) {
+  Widget _buildPhoto({required bool playAboveLabel}) {
     final photo = ClipRRect(
       borderRadius: BorderRadius.circular(26),
       child: Stack(
@@ -321,7 +328,8 @@ class _PerformancePhoto extends StatelessWidget {
           Positioned(
             left: 12,
             right: onPreview == null ? 30 : (playAboveLabel ? 12 : 68),
-            bottom: 12,
+            top: onPreview == null ? 12 : null,
+            bottom: onPreview == null ? null : 12,
             child: Align(
               alignment: Alignment.centerLeft,
               child: SurfacePanel(
@@ -355,6 +363,7 @@ class _PerformancePhoto extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: onPreview,
+            excludeFromSemantics: true,
             borderRadius: BorderRadius.circular(26),
             child: photo,
           ),
@@ -364,9 +373,16 @@ class _PerformancePhoto extends StatelessWidget {
   }
 }
 
-class _JoinCrewButton extends StatelessWidget {
-  const _JoinCrewButton({required this.onPressed});
+class AccountEntryButton extends StatelessWidget {
+  const AccountEntryButton(
+    this.label, {
+    super.key,
+    required this.onPressed,
+    this.busy = false,
+  });
+  final String label;
   final VoidCallback onPressed;
+  final bool busy;
   @override
   Widget build(BuildContext context) => Stack(
     children: [
@@ -381,28 +397,30 @@ class _JoinCrewButton extends StatelessWidget {
         ),
       ),
       TextButton(
-        onPressed: onPressed,
+        onPressed: busy ? null : onPressed,
         style: TextButton.styleFrom(
           foregroundColor: VimiColors.onAccent,
+          disabledForegroundColor: VimiColors.onAccent,
           minimumSize: const Size.fromHeight(56),
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
           ),
         ),
-        child: const Row(
+        child: Row(
           children: [
             Expanded(
               child: Text(
-                'Join the crew',
-                style: TextStyle(
+                busy ? 'Please wait…' : label,
+                style: const TextStyle(
                   fontSize: 16,
                   height: 1.25,
                   fontWeight: FontWeight.w800,
                 ),
               ),
             ),
-            VIcon(Glyph.next, color: VimiColors.onAccent, size: 22),
+            if (!busy)
+              const VIcon(Glyph.next, color: VimiColors.onAccent, size: 22),
           ],
         ),
       ),

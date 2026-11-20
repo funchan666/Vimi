@@ -4,13 +4,18 @@ import 'package:uuid/uuid.dart';
 import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
 import '../../core/models.dart';
+import '../../core/media_library.dart';
+import '../../design/library_image.dart';
 import '../../core/pagination.dart';
 import '../../design/page_footer.dart';
 import '../../core/local_studio.dart';
 import '../../design/vimi_ui.dart';
+import 'floor_spotlight.dart';
 import '../auth/auth_pages.dart';
 import '../profile/profile_pages.dart';
 import '../studio/rehearsal_player.dart';
+import '../studio/media_library_pages.dart';
+import '../studio/studio_pages.dart';
 import 'publish_page.dart';
 import 'content_editor.dart';
 
@@ -26,118 +31,21 @@ class _FloorPageState extends State<FloorPage> {
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 20),
       children: [
-        Text(
-          'Find your rhythm.',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.w700),
+        FloorSpotlight(
+          onFind: () => openPage(context, const DancerDirectory()),
+          onPost: () async {
+            if (await requireSignIn(context) && context.mounted) {
+              await openPage(context, const PublishPage());
+            }
+          },
+          onChallenges: () => openPage(context, const ChallengesPage()),
         ),
-        const SizedBox(height: 8),
-        const Text(
-          'Share a cover. Find your dance people.',
-          style: TextStyle(fontSize: 15, height: 1.5, color: VimiColors.muted),
-        ),
-        const SizedBox(height: 22),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final compact = constraints.maxWidth < 420;
-              return Stack(
-                children: [
-                  Positioned.fill(
-                    child: ExcludeSemantics(
-                      child: Image.asset(
-                        'assets/ui/neon-floor.webp',
-                        fit: BoxFit.cover,
-                        alignment: const Alignment(.35, 0),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(18),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: compact ? 140 : 220,
-                          child: Text(
-                            'Your next\nchorus.',
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(
-                                  fontSize: compact ? 24 : 30,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
-                        ),
-                        SizedBox(height: compact ? 20 : 36),
-                        VButton(
-                          'Challenges',
-                          onPressed: () =>
-                              openPage(context, const ChallengesPage()),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(
-              child: Text(
-                'Meet the dancers',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-            VIconButton(
-              Glyph.search,
-              label: 'Find dancers',
-              color: VimiColors.cyan,
-              onPressed: () => openPage(context, const DancerDirectory()),
-            ),
-          ],
-        ),
-        if (app.signedIn)
-          const CommunityDancers()
-        else
-          SurfacePanel(
-            illuminated: true,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Your people are one cover away.',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Join the community to find dancers and start your own circle.',
-                ),
-                const SizedBox(height: 16),
-                VButton(
-                  'Meet your crew',
-                  onPressed: () =>
-                      openPage(context, const AuthPage(signUp: true)),
-                ),
-              ],
-            ),
-          ),
-        const SizedBox(height: 24),
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'On the floor',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ),
+            const Expanded(child: Text('Member covers', style: _sectionStyle)),
             VIconButton(
               Glyph.refresh,
               label: 'Refresh community',
@@ -145,31 +53,70 @@ class _FloorPageState extends State<FloorPage> {
             ),
           ],
         ),
+        _CoverStyles(value: style, onChanged: (v) => setState(() => style = v)),
         const SizedBox(height: 12),
-        ChoiceStrip(
-          options: ['All', ...DanceStyle.values.map((s) => s.label)],
-          value: style,
-          onChanged: (v) => setState(() => style = v),
-        ),
-        const SizedBox(height: 18),
-        if (!app.signedIn)
-          EmptyNote(
-            'Your next cover belongs here.',
-            'Sign in to post, follow dancers and trade practice tips.',
-            action: VButton(
-              'Sign in',
-              quiet: true,
-              onPressed: () => openPage(context, const AuthPage(signUp: false)),
-            ),
-          )
-        else
+        if (app.signedIn) ...[
           PostCollection(
             key: ValueKey('floor-$style-${app.account}'),
             style: style == 'All' ? null : style,
           ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Expanded(child: Text('Dancers', style: _sectionStyle)),
+              VIconButton(
+                Glyph.next,
+                label: 'Open dancer directory',
+                onPressed: () => openPage(context, const DancerDirectory()),
+              ),
+            ],
+          ),
+          const CommunityDancers(),
+        ],
       ],
     );
   }
+}
+
+const _sectionStyle = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
+
+class _CoverStyles extends StatelessWidget {
+  const _CoverStyles({required this.value, required this.onChanged});
+  final String value;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) => SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    child: Row(
+      children: [
+        for (final option in ['All', ...DanceStyle.values.map((s) => s.label)])
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: Semantics(
+              selected: value == option,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(48, 48),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  foregroundColor: value == option
+                      ? VimiColors.cyan
+                      : VimiColors.muted,
+                  backgroundColor: value == option
+                      ? VimiColors.tonal
+                      : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () => onChanged(option),
+                child: Text(option, style: const TextStyle(fontSize: 13)),
+              ),
+            ),
+          ),
+      ],
+    ),
+  );
 }
 
 class CommunityDancers extends StatefulWidget {
@@ -209,9 +156,9 @@ class _CommunityDancersState extends State<CommunityDancers> {
       }
       if (snapshot.connectionState != ConnectionState.done) {
         return const Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: EdgeInsets.symmetric(vertical: 12),
           child: Text(
-            'Finding your dance people…',
+            'Loading dancers…',
             style: TextStyle(color: VimiColors.muted),
           ),
         );
@@ -222,26 +169,11 @@ class _CommunityDancersState extends State<CommunityDancers> {
           .take(6)
           .toList();
       if (people.isEmpty) {
-        return SurfacePanel(
-          illuminated: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Start your dance circle.',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Share a cover and give other dancers a way to find you.',
-              ),
-              const SizedBox(height: 14),
-              VButton(
-                'Share your dance',
-                glyph: Glyph.add,
-                onPressed: () => openPage(context, const PublishPage()),
-              ),
-            ],
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            'No dancers to show yet.',
+            style: TextStyle(color: VimiColors.muted),
           ),
         );
       }
@@ -252,7 +184,7 @@ class _CommunityDancersState extends State<CommunityDancers> {
           children: [
             for (final dancer in people)
               SizedBox(
-                width: 88,
+                width: 76,
                 child: TextButton(
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
@@ -264,15 +196,15 @@ class _CommunityDancersState extends State<CommunityDancers> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SignedAvatar(dancer, size: 62),
-                      const SizedBox(height: 8),
+                      SignedAvatar(dancer, size: 46),
+                      const SizedBox(height: 6),
                       Text(
                         dancer.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: VimiColors.ink,
                         ),
@@ -346,23 +278,31 @@ class _PostCollectionState extends State<PostCollection> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (pager!.loaded && pager!.items.isEmpty && pager!.error == null)
-          EmptyNote(
-            widget.saved
-                ? 'Keep a little inspiration.'
-                : 'The next cover could be yours.',
-            widget.saved
-                ? 'Save a dance post to find it here.'
-                : 'Share a photo or a dance video. New posts appear after review.',
-            action: widget.saved
-                ? null
-                : VButton(
-                    'Share your dance',
-                    glyph: Glyph.add,
-                    onPressed: () => openPage(
-                      context,
-                      PublishPage(challenge: widget.challenge),
-                    ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Text(
+                    widget.saved
+                        ? 'No saved covers yet.'
+                        : 'No covers here yet.',
+                    style: const TextStyle(color: VimiColors.muted),
                   ),
+                ),
+              ),
+              if (!widget.saved &&
+                  widget.author == null &&
+                  widget.challenge == null)
+                VIconButton(
+                  Glyph.add,
+                  label: 'Share your dance',
+                  onPressed: () => openPage(
+                    context,
+                    PublishPage(challenge: widget.challenge),
+                  ),
+                ),
+            ],
           ),
         for (final post in pager!.items)
           Padding(
@@ -405,21 +345,41 @@ class _SignedAvatarState extends State<SignedAvatar> {
 
   void refresh() {
     final app = VimiScope.of(context);
-    if (owner != app.account || path != widget.dancer.avatar) {
+    final avatar = widget.dancer.avatar?.trim();
+    final nextPath = avatar == null || avatar.isEmpty ? null : avatar;
+    if (owner != app.account || path != nextPath) {
       owner = app.account;
-      path = widget.dancer.avatar;
-      url = path == null ? null : app.repo!.mediaUrl(path!);
+      path = nextPath;
+      url = nextPath == null ? null : app.repo?.mediaUrl(nextPath);
     }
   }
 
   @override
-  Widget build(BuildContext context) => path == null
-      ? Avatar(size: widget.size)
-      : FutureBuilder<String>(
-          future: url,
-          builder: (_, snapshot) =>
-              Avatar(url: snapshot.data, size: widget.size),
-        );
+  Widget build(BuildContext context) {
+    final dancer = widget.dancer;
+    if (path == null) {
+      return FutureBuilder<MediaLibrary>(
+        future: VimiScope.of(context).avatarLibrary,
+        builder: (_, snapshot) => Avatar(
+          name: dancer.name,
+          url: snapshot.data?.defaultAvatarFor(dancer.id)?.thumbnail,
+          label: 'Default profile image',
+          alignment: const Alignment(0, -.45),
+          size: widget.size,
+        ),
+      );
+    }
+    return FutureBuilder<String>(
+      key: ValueKey((owner, path)),
+      future: url,
+      builder: (_, snapshot) => Avatar(
+        name: dancer.name,
+        url: snapshot.data,
+        label: 'Profile photo',
+        size: widget.size,
+      ),
+    );
+  }
 }
 
 class PostTile extends StatefulWidget {
@@ -470,7 +430,7 @@ class _PostTileState extends State<PostTile> {
                 onPressed: () => openPage(context, DancerPage(id: p.author.id)),
                 child: Row(
                   children: [
-                    SignedAvatar(p.author, size: 42),
+                    SignedAvatar(p.author, size: 36),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -482,7 +442,10 @@ class _PostTileState extends State<PostTile> {
                           ),
                           Text(
                             '${p.style} · ${displayDate(p.createdAt)}',
-                            style: const TextStyle(color: VimiColors.muted),
+                            style: const TextStyle(
+                              color: VimiColors.muted,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
@@ -566,15 +529,17 @@ class _PostTileState extends State<PostTile> {
               ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Text(p.caption, style: Theme.of(context).textTheme.bodyLarge),
-        ),
-        if (!widget.detail)
-          VButton(
-            'View dance and comments',
-            quiet: true,
-            onPressed: () => openPage(context, PostDetailPage(post: p)),
+        if (p.caption.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              p.caption,
+              maxLines: widget.detail ? null : 3,
+              overflow: widget.detail
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
           ),
       ],
     );
@@ -818,8 +783,13 @@ Future<void> blockDancer(BuildContext context, Dancer dancer) async {
 }
 
 class PostDetailPage extends StatefulWidget {
-  const PostDetailPage({super.key, required this.post});
+  const PostDetailPage({
+    super.key,
+    required this.post,
+    this.commentsOnly = false,
+  });
   final DancePost post;
+  final bool commentsOnly;
   @override
   State<PostDetailPage> createState() => _PostDetailPageState();
 }
@@ -899,7 +869,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
     return VPage(
-      title: 'A closer look',
+      title: widget.commentsOnly ? 'Comments' : 'A closer look',
       child: FutureBuilder<DancePost?>(
         future: post,
         builder: (context, currentPost) {
@@ -939,13 +909,18 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       readableError(currentPost.error!),
                       onRetry: app.changed,
                     ),
-                  PostTile(post: shown, detail: true),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Talk about the movement',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 16),
+                  if (!widget.commentsOnly) ...[
+                    PostTile(post: shown, detail: true),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Talk about the movement',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 16),
+                  ] else if (shown.caption.isNotEmpty) ...[
+                    Text(shown.caption),
+                    const SizedBox(height: 12),
+                  ],
                   AnimatedBuilder(
                     animation: comments!,
                     builder: (context, _) {
@@ -1090,44 +1065,25 @@ class ChallengesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
     return VPage(
-      title: 'Pick your next eight',
-
-      child: ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          const Text(
-            'Original practice prompts. Bring your own movement and music you have permission to use.',
-          ),
-          const SizedBox(height: 24),
-          for (final challenge in app.challenges)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: SurfacePanel(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      challenge.title,
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Text('${challenge.style} · ${challenge.counts} counts'),
-                    const SizedBox(height: 12),
-                    Text(challenge.description),
-                    const SizedBox(height: 16),
-                    VButton(
-                      'Open challenge',
-
-                      onPressed: () => openPage(
-                        context,
-                        ChallengePage(challenge: challenge),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+      title: 'Challenges',
+      child: ListView.separated(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        itemCount: app.challenges.length,
+        separatorBuilder: (_, _) =>
+            const Divider(height: 1, color: VimiColors.tonal),
+        itemBuilder: (context, index) {
+          final challenge = app.challenges[index];
+          return Tooltip(
+            message: 'Open challenge',
+            child: VActionRow(
+              challenge.title,
+              detail: '${challenge.style} · ${challenge.counts} counts',
+              glyph: Glyph.studio,
+              onPressed: () =>
+                  openPage(context, ChallengePage(challenge: challenge)),
             ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -1141,46 +1097,154 @@ class ChallengePage extends StatelessWidget {
     final app = VimiScope.of(context);
     return VPage(
       title: challenge.title,
-
+      actions: [
+        VIconButton(
+          Glyph.video,
+          label: 'Share your take',
+          primary: true,
+          onPressed: () async {
+            if (await requireSignIn(context) && context.mounted) {
+              await openPage(context, PublishPage(challenge: challenge.id));
+            }
+          },
+        ),
+      ],
       child: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.fromLTRB(16, 6, 16, 24),
         children: [
-          Text(
-            challenge.description,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 24),
-          for (var i = 0; i < challenge.prompts.length; i++)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Text(
-                '${i + 1}. ${challenge.prompts[i]}',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+          _ChallengeReference(style: challenge.style),
+          const SizedBox(height: 14),
+          Text(challenge.description),
+          const SizedBox(height: 12),
+          SurfacePanel(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: Column(
+              children: [
+                for (var i = 0; i < challenge.prompts.length; i++) ...[
+                  if (i > 0) const Divider(height: 1, color: VimiColors.tonal),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 9),
+                          child: Text(
+                            '${i + 1}',
+                            style: const TextStyle(
+                              color: VimiColors.cyan,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Text(challenge.prompts[i])),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
             ),
-          VButton(
-            'Share your take',
-            glyph: Glyph.video,
-
-            onPressed: () async {
-              if (await requireSignIn(context) && context.mounted)
-                await openPage(context, PublishPage(challenge: challenge.id));
-            },
           ),
-          const SizedBox(height: 32),
-          Text(
-            'Community takes',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+          const SizedBox(height: 20),
+          const Text('Community takes', style: _sectionStyle),
           if (app.signedIn)
             PostCollection(
               key: ValueKey('${challenge.id}-${app.account}'),
               challenge: challenge.id,
-            )
-          else
-            const Text('Sign in to see the community’s takes.'),
+            ),
         ],
       ),
     );
   }
+}
+
+class _ChallengeReference extends StatefulWidget {
+  const _ChallengeReference({required this.style});
+  final String style;
+
+  @override
+  State<_ChallengeReference> createState() => _ChallengeReferenceState();
+}
+
+class _ChallengeReferenceState extends State<_ChallengeReference> {
+  late Future<MediaLibrary> catalog = MediaLibrary.load();
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<MediaLibrary>(
+    future: catalog,
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return ErrorNote(
+          'Couldn’t open the reference clip.',
+          onRetry: () => setState(() => catalog = MediaLibrary.load()),
+        );
+      }
+      final id = switch (widget.style) {
+        'Girl group' => 'room-formation',
+        'Boy group' => 'street-style-group',
+        'Freestyle' => 'night-plaza-solo',
+        _ => 'holiday-duet',
+      };
+      final clip = snapshot.data?.clips
+          .where((clip) => clip.id == id)
+          .firstOrNull;
+      if (clip == null) return const SizedBox.shrink();
+      return SurfacePanel(
+        padding: const EdgeInsets.all(8),
+        child: Tooltip(
+          message: 'Play practice reference',
+          child: TextButton(
+            style: TextButton.styleFrom(padding: EdgeInsets.zero),
+            onPressed: () => openPage(
+              context,
+              ClipLibraryDetail(
+                clip: clip,
+                practiceBuilder: (value) => PracticeEditor(initialClip: value),
+              ),
+            ),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LibraryImage(
+                    clip.thumbnail,
+                    width: 72,
+                    height: 74,
+                    cacheWidth: 200,
+                    compact: true,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Practice reference',
+                        style: TextStyle(color: VimiColors.ink, fontSize: 15),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        clip.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: VimiColors.muted,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(8),
+                  child: VIcon(Glyph.play, size: 18, color: VimiColors.cyan),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }

@@ -139,6 +139,8 @@ class _WalletPageState extends State<WalletPage> {
               child: Semantics(liveRegion: true, child: Text(billing.status!)),
             ),
           const SizedBox(height: 16),
+          Text('Coin packs', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
           for (final product in billing.catalog)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -155,26 +157,28 @@ class _WalletPageState extends State<WalletPage> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
-                    VButton(
-                      billing.products[product['id']]?.price ?? 'Check price',
-                      quiet: true,
-                      busy: billing.busy,
-                      onPressed: !PlayCoins.enabled || billing.busy
-                          ? null
-                          : () => choose(
-                              product['id'] as String,
-                              (product['coins'] as num).toInt(),
-                            ),
-                    ),
+                    if (PlayCoins.enabled)
+                      VButton(
+                        billing.products[product['id']]?.price ?? 'Check price',
+                        quiet: true,
+                        busy: billing.busy,
+                        onPressed: billing.busy
+                            ? null
+                            : () => choose(
+                                product['id'] as String,
+                                (product['coins'] as num).toInt(),
+                              ),
+                      ),
                   ],
                 ),
               ),
             ),
-          VButton(
-            'Check pending purchases',
-            quiet: true,
-            onPressed: PlayCoins.enabled ? billing.checkPurchases : null,
-          ),
+          if (PlayCoins.enabled)
+            VButton(
+              'Check pending purchases',
+              quiet: true,
+              onPressed: billing.checkPurchases,
+            ),
           const Text(
             'Your coin balance is tied to your account. Consumed coin packs are not restored as another purchase.',
             style: TextStyle(color: VimiColors.muted),

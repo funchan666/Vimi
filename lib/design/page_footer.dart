@@ -27,7 +27,14 @@ class PageFooter<T> extends StatelessWidget {
           pager.error == null &&
           pager.loaded &&
           pager.hasMore)
-        VButton(moreLabel, quiet: true, onPressed: pager.loadMore),
+        Center(
+          child: VIconButton(
+            Glyph.next,
+            label: moreLabel,
+            filled: true,
+            onPressed: pager.loadMore,
+          ),
+        ),
     ],
   );
 }

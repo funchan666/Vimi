@@ -22,118 +22,221 @@ class _CatalogState extends State<_Catalog> {
     builder: (context, snapshot) {
       if (snapshot.hasError) {
         return Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           child: ErrorNote(
-            'The library could not be opened. Please try again.',
+            'The library could not be opened.',
             onRetry: () => setState(() => future = MediaLibrary.load()),
           ),
         );
       }
       if (!snapshot.hasData) {
-        return const Center(child: Text('Opening your library…'));
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('Opening your library…', style: _libraryMetadata),
+          ),
+        );
       }
       return widget.builder(context, snapshot.data!);
     },
   );
 }
 
-class MediaLibraryPage extends StatefulWidget {
-  const MediaLibraryPage({super.key, required this.practiceBuilder});
+const _libraryMetadata = TextStyle(fontSize: 12, color: VimiColors.muted);
+
+class RehearsalShelf extends StatelessWidget {
+  const RehearsalShelf({super.key, required this.practiceBuilder});
   final Widget Function(LibraryClip) practiceBuilder;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Row(
+        children: [
+          const Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: Text(
+                'Rehearsal cuts',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ),
+          VIconButton(
+            Glyph.save,
+            label: 'Saved clips',
+            color: VimiColors.violet,
+            onPressed: () => openPage(
+              context,
+              MediaLibraryPage(
+                practiceBuilder: practiceBuilder,
+                showSaved: true,
+              ),
+            ),
+          ),
+          VIconButton(
+            Glyph.library,
+            label: 'Dance video library',
+            color: VimiColors.cyan,
+            onPressed: () => openPage(
+              context,
+              MediaLibraryPage(practiceBuilder: practiceBuilder),
+            ),
+          ),
+        ],
+      ),
+      SizedBox(
+        height: 218,
+        child: _Catalog(
+          builder: (context, library) => ListView.separated(
+            primary: false,
+            scrollDirection: Axis.horizontal,
+            itemCount: library.clips.length,
+            separatorBuilder: (context, index) => const SizedBox(width: 10),
+            itemBuilder: (context, index) {
+              final clip = library.clips[index];
+              return SizedBox(
+                width: 146,
+                child: LibraryClipTile(
+                  clip: clip,
+                  onTap: () => openPage(
+                    context,
+                    ClipLibraryDetail(
+                      clip: clip,
+                      practiceBuilder: practiceBuilder,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+class MediaLibraryPage extends StatefulWidget {
+  const MediaLibraryPage({
+    super.key,
+    required this.practiceBuilder,
+    this.showSaved = false,
+  });
+  final Widget Function(LibraryClip) practiceBuilder;
+  final bool showSaved;
   @override
   State<MediaLibraryPage> createState() => _MediaLibraryPageState();
 }
 
 class _MediaLibraryPageState extends State<MediaLibraryPage> {
-  String filter = 'All';
+  late String filter = widget.showSaved ? 'Saved' : 'All';
   @override
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
-    final saved =
-        (app.studio.preferences.getStringList(
-                  'library-saved.v1.${app.account}',
-                ) ??
-                [])
-            .toSet();
+    final saved = app.studio.savedLibraryClips(app.account);
     return VPage(
       title: 'Dance video library',
       child: _Catalog(
         builder: (context, library) {
           final clips = library.clips
               .where(
-                (clip) =>
-                    filter == 'All' ||
-                    (filter == 'Saved'
-                        ? saved.contains(clip.id)
-                        : clip.category == filter),
+                (clip) => switch (filter) {
+                  'All' => true,
+                  'Saved' => saved.contains(clip.id),
+                  _ => clip.category == filter,
+                },
               )
               .toList();
           return CustomScrollView(
             slivers: [
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                 sliver: SliverToBoxAdapter(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Pick a take to practice.',
-                        style: Theme.of(context).textTheme.headlineLarge,
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (final category in const [
+                              'All',
+                              'Solo',
+                              'Duets',
+                              'Groups',
+                              'Saved',
+                            ])
+                              Padding(
+                                padding: const EdgeInsets.only(right: 4),
+                                child: _LibraryFilter(
+                                  label: category,
+                                  selected: category == filter,
+                                  onTap: () =>
+                                      setState(() => filter = category),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Slow down a take, try it mirrored and keep a note for your next rehearsal. Clips stream online; your practice notes stay on this device.',
-                      ),
-                      const SizedBox(height: 20),
-                      ChoiceStrip(
-                        options: const [
-                          'All',
-                          'Solo',
-                          'Duets',
-                          'Groups',
-                          'Saved',
-                        ],
-                        value: filter,
-                        onChanged: (value) => setState(() => filter = value),
-                      ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 6),
                       Text(
                         '${clips.length} ${clips.length == 1 ? 'clip' : 'clips'}',
-                        style: const TextStyle(color: VimiColors.muted),
+                        style: _libraryMetadata,
                       ),
                     ],
                   ),
                 ),
               ),
               if (clips.isEmpty)
-                const SliverPadding(
-                  padding: EdgeInsets.all(24),
+                SliverPadding(
+                  padding: const EdgeInsets.all(16),
                   sliver: SliverToBoxAdapter(
-                    child: EmptyNote(
-                      'Keep a take for later.',
-                      'Open a clip and tap Save clip. Saved bookmarks stay with this account on this device.',
+                    child: SurfacePanel(
+                      padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+                      child: Row(
+                        children: [
+                          const VIcon(
+                            Glyph.save,
+                            size: 20,
+                            color: VimiColors.violet,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              filter == 'Saved'
+                                  ? 'No saved clips yet'
+                                  : 'No clips in this category',
+                            ),
+                          ),
+                          VIconButton(
+                            Glyph.library,
+                            label: 'Show all clips',
+                            color: VimiColors.cyan,
+                            onPressed: () => setState(() => filter = 'All'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 )
               else
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                   sliver: SliverGrid.builder(
                     itemCount: clips.length,
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 250,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 20,
-                          childAspectRatio: .56,
+                          maxCrossAxisExtent: 236,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: .73,
                         ),
                     itemBuilder: (context, index) {
                       final clip = clips[index];
-                      return _LibraryTile(
-                        image: clip.thumbnail,
-                        title: clip.title,
-                        detail:
-                            '${clip.category} · ${clip.durationLabel}${saved.contains(clip.id) ? ' · Saved' : ''}',
+                      return LibraryClipTile(
+                        clip: clip,
+                        saved: saved.contains(clip.id),
                         onTap: () async {
                           await openPage(
                             context,
@@ -156,6 +259,161 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
   }
 }
 
+class _LibraryFilter extends StatelessWidget {
+  const _LibraryFilter({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    selected: selected,
+    child: TextButton(
+      onPressed: onTap,
+      style: TextButton.styleFrom(
+        foregroundColor: selected ? VimiColors.cyan : VimiColors.muted,
+        minimumSize: const Size(48, 48),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 5),
+          SizedBox(
+            width: 14,
+            height: 2,
+            child: ColoredBox(
+              color: selected ? VimiColors.cyan : Colors.transparent,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class LibraryClipTile extends StatelessWidget {
+  const LibraryClipTile({
+    super.key,
+    required this.clip,
+    required this.onTap,
+    this.saved = false,
+  });
+  final LibraryClip clip;
+  final VoidCallback onTap;
+  final bool saved;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: 'Play ${clip.title}',
+    child: Material(
+      color: VimiColors.surface,
+      clipBehavior: Clip.antiAlias,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  LibraryImage(
+                    clip.thumbnail,
+                    compact: true,
+                    cacheWidth: 320,
+                    alignment: const Alignment(0, -.25),
+                  ),
+                  Positioned(
+                    right: 7,
+                    bottom: 7,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: VimiColors.background.withValues(alpha: .92),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 5,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const VIcon(
+                              Glyph.play,
+                              color: VimiColors.cyan,
+                              size: 12,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              clip.durationLabel,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(9, 7, 9, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    clip.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          clip.category,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: _libraryMetadata,
+                        ),
+                      ),
+                      if (saved)
+                        const VIcon(
+                          Glyph.save,
+                          color: VimiColors.violet,
+                          size: 13,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 class ClipLibraryDetail extends StatefulWidget {
   const ClipLibraryDetail({
     super.key,
@@ -172,15 +430,10 @@ class _ClipLibraryDetailState extends State<ClipLibraryDetail> {
   bool busy = false;
   Future<void> toggleSaved() async {
     if (busy) return;
-    final app = VimiScope.of(context), owner = VimiScope.of(context).account;
-    final prefs = app.studio.preferences, key = 'library-saved.v1.$owner';
-    final next = (prefs.getStringList(key) ?? []).toSet();
-    if (!next.add(widget.clip.id)) next.remove(widget.clip.id);
+    final app = VimiScope.of(context), owner = app.account;
     setState(() => busy = true);
     try {
-      if (!await prefs.setStringList(key, next.toList())) {
-        throw StateError('Your saved clips could not be updated. Try again.');
-      }
+      await app.studio.toggleLibraryClip(owner, widget.clip.id);
     } catch (e) {
       if (mounted && app.account == owner) feedback(context, readableError(e));
     } finally {
@@ -191,59 +444,57 @@ class _ClipLibraryDetailState extends State<ClipLibraryDetail> {
   @override
   Widget build(BuildContext context) {
     final app = VimiScope.of(context), clip = widget.clip;
-    final saved =
-        (app.studio.preferences.getStringList(
-                  'library-saved.v1.${app.account}',
-                ) ??
-                [])
-            .contains(clip.id);
+    final saved = app.studio.savedLibraryClips(app.account).contains(clip.id);
     return VPage(
       title: clip.title,
       child: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 22),
         children: [
           RehearsalPlayer(source: clip.source, practice: true),
-          const SizedBox(height: 20),
-          Text(
-            '${clip.category} · ${clip.durationLabel} · ${clip.hasAudio ? 'Includes audio' : 'Silent clip'}',
-            style: const TextStyle(color: VimiColors.muted),
-          ),
-          const SizedBox(height: 20),
-          VButton(
-            'Add to a practice note',
-            glyph: Glyph.add,
-            onPressed: () => openPage(context, widget.practiceBuilder(clip)),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              VIconButton(
-                Glyph.save,
-                label: saved ? 'Saved · tap to remove' : 'Save clip',
-                selected: saved,
-                filled: true,
-                busy: busy,
-                onPressed: toggleSaved,
-              ),
-              VIconButton(
-                Glyph.report,
-                label: 'Report a concern',
-                onPressed: () => openPage(
-                  context,
-                  HelpCenterPage(libraryItem: '${clip.id} · ${clip.title}'),
+          const SizedBox(height: 8),
+          SurfacePanel(
+            padding: const EdgeInsets.fromLTRB(12, 2, 2, 2),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${clip.category} · ${clip.durationLabel}\n${clip.hasAudio ? 'Audio available' : 'Silent clip'}',
+                    style: _libraryMetadata,
+                  ),
                 ),
-              ),
-            ],
+                VIconButton(
+                  Glyph.add,
+                  label: 'Add to a practice note',
+                  color: VimiColors.cyan,
+                  onPressed: () =>
+                      openPage(context, widget.practiceBuilder(clip)),
+                ),
+                VIconButton(
+                  Glyph.save,
+                  label: saved ? 'Saved · tap to remove' : 'Save clip',
+                  selected: saved,
+                  color: VimiColors.violet,
+                  busy: busy,
+                  onPressed: toggleSaved,
+                ),
+                VIconButton(
+                  Glyph.report,
+                  label: 'Report a concern',
+                  color: VimiColors.muted,
+                  onPressed: () => openPage(
+                    context,
+                    HelpCenterPage(libraryItem: '${clip.id} · ${clip.title}'),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 20),
-          const Text(
-            'Start with one eight-count phrase. Mark the weight changes, try the transition slowly, then write down what you want to improve.',
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'These are publisher-supplied practice videos. Appearance in the library does not indicate membership.',
-            style: TextStyle(color: VimiColors.muted),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(4, 10, 4, 0),
+            child: Text(
+              'Practice reference · Supplied by the publisher',
+              style: _libraryMetadata,
+            ),
           ),
         ],
       ),
@@ -252,60 +503,63 @@ class _ClipLibraryDetailState extends State<ClipLibraryDetail> {
 }
 
 class PortraitPickerPage extends StatelessWidget {
-  const PortraitPickerPage({super.key});
+  const PortraitPickerPage({super.key, this.browseOnly = false});
+  final bool browseOnly;
+
   @override
   Widget build(BuildContext context) => VPage(
-    title: 'Profile image library',
+    title: browseOnly ? 'Photo library' : 'Profile image library',
     child: _Catalog(
       builder: (context, library) => CustomScrollView(
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
             sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Find your profile look.',
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Explore ${library.portraits.length} images. Open one to see the full photo and preview its avatar crop.',
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Library imagery does not verify anyone’s identity.',
-                    style: TextStyle(color: VimiColors.muted),
-                  ),
-                ],
+              child: Text(
+                'Explore ${library.portraits.length} images.',
+                style: _libraryMetadata,
               ),
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             sliver: SliverGrid.builder(
               itemCount: library.portraits.length,
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 220,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 20,
-                childAspectRatio: .65,
+                maxCrossAxisExtent: 138,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: .8,
               ),
               itemBuilder: (context, index) {
                 final portrait = library.portraits[index];
-                return _LibraryTile(
-                  image: portrait.thumbnail,
-                  title: portrait.title,
-                  detail: 'Preview image',
-                  onTap: () async {
-                    final choice = await openPage<LibraryPortrait>(
-                      context,
-                      _PortraitPreview(portrait: portrait),
-                    );
-                    if (choice != null && context.mounted)
-                      Navigator.pop(context, choice);
-                  },
+                return Tooltip(
+                  message: portrait.title,
+                  child: Material(
+                    color: VimiColors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () async {
+                        final choice = await openPage<LibraryPortrait>(
+                          context,
+                          PortraitPreviewPage(
+                            portrait: portrait,
+                            browseOnly: browseOnly,
+                          ),
+                        );
+                        if (!browseOnly && choice != null && context.mounted) {
+                          Navigator.pop(context, choice);
+                        }
+                      },
+                      child: LibraryImage(
+                        portrait.thumbnail,
+                        compact: true,
+                        cacheWidth: 280,
+                        label: portrait.title,
+                      ),
+                    ),
+                  ),
                 );
               },
             ),
@@ -316,17 +570,34 @@ class PortraitPickerPage extends StatelessWidget {
   );
 }
 
-class _PortraitPreview extends StatelessWidget {
-  const _PortraitPreview({required this.portrait});
+class PortraitPreviewPage extends StatelessWidget {
+  const PortraitPreviewPage({
+    super.key,
+    required this.portrait,
+    this.browseOnly = false,
+  });
   final LibraryPortrait portrait;
+  final bool browseOnly;
+
   @override
   Widget build(BuildContext context) => VPage(
     title: portrait.title,
+    actions: [
+      VIconButton(
+        Glyph.report,
+        label: 'Report a concern',
+        color: VimiColors.muted,
+        onPressed: () => openPage(
+          context,
+          HelpCenterPage(libraryItem: '${portrait.id} · ${portrait.title}'),
+        ),
+      ),
+    ],
     child: ListView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
       children: [
         SizedBox(
-          height: MediaQuery.sizeOf(context).height * .52,
+          height: MediaQuery.sizeOf(context).height * (browseOnly ? .69 : .52),
           child: InteractiveViewer(
             minScale: 1,
             maxScale: 4,
@@ -337,104 +608,60 @@ class _PortraitPreview extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        const Text('Pinch to zoom. Your avatar uses the centered crop below.'),
-        const SizedBox(height: 16),
-        Center(
-          child: ClipOval(
-            child: LibraryImage(
-              portrait.url,
-              compact: true,
-              width: 96,
-              height: 96,
-              fit: BoxFit.cover,
+        if (browseOnly)
+          const Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: Text(
+              'Pinch to zoom',
+              textAlign: TextAlign.center,
+              style: _libraryMetadata,
             ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        VButton(
-          'Use this image',
-          glyph: Glyph.check,
-          onPressed: () => Navigator.pop(context, portrait),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: VIconButton(
-            Glyph.report,
-            label: 'Report a concern',
-            onPressed: () => openPage(
-              context,
-              HelpCenterPage(libraryItem: '${portrait.id} · ${portrait.title}'),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        const Text(
-          'The image uploads when you save your profile. You can change it again before saving.',
-        ),
-      ],
-    ),
-  );
-}
-
-class _LibraryTile extends StatelessWidget {
-  const _LibraryTile({
-    required this.image,
-    required this.title,
-    required this.detail,
-    required this.onTap,
-  });
-  final String image, title, detail;
-  final VoidCallback onTap;
-  @override
-  Widget build(BuildContext context) => Semantics(
-    button: true,
-    label: 'Open $title',
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: Material(
-        color: VimiColors.surface,
-        child: InkWell(
-          onTap: onTap,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: LibraryImage(
-                  image,
-                  compact: true,
-                  fit: BoxFit.cover,
-                  cacheWidth: 320,
+          )
+        else ...[
+          const SizedBox(height: 12),
+          SurfacePanel(
+            padding: const EdgeInsets.fromLTRB(10, 8, 4, 8),
+            child: Row(
+              children: [
+                ClipOval(
+                  child: LibraryImage(
+                    portrait.url,
+                    compact: true,
+                    width: 52,
+                    height: 52,
+                    cacheWidth: 156,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      detail,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: VimiColors.muted,
-                        fontSize: 13,
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Avatar crop',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Uploads when you save your profile.',
+                        style: _libraryMetadata,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                VIconButton(
+                  Glyph.check,
+                  label: 'Use this image',
+                  color: VimiColors.cyan,
+                  onPressed: () => Navigator.pop(context, portrait),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        ],
+      ],
     ),
   );
 }

@@ -1,0 +1,45 @@
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false">
+    <!-- Reuse the same logo and move only the short loading marker. -->
+    <item android:duration="80">
+        <layer-list android:paddingMode="stack">
+            <item android:drawable="@drawable/vimi_launch_content" />
+            <item android:drawable="@drawable/vimi_launch_progress" android:gravity="center" android:height="3dp" android:right="56dp" android:top="171dp" android:width="8dp" />
+        </layer-list>
+    </item>
+    <item android:duration="80">
+        <layer-list android:paddingMode="stack">
+            <item android:drawable="@drawable/vimi_launch_content" />
+            <item android:drawable="@drawable/vimi_launch_progress" android:gravity="center" android:height="3dp" android:right="40dp" android:top="171dp" android:width="18dp" />
+        </layer-list>
+    </item>
+    <item android:duration="80">
+        <layer-list android:paddingMode="stack">
+            <item android:drawable="@drawable/vimi_launch_content" />
+            <item android:drawable="@drawable/vimi_launch_progress" android:gravity="center" android:height="3dp" android:right="20dp" android:top="171dp" android:width="22dp" />
+        </layer-list>
+    </item>
+    <item android:duration="80">
+        <layer-list android:paddingMode="stack">
+            <item android:drawable="@drawable/vimi_launch_content" />
+            <item android:drawable="@drawable/vimi_launch_progress" android:gravity="center" android:height="3dp" android:top="171dp" android:width="22dp" />
+        </layer-list>
+    </item>
+    <item android:duration="80">
+        <layer-list android:paddingMode="stack">
+            <item android:drawable="@drawable/vimi_launch_content" />
+            <item android:drawable="@drawable/vimi_launch_progress" android:gravity="center" android:height="3dp" android:left="20dp" android:top="171dp" android:width="22dp" />
+        </layer-list>
+    </item>
+    <item android:duration="80">
+        <layer-list android:paddingMode="stack">
+            <item android:drawable="@drawable/vimi_launch_content" />
+            <item android:drawable="@drawable/vimi_launch_progress" android:gravity="center" android:height="3dp" android:left="40dp" android:top="171dp" android:width="18dp" />
+        </layer-list>
+    </item>
+    <item android:duration="80">
+        <layer-list android:paddingMode="stack">
+            <item android:drawable="@drawable/vimi_launch_content" />
+            <item android:drawable="@drawable/vimi_launch_progress" android:gravity="center" android:height="3dp" android:left="56dp" android:top="171dp" android:width="8dp" />
+        </layer-list>
+    </item>
+</animation-list>

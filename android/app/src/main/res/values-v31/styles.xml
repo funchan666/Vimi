@@ -1,8 +1,12 @@
 <resources>
-    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+    <style name="VimiSystemLaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@color/vimi_background</item>
         <item name="android:windowSplashScreenBackground">@color/vimi_background</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
-        <item name="android:windowSplashScreenIconBackgroundColor">@color/vimi_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/vimi_launch_motion</item>
+        <item name="android:windowSplashScreenAnimationDuration">560</item>
+        <item name="android:statusBarColor">@color/vimi_background</item>
+        <item name="android:navigationBarColor">@color/vimi_background</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
+    <style name="LaunchTheme" parent="@style/VimiSystemLaunchTheme" />
 </resources>

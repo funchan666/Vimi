@@ -1,0 +1,12 @@
+{
+  "file": "dist/Vimi-1.0.0-arm64-preview.apk",
+  "mode": "profile",
+  "signing": "local debug key; preview only",
+  "bytes": 36851578,
+  "sha256": "41a7a36a336109c9b5875d00d801e7707fe730c0a574ff6dfba8426f8e15ac58",
+  "qa_credentials_present": false,
+  "private_configs_present": false,
+  "qa_fixture_labels_present": false,
+  "actual_distinct_passwords_checked": 2,
+  "arm64": true
+}

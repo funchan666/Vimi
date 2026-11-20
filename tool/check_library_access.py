@@ -5,7 +5,7 @@ from migrate_library_to_cloud import BASE, CONFIG, OUTPUT, request
 
 
 def main():
-    data = (Path(__file__).resolve().parents[1] / 'assets/ui/neon-mark.webp').read_bytes()
+    data = (Path(__file__).resolve().parents[1] / 'assets/ui/neon-spectrum.webp').read_bytes()
     endpoint = BASE + '/storage/v1/object/dance-library/v1/covers/qa-write-denied.webp'
     headers = {'apikey': CONFIG['SUPABASE_PUBLISHABLE_KEY'], 'Content-Type': 'image/webp'}
     result = {}

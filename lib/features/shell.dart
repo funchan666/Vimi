@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_controller.dart';
 import '../design/vimi_ui.dart';
-import 'auth/auth_pages.dart';
-import 'community/community_pages.dart';
-import 'community/publish_page.dart';
+import 'community/cover_feed_page.dart';
 import 'messages/inbox_pages.dart';
 import 'profile/profile_pages.dart';
 import 'studio/rehearsal_player.dart';
@@ -18,10 +16,12 @@ class DanceShell extends StatefulWidget {
 
 class _DanceShellState extends State<DanceShell> {
   late int tab;
+  late final Set<int> opened;
   @override
   void initState() {
     super.initState();
     tab = widget.initialTab;
+    opened = {tab};
   }
 
   static const titles = ['Floor', 'Studio', 'Inbox', 'Me'];
@@ -29,12 +29,15 @@ class _DanceShellState extends State<DanceShell> {
   void select(int next) {
     if (next == tab) return;
     PlaybackCoordinator.pauseAll();
-    setState(() => tab = next);
+    setState(() {
+      tab = next;
+      opened.add(next);
+    });
   }
 
   Widget destination(int index) => SizedBox(
-    width: 60,
-    height: 52,
+    width: 52,
+    height: 48,
     child: VIconButton(
       icons[index],
       label: titles[index],
@@ -45,15 +48,15 @@ class _DanceShellState extends State<DanceShell> {
   );
 
   Widget navigation(bool expanded) => Padding(
-    padding: EdgeInsets.fromLTRB(expanded ? 12 : 20, 8, expanded ? 12 : 20, 10),
+    padding: EdgeInsets.fromLTRB(expanded ? 10 : 16, 4, expanded ? 10 : 16, 8),
     child: SurfacePanel(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       child: expanded
           ? SingleChildScrollView(
               child: Column(
                 children: [
                   for (var i = 0; i < titles.length; i++) ...[
-                    if (i > 0) const SizedBox(height: 16),
+                    if (i > 0) const SizedBox(height: 8),
                     destination(i),
                   ],
                 ],
@@ -73,52 +76,26 @@ class _DanceShellState extends State<DanceShell> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final expanded = constraints.maxWidth >= 760;
-        final body = Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 12, 0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      titles[tab],
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: constraints.maxWidth * .5,
-                    ),
-                    child: VIconButton(
-                      Glyph.add,
-                      label: 'Post',
-                      primary: true,
-                      onPressed: () async {
-                        if (await requireSignIn(context) && context.mounted)
-                          await openPage(context, const PublishPage());
-                      },
-                    ),
-                  ),
-                ],
-              ),
+        final pages = [
+          CoverFeedPage(
+            key: ValueKey('floor-${app.account}'),
+            active: tab == 0,
+          ),
+          const StudioPage(),
+          InboxPage(key: ValueKey('inbox-${app.account}'), active: tab == 2),
+          const MePage(),
+        ];
+        final body = Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: IndexedStack(
+              index: tab,
+              children: [
+                for (var i = 0; i < pages.length; i++)
+                  opened.contains(i) ? pages[i] : const SizedBox.shrink(),
+              ],
             ),
-            Expanded(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
-                  child: IndexedStack(
-                    index: tab,
-                    children: [
-                      FloorPage(key: ValueKey('floor-${app.account}')),
-                      const StudioPage(),
-                      InboxPage(key: ValueKey('inbox-${app.account}')),
-                      const MePage(),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         );
         return Scaffold(
           body: NeonBackdrop(
@@ -126,7 +103,7 @@ class _DanceShellState extends State<DanceShell> {
               child: expanded
                   ? Row(
                       children: [
-                        SizedBox(width: 112, child: navigation(true)),
+                        SizedBox(width: 84, child: navigation(true)),
                         Expanded(child: body),
                       ],
                     )

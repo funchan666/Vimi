@@ -97,41 +97,84 @@ class _VimiBootstrapState extends State<VimiBootstrap> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: vimiTheme(),
-      home: Scaffold(
-        body: NeonBackdrop(
-          child: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+      home: _LaunchPage(onRetry: failure == null ? null : start),
+    );
+  }
+}
+
+class _LaunchPage extends StatelessWidget {
+  const _LaunchPage({this.onRetry});
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: const Color(0xFF100B24),
+    body: SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final logoSize = (constraints.biggest.shortestSide / 2).clamp(
+            0.0,
+            128.0,
+          );
+          final gap = logoSize * (20 / 128);
+          const trackHeight = 3.0;
+          return Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Balance the block below so the artwork itself stays centered.
+                  if (onRetry == null) SizedBox(height: gap + trackHeight),
+                  Image.asset(
+                    'assets/ui/vimi-logo.png',
+                    width: logoSize,
+                    height: logoSize,
+                    excludeFromSemantics: true,
+                  ),
+                  SizedBox(height: gap),
+                  if (onRetry == null)
+                    Semantics(
+                      label: 'Loading',
+                      liveRegion: true,
+                      excludeSemantics: true,
+                      child: SizedBox(
+                        width: logoSize / 2,
+                        child: LinearProgressIndicator(
+                          value: MediaQuery.disableAnimationsOf(context)
+                              ? .36
+                              : null,
+                          minHeight: trackHeight,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(2),
+                          ),
+                          backgroundColor: const Color(0xFF3A3058),
+                          color: VimiColors.cyan,
+                          trackGap: 0,
+                          stopIndicatorColor: Colors.transparent,
+                        ),
+                      ),
+                    )
+                  else ...[
                     Semantics(
                       liveRegion: true,
                       child: Text(
-                        failure == null
-                            ? 'Getting the floor ready…'
-                            : 'Couldn’t open the app.',
+                        'Couldn’t open the app.',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
-                    if (failure != null) ...[
-                      const SizedBox(height: 24),
-                      VButton('Try again', onPressed: start),
-                    ],
+                    const SizedBox(height: 16),
+                    VButton('Try again', onPressed: onRetry),
                   ],
-                ),
+                ],
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
 }
 
 class VimiApp extends StatefulWidget {

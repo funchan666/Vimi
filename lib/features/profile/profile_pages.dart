@@ -15,12 +15,15 @@ import '../../design/library_image.dart';
 import '../auth/auth_pages.dart';
 import '../community/community_pages.dart';
 import '../messages/inbox_pages.dart';
+import '../wallet/play_coins.dart';
 import '../wallet/wallet_page.dart';
 import 'license_page.dart';
 import 'help_pages.dart';
 import 'moderation_pages.dart';
 import '../auth/account_security_pages.dart';
 import '../studio/media_library_pages.dart';
+import '../studio/studio_pages.dart';
+import 'personal_activity.dart';
 
 class MePage extends StatelessWidget {
   const MePage({super.key});
@@ -28,127 +31,354 @@ class MePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
     final profile = app.profile;
-    if (!app.signedIn)
-      return ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          Text(
-            'Your dance profile',
-            style: Theme.of(context).textTheme.displaySmall,
-          ),
-          EmptyNote(
-            'Your dance story starts here.',
-            'Create an account to share your work, follow dancers and keep your coin wallet.',
-            action: VButton(
-              'Create account',
-
-              onPressed: () => openPage(context, const AuthPage(signUp: true)),
-            ),
-          ),
-        ],
+    if (!app.signedIn) {
+      return Center(
+        child: VButton(
+          'Sign in',
+          onPressed: () => openPage(context, const AuthPage(signUp: false)),
+        ),
       );
-    if (profile == null)
+    }
+    if (profile == null) {
       return Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(16),
         child: app.cloudError != null
             ? ErrorNote(
                 app.cloudError!,
                 onRetry: () => unawaited(app.refreshAccount()),
               )
-            : const Text('Opening your dance profile…'),
+            : const Text('Opening your profile…'),
       );
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        SurfacePanel(
-          illuminated: true,
-          child: Row(
-            children: [
-              SignedAvatar(profile, size: 80),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Text(
-                  profile.name,
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-              ),
-              VIconButton(
-                Glyph.settings,
-                label: 'Open settings',
-                onPressed: () => openPage(context, const SettingsPage()),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          profile.styles.join(' · '),
-          style: const TextStyle(color: VimiColors.muted),
-        ),
-        if (profile.bio.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Text(profile.bio, style: Theme.of(context).textTheme.bodyLarge),
-        ],
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
+    }
+    void editProfile() => openPage(context, EditProfilePage(profile: profile));
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
-            VProfileStat(
-              count: profile.followers,
-              label: 'followers',
-              onPressed: () => openPage(
-                context,
-                RelationsPage(id: profile.id, followers: true),
+            SurfacePanel(
+              padding: const EdgeInsets.fromLTRB(14, 14, 8, 3),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _ProfileIdentity(
+                    profile: profile,
+                    avatarSize: 70,
+                    onAvatarTap: editProfile,
+                    actions: [
+                      VIconButton(
+                        Glyph.edit,
+                        label: 'Edit dance profile',
+                        color: VimiColors.violet,
+                        onPressed: editProfile,
+                      ),
+                      VIconButton(
+                        Glyph.settings,
+                        label: 'Open settings',
+                        onPressed: () =>
+                            openPage(context, const SettingsPage()),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  const Divider(height: 1, color: VimiColors.tonal),
+                  _ProfileRelations(profile: profile),
+                ],
               ),
             ),
-            VProfileStat(
-              count: profile.following,
-              label: 'following',
-              onPressed: () => openPage(
-                context,
-                RelationsPage(id: profile.id, followers: false),
-              ),
+            const SizedBox(height: 12),
+            _CoinWalletTile(coins: app.coins),
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _PersonalShortcut(
+                    glyph: Glyph.save,
+                    label: 'Saved covers',
+                    color: VimiColors.violet,
+                    onPressed: () => openPage(context, const SavedPostsPage()),
+                  ),
+                ),
+                Expanded(
+                  child: _PersonalShortcut(
+                    glyph: Glyph.video,
+                    label: 'Saved clips',
+                    color: VimiColors.cyan,
+                    onPressed: () => openPage(
+                      context,
+                      MediaLibraryPage(
+                        showSaved: true,
+                        practiceBuilder: (clip) =>
+                            PracticeEditor(initialClip: clip),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: _PersonalShortcut(
+                    glyph: Glyph.studio,
+                    label: 'Practice history',
+                    color: VimiColors.accent,
+                    onPressed: () =>
+                        openPage(context, const PracticeHistoryPage()),
+                  ),
+                ),
+              ],
             ),
-            VIconButton(
-              Glyph.edit,
-              label: 'Edit dance profile',
-              filled: true,
-              onPressed: () =>
-                  openPage(context, EditProfilePage(profile: profile)),
-            ),
+            const Divider(height: 18, color: VimiColors.tonal),
+            PersonalActivity(key: ValueKey('mine-${app.account}')),
           ],
         ),
-        const SizedBox(height: 24),
-        SurfacePanel(
-          illuminated: true,
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            children: [
-              VActionRow(
-                'Wallet',
-                glyph: Glyph.coin,
-                detail: '${app.coins} coins available',
-                onPressed: () => openPage(context, const WalletPage()),
-              ),
-              VActionRow(
-                'Saved inspiration',
-                glyph: Glyph.save,
-                onPressed: () => openPage(context, const SavedPostsPage()),
-              ),
-            ],
+      ),
+    );
+  }
+}
+
+class _CoinWalletTile extends StatelessWidget {
+  const _CoinWalletTile({required this.coins});
+
+  final int coins;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: 'Open coin wallet',
+    excludeFromSemantics: true,
+    child: Material(
+      color: VimiColors.surface,
+      clipBehavior: Clip.antiAlias,
+      borderRadius: BorderRadius.circular(16),
+      child: Ink(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/ui/neon-spectrum.webp'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(Color(0xD91B122B), BlendMode.srcATop),
           ),
         ),
-        const SizedBox(height: 24),
-        Text(
-          'Your dance archive',
-          style: Theme.of(context).textTheme.headlineSmall,
+        child: InkWell(
+          onTap: () => openPage(context, const WalletPage()),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+            child: Row(
+              children: [
+                const VIcon(Glyph.coin, size: 30, color: VimiColors.cyan),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Coin wallet',
+                        style: TextStyle(fontSize: 13, color: VimiColors.muted),
+                      ),
+                      Text(
+                        '$coins coins',
+                        style: const TextStyle(
+                          fontSize: 21,
+                          height: 1.15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    PlayCoins.enabled ? 'Get coins' : 'View coin packs',
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(
+                      color: VimiColors.cyan,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const VIcon(Glyph.next, size: 17, color: VimiColors.cyan),
+              ],
+            ),
+          ),
         ),
-        const SizedBox(height: 16),
-        PostCollection(
-          key: ValueKey('mine-${app.account}'),
-          author: app.account,
+      ),
+    ),
+  );
+}
+
+class _PersonalShortcut extends StatelessWidget {
+  const _PersonalShortcut({
+    required this.glyph,
+    required this.label,
+    required this.color,
+    required this.onPressed,
+  });
+
+  final Glyph glyph;
+  final String label;
+  final Color color;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => TextButton(
+    style: TextButton.styleFrom(
+      foregroundColor: VimiColors.ink,
+      minimumSize: const Size(48, 64),
+      padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
+    ),
+    onPressed: onPressed,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        VIcon(glyph, size: 23, color: color),
+        const SizedBox(height: 5),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
         ),
       ],
+    ),
+  );
+}
+
+const _profileSection = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
+const _profileMeta = TextStyle(fontSize: 13, color: VimiColors.muted);
+
+class _ProfileIdentity extends StatelessWidget {
+  const _ProfileIdentity({
+    required this.profile,
+    required this.actions,
+    this.onAvatarTap,
+    this.avatarSize = 56,
+  });
+  final Dancer profile;
+  final List<Widget> actions;
+  final VoidCallback? onAvatarTap;
+  final double avatarSize;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          if (onAvatarTap == null)
+            SignedAvatar(profile, size: avatarSize)
+          else
+            Tooltip(
+              message: 'Change profile photo',
+              child: Material(
+                color: Colors.transparent,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: onAvatarTap,
+                  child: Ink(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: AssetImage('assets/ui/neon-spectrum.webp'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(2),
+                    child: SignedAvatar(profile, size: avatarSize),
+                  ),
+                ),
+              ),
+            ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Semantics(
+                  header: true,
+                  child: Text(
+                    profile.name,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (profile.styles.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    profile.styles.join(' · '),
+                    style: _profileMeta,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          ...actions,
+        ],
+      ),
+      if (profile.bio.isNotEmpty) ...[
+        const SizedBox(height: 8),
+        Text(profile.bio, style: const TextStyle(fontSize: 14, height: 1.4)),
+      ],
+    ],
+  );
+}
+
+class _ProfileRelations extends StatelessWidget {
+  const _ProfileRelations({required this.profile, this.actions = const []});
+  final Dancer profile;
+  final List<Widget> actions;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Expanded(
+        child: _relation(context, followers: true, count: profile.followers),
+      ),
+      Expanded(
+        child: _relation(context, followers: false, count: profile.following),
+      ),
+      ...actions,
+    ],
+  );
+
+  Widget _relation(
+    BuildContext context, {
+    required bool followers,
+    required int count,
+  }) {
+    final label = followers ? 'followers' : 'following';
+    return TextButton(
+      style: TextButton.styleFrom(
+        minimumSize: const Size(48, 48),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+      ),
+      onPressed: () => openPage(
+        context,
+        RelationsPage(id: profile.id, followers: followers),
+      ),
+      child: Wrap(
+        spacing: 5,
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Text(
+            '$count',
+            style: const TextStyle(
+              fontSize: 15,
+              color: VimiColors.ink,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Text(label, style: _profileMeta),
+        ],
+      ),
     );
   }
 }
@@ -188,6 +418,11 @@ class _DancerDirectoryState extends State<DancerDirectory> {
     unawaited(pager!.refresh());
   }
 
+  void submitSearch() {
+    FocusScope.of(context).unfocus();
+    search();
+  }
+
   @override
   void dispose() {
     query.dispose();
@@ -199,13 +434,25 @@ class _DancerDirectoryState extends State<DancerDirectory> {
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
     return VPage(
-      title: 'Find your dance people',
+      title: 'Dancers',
       child: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
-          VField('Search dancer names', controller: query),
-          VButton('Find dancers', glyph: Glyph.search, onPressed: search),
-          const SizedBox(height: 24),
+          TextField(
+            controller: query,
+            textInputAction: TextInputAction.search,
+            onSubmitted: (_) => submitSearch(),
+            decoration: InputDecoration(
+              labelText: 'Search dancer names',
+              suffixIcon: VIconButton(
+                Glyph.search,
+                label: 'Find dancers',
+                color: VimiColors.cyan,
+                onPressed: submitSearch,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           if (!app.signedIn)
             VButton(
               'Sign in to meet the community',
@@ -220,9 +467,9 @@ class _DancerDirectoryState extends State<DancerDirectory> {
                   if (pager!.loaded &&
                       pager!.items.isEmpty &&
                       pager!.error == null)
-                    const EmptyNote(
-                      'Room for a new dance circle.',
-                      'No dancers found yet. Try another name or share your own cover.',
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Text('No dancers found.', style: _profileMeta),
                     ),
                   for (final dancer in pager!.items)
                     DancerRow(dancer, key: ValueKey(dancer.id)),
@@ -244,31 +491,35 @@ class DancerRow extends StatelessWidget {
   const DancerRow(this.dancer, {super.key});
   final Dancer dancer;
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: TextButton(
-      onPressed: () => openPage(context, DancerPage(id: dancer.id)),
-      child: Row(
-        children: [
-          SignedAvatar(dancer),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  dancer.name,
-                  style: Theme.of(context).textTheme.titleMedium,
+  Widget build(BuildContext context) => TextButton(
+    style: TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      foregroundColor: VimiColors.ink,
+    ),
+    onPressed: () => openPage(context, DancerPage(id: dancer.id)),
+    child: Row(
+      children: [
+        SignedAvatar(dancer, size: 42),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                dancer.name,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
                 ),
-                Text(
-                  dancer.styles.join(' · '),
-                  style: const TextStyle(color: VimiColors.muted),
-                ),
-              ],
-            ),
+              ),
+              if (dancer.styles.isNotEmpty)
+                Text(dancer.styles.join(' · '), style: _profileMeta),
+            ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 8),
+        const VIcon(Glyph.next, color: VimiColors.muted, size: 16),
+      ],
     ),
   );
 }
@@ -328,12 +579,17 @@ class _RelationsPageState extends State<RelationsPage> {
     child: AnimatedBuilder(
       animation: pager!,
       builder: (context, _) => ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
         children: [
           if (pager!.loaded && pager!.items.isEmpty && pager!.error == null)
-            const EmptyNote(
-              'The circle starts small.',
-              'Follow dancers whose work you want to keep up with.',
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                widget.followers
+                    ? 'No followers yet.'
+                    : 'No followed dancers yet.',
+                style: _profileMeta,
+              ),
             ),
           for (final dancer in pager!.items)
             DancerRow(dancer, key: ValueKey(dancer.id)),
@@ -373,8 +629,7 @@ class _DancerPageState extends State<DancerPage> {
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
     return VPage(
-      title: 'Dance profile',
-
+      title: '',
       child: FutureBuilder<Dancer?>(
         future: future,
         builder: (context, snapshot) {
@@ -392,19 +647,15 @@ class _DancerPageState extends State<DancerPage> {
           final profile = snapshot.data;
           if (profile == null)
             return const Padding(
-              padding: EdgeInsets.all(24),
-              child: EmptyNote(
-                'This profile is unavailable.',
-                'You can return to the floor to discover other dancers.',
-              ),
+              padding: EdgeInsets.all(16),
+              child: Text('This profile is unavailable.', style: _profileMeta),
             );
           return ListView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             children: [
-              Row(
-                children: [
-                  SignedAvatar(profile, size: 96),
-                  const Spacer(),
+              _ProfileIdentity(
+                profile: profile,
+                actions: [
                   if (profile.id != app.account) ...[
                     VIconButton(
                       Glyph.report,
@@ -420,82 +671,47 @@ class _DancerPageState extends State<DancerPage> {
                   ],
                 ],
               ),
-              const SizedBox(height: 20),
-              Text(
-                profile.name,
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 8),
-              Text(profile.styles.join(' · ')),
-              if (profile.bio.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                Text(profile.bio, style: Theme.of(context).textTheme.bodyLarge),
-              ],
-              const SizedBox(height: 16),
-              Wrap(
-                children: [
-                  VProfileStat(
-                    count: profile.followers,
-                    label: 'followers',
-                    onPressed: () => openPage(
-                      context,
-                      RelationsPage(id: profile.id, followers: true),
+              _ProfileRelations(
+                profile: profile,
+                actions: [
+                  if (profile.id != app.account) ...[
+                    VIconButton(
+                      profile.isFollowing ? Glyph.check : Glyph.add,
+                      label: profile.isFollowing
+                          ? 'Following'
+                          : 'Follow dancer',
+                      selected: profile.isFollowing,
+                      color: VimiColors.accent,
+                      busy: busy,
+                      onPressed: () async {
+                        if (busy) return;
+                        setState(() => busy = true);
+                        try {
+                          await app.repo!.follow(
+                            profile.id,
+                            followed: !profile.isFollowing,
+                          );
+                          await app.refreshAccount();
+                        } catch (e) {
+                          if (context.mounted)
+                            feedback(context, readableError(e));
+                        } finally {
+                          if (mounted) setState(() => busy = false);
+                        }
+                      },
                     ),
-                  ),
-                  VProfileStat(
-                    count: profile.following,
-                    label: 'following',
-                    onPressed: () => openPage(
-                      context,
-                      RelationsPage(id: profile.id, followers: false),
-                    ),
-                  ),
-                ],
-              ),
-              if (profile.id != app.account) ...[
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: VButton(
-                        profile.isFollowing ? 'Following' : 'Follow dancer',
-                        glyph: profile.isFollowing ? Glyph.check : Glyph.add,
-
-                        busy: busy,
-                        onPressed: () async {
-                          if (busy) return;
-                          setState(() => busy = true);
-                          try {
-                            await app.repo!.follow(
-                              profile.id,
-                              followed: !profile.isFollowing,
-                            );
-                            await app.refreshAccount();
-                          } catch (e) {
-                            if (context.mounted)
-                              feedback(context, readableError(e));
-                          } finally {
-                            if (mounted) setState(() => busy = false);
-                          }
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
                     VIconButton(
                       Glyph.inbox,
                       label: 'Message',
-                      filled: true,
+                      color: VimiColors.cyan,
                       onPressed: () =>
                           openPage(context, ChatPage(peer: profile)),
                     ),
                   ],
-                ),
-              ],
-              const SizedBox(height: 24),
-              Text(
-                'On their floor',
-                style: Theme.of(context).textTheme.headlineSmall,
+                ],
               ),
+              const Divider(height: 16, color: VimiColors.tonal),
+              const Text('Covers', style: _profileSection),
               PostCollection(
                 key: ValueKey('${profile.id}-${app.account}'),
                 author: profile.id,
@@ -509,8 +725,13 @@ class _DancerPageState extends State<DancerPage> {
 }
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key, required this.profile});
+  const EditProfilePage({
+    super.key,
+    required this.profile,
+    this.initialPortrait,
+  });
   final Dancer profile;
+  final LibraryPortrait? initialPortrait;
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
 }
@@ -528,6 +749,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     name = TextEditingController(text: widget.profile.name);
     bio = TextEditingController(text: widget.profile.bio);
     styles = widget.profile.styles.toSet();
+    libraryPhoto = widget.initialPortrait;
   }
 
   @override
@@ -623,71 +845,73 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) => VPage(
-    title: 'Your dance identity',
-
+    title: 'Edit profile',
     child: ListView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        const Text(
-          'Your saved name, bio, styles and profile photo are visible to other members. Your selected photo uploads when you save.',
-        ),
-        const SizedBox(height: 20),
-        if (libraryPhoto != null)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: ClipOval(
-              child: LibraryImage(
-                libraryPhoto!.url,
-                compact: true,
-                width: 96,
-                height: 96,
-                fit: BoxFit.cover,
-              ),
-            ),
-          )
-        else if (photo == null)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: SignedAvatar(widget.profile, size: 96),
-          )
-        else
-          Align(
-            alignment: Alignment.centerLeft,
-            child: ClipOval(
-              child: Image.file(
-                photo!,
-                width: 96,
-                height: 96,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 12,
-          runSpacing: 8,
+        Row(
           children: [
-            VIconButton(
-              Glyph.library,
-              label: 'Browse profile images',
-              primary: true,
-              onPressed: busy ? null : chooseLibraryPhoto,
-            ),
-            VIconButton(
-              Glyph.photo,
-              label: 'Choose photo',
-              filled: true,
-              onPressed: busy ? null : () => choose(ImageSource.gallery),
-            ),
-            VIconButton(
-              Glyph.camera,
-              label: 'Take photo',
-              filled: true,
-              onPressed: busy ? null : () => choose(ImageSource.camera),
+            if (libraryPhoto != null)
+              ClipOval(
+                child: LibraryImage(
+                  libraryPhoto!.thumbnail,
+                  compact: true,
+                  width: 72,
+                  height: 72,
+                  label: 'Selected profile photo',
+                ),
+              )
+            else if (photo != null)
+              ClipOval(
+                child: Image.file(
+                  photo!,
+                  width: 72,
+                  height: 72,
+                  fit: BoxFit.cover,
+                  semanticLabel: 'Selected profile photo',
+                ),
+              )
+            else
+              SignedAvatar(widget.profile, size: 72),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: [
+                  VIconButton(
+                    Glyph.library,
+                    label: 'Browse profile images',
+                    primary: true,
+                    onPressed: busy ? null : chooseLibraryPhoto,
+                  ),
+                  VIconButton(
+                    Glyph.photo,
+                    label: 'Choose photo',
+                    color: VimiColors.violet,
+                    onPressed: busy ? null : () => choose(ImageSource.gallery),
+                  ),
+                  VIconButton(
+                    Glyph.camera,
+                    label: 'Take photo',
+                    color: VimiColors.cyan,
+                    onPressed: busy ? null : () => choose(ImageSource.camera),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 8),
+        Text(
+          photo != null || libraryPhoto != null
+              ? 'Your new photo is visible to members after you save.'
+              : (widget.profile.avatar?.trim().isEmpty ?? true)
+              ? 'Your default photo comes from the profile image library.'
+              : 'Your profile is visible to members.',
+          style: _profileMeta,
+        ),
+        const SizedBox(height: 16),
         VField('Display name', controller: name, maxLength: 40, enabled: !busy),
         VField(
           'A little about your dancing',
@@ -729,7 +953,7 @@ class SavedPostsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
     return VPage(
-      title: 'Saved inspiration',
+      title: 'Saved covers',
       child: ListView(
         padding: const EdgeInsets.all(24),
         children: [

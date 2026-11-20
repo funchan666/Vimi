@@ -275,22 +275,42 @@ class DanceRepository {
     bool saved = false,
     String? challenge,
     TimelineCursor? cursor,
-  }) async => CursorPage.rows(
-    jsonRows(
-      await client.rpc(
-        'get_feed_page',
-        params: {
-          'p_style': style,
-          'p_author': author,
-          'p_saved': saved,
-          'p_challenge': challenge,
-          ...?cursor?.beforeParameters,
-        },
+    bool approvedVideosOnly = false,
+  }) async {
+    final page = CursorPage<DancePost>.rows(
+      jsonRows(
+        await client.rpc(
+          'get_feed_page',
+          params: {
+            'p_style': style,
+            'p_author': author,
+            'p_saved': saved,
+            'p_challenge': challenge,
+            ...?cursor?.beforeParameters,
+          },
+        ),
       ),
-    ),
-    DancePost.fromJson,
-    size: 20,
-  );
+      DancePost.fromJson,
+      size: 20,
+    );
+    if (!approvedVideosOnly) return page;
+
+    final videos = <DancePost>[];
+    final videoCursors = <TimelineCursor>[];
+    for (final (index, post) in page.items.indexed) {
+      if (post.kind == 'video' && post.status == 'approved') {
+        videos.add(post);
+        videoCursors.add(page.cursors[index]);
+      }
+    }
+    // A batch may contain only photos. Continue from the server's raw cursor.
+    return CursorPage(
+      videos,
+      next: page.next,
+      hasMore: page.hasMore,
+      cursors: videoCursors,
+    );
+  }
 
   Future<CursorPage<Dancer>> dancerPage(
     String query, {

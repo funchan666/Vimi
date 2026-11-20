@@ -60,7 +60,7 @@ class _EmailConfirmationPageState extends State<EmailConfirmationPage> {
               ),
               const SizedBox(height: 12),
               Text(
-                'Open the confirmation link sent to ${widget.email}. Then return to Vimi to sign in.',
+                'Open the confirmation link sent to ${widget.email}. Then return here to sign in.',
               ),
             ],
           ),

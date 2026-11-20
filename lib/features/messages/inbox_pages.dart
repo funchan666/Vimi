@@ -13,166 +13,867 @@ import '../community/community_pages.dart';
 import '../profile/profile_pages.dart';
 
 class InboxPage extends StatefulWidget {
-  const InboxPage({super.key});
+  const InboxPage({super.key, this.active = true});
+
+  final bool active;
+
   @override
   State<InboxPage> createState() => _InboxPageState();
 }
 
 class _InboxPageState extends State<InboxPage> {
+  final search = TextEditingController();
+  final searchFocus = FocusNode();
   CursorPager<Json>? pager;
-  String? owner;
-  int revision = -1;
+  CursorPager<Dancer>? mutuals;
+  String? owner, openingContact;
+  int revision = -1, contactRevision = -1;
+  bool unreadOnly = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final app = VimiScope.of(context);
-    if (app.signedIn && (pager == null || owner != app.account)) {
+    if (!app.signedIn) {
       pager?.dispose();
-      owner = app.account;
-      final currentOwner = owner;
+      mutuals?.dispose();
+      pager = null;
+      mutuals = null;
+      owner = null;
+      return;
+    }
+    if (pager == null || owner != app.account) {
+      pager?.dispose();
+      mutuals?.dispose();
+      final newOwner = app.account;
+      final repo = app.repo!;
+      owner = newOwner;
+      revision = contactRevision = -1;
       pager = CursorPager(
-        fetch: (cursor) => app.repo!.inboxPage(cursor: cursor),
+        fetch: (cursor) => repo.inboxPage(cursor: cursor),
         identity: (row) => jsonMap(row['peer'])['id'] as String,
-        isCurrent: () => app.signedIn && app.account == currentOwner,
+        isCurrent: () => app.signedIn && app.account == newOwner,
+      );
+      mutuals = CursorPager(
+        fetch: (cursor) => _mutualPage(repo, newOwner, cursor),
+        identity: (dancer) => dancer.id,
+        isCurrent: () => app.signedIn && app.account == newOwner,
       );
     }
-    if (pager != null && revision != app.messageRevision) {
+    if (revision != app.messageRevision) {
       revision = app.messageRevision;
       unawaited(pager!.refresh());
     }
+    refreshContacts(app);
+  }
+
+  @override
+  void didUpdateWidget(covariant InboxPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.active) {
+      searchFocus.unfocus();
+    } else if (!oldWidget.active) {
+      refreshContacts(VimiScope.of(context));
+    }
+  }
+
+  void refreshContacts(AppController app) {
+    final contacts = mutuals;
+    if (!widget.active || contacts == null || contactRevision == app.revision) {
+      return;
+    }
+    contactRevision = app.revision;
+    unawaited(contacts.refresh());
+  }
+
+  Future<void> compose() async {
+    final app = VimiScope.of(context);
+    final contacts = mutuals;
+    if (!app.signedIn || contacts == null || openingContact != null) return;
+    searchFocus.unfocus();
+    final currentOwner = app.account;
+    final peer = await openPage<Dancer>(
+      context,
+      _NewConversationPage(owner: currentOwner, contacts: contacts),
+    );
+    if (!mounted ||
+        peer == null ||
+        !app.signedIn ||
+        app.account != currentOwner) {
+      return;
+    }
+    await openPage(context, ChatPage(peer: peer));
+  }
+
+  Future<void> quickChat(Dancer peer) async {
+    if (openingContact != null) return;
+    final app = VimiScope.of(context);
+    final currentOwner = app.account;
+    if (!app.signedIn) return;
+    searchFocus.unfocus();
+    setState(() => openingContact = peer.id);
+    try {
+      final allowed = await app.repo!.canMessage(peer.id);
+      if (!mounted ||
+          !widget.active ||
+          !app.signedIn ||
+          app.account != currentOwner ||
+          ModalRoute.isCurrentOf(context) == false) {
+        return;
+      }
+      if (allowed) {
+        await openPage(context, ChatPage(peer: peer));
+      } else {
+        feedback(context, 'Messaging is no longer available with this dancer.');
+        final contacts = mutuals;
+        if (contacts != null) unawaited(contacts.refresh());
+      }
+    } catch (error) {
+      if (mounted && widget.active && app.account == currentOwner) {
+        feedback(context, readableError(error));
+      }
+    } finally {
+      if (mounted) setState(() => openingContact = null);
+    }
+  }
+
+  void discoverDancers() {
+    searchFocus.unfocus();
+    openPage(context, const DancerDirectory());
   }
 
   @override
   void dispose() {
     pager?.dispose();
+    mutuals?.dispose();
+    search.dispose();
+    searchFocus.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final conversations = pager;
+    final contacts = mutuals;
+    if (conversations == null || contacts == null) {
+      return Center(
+        child: VIconButton(
+          Glyph.inbox,
+          label: 'Sign in to open conversations',
+          filled: true,
+          onPressed: () => openPage(context, const AuthPage(signUp: false)),
+        ),
+      );
+    }
+    final query = search.text.trim().toLowerCase();
+    final searching = query.isNotEmpty;
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Row(
+                children: [
+                  Expanded(child: _searchField()),
+                  const SizedBox(width: 8),
+                  VIconButton(
+                    Glyph.edit,
+                    label: 'New conversation',
+                    primary: true,
+                    onPressed: openingContact == null ? compose : null,
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                color: VimiColors.cyan,
+                backgroundColor: VimiColors.surface,
+                onRefresh: () async {
+                  await Future.wait([
+                    conversations.refresh(),
+                    contacts.refresh(),
+                  ]);
+                },
+                child: ListenableBuilder(
+                  listenable: Listenable.merge([conversations, contacts]),
+                  builder: (context, _) {
+                    final rows = conversations.items.where((row) {
+                      if (unreadOnly && _unreadMessages(row) == 0) return false;
+                      if (!searching) return true;
+                      final peer = jsonMap(row['peer']);
+                      final name = (peer['display_name'] as String? ?? '')
+                          .toLowerCase();
+                      return name.contains(query) ||
+                          (row['body'] as String).toLowerCase().contains(query);
+                    }).toList();
+                    final settled =
+                        conversations.loaded &&
+                        !conversations.loading &&
+                        conversations.error == null;
+                    final emptyInbox =
+                        settled &&
+                        conversations.items.isEmpty &&
+                        !searching &&
+                        !unreadOnly;
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3),
+                          child: Row(
+                            children: [
+                              _InboxFilter(
+                                label: 'All',
+                                selected: !unreadOnly,
+                                onPressed: () =>
+                                    setState(() => unreadOnly = false),
+                              ),
+                              const SizedBox(width: 6),
+                              _InboxFilter(
+                                label: 'Unread',
+                                selected: unreadOnly,
+                                onPressed: () =>
+                                    setState(() => unreadOnly = true),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(height: 1, color: VimiColors.tonal),
+                        if (!searching &&
+                            !unreadOnly &&
+                            contacts.items.isNotEmpty)
+                          _ContactShelf(
+                            title: 'Quick chats',
+                            people: contacts.items.take(5),
+                            onOpenAll: compose,
+                            openAllLabel: 'Choose a dancer to message',
+                            onSelect: openingContact == null ? quickChat : null,
+                          ),
+                        if (settled && rows.isEmpty)
+                          _InboxEmpty(
+                            glyph: searching
+                                ? Glyph.search
+                                : unreadOnly
+                                ? Glyph.check
+                                : Glyph.inbox,
+                            title: searching
+                                ? 'No matching chats'
+                                : unreadOnly
+                                ? 'No unread chats'
+                                : 'No conversations yet',
+                            detail: searching
+                                ? (conversations.hasMore
+                                      ? 'Try earlier conversations below.'
+                                      : 'Try another name or message.')
+                                : unreadOnly
+                                ? (conversations.hasMore
+                                      ? 'Check earlier conversations below.'
+                                      : null)
+                                : 'You can message dancers who follow you back.',
+                          ),
+                        if (emptyInbox && contacts.items.isEmpty)
+                          _FindDancersShelf(
+                            onOpenAll: discoverDancers,
+                            key: ValueKey(owner),
+                          ),
+                        for (final row in rows)
+                          _InboxConversation(
+                            key: ValueKey(jsonMap(row['peer'])['id']),
+                            row: row,
+                          ),
+                        PageFooter(
+                          pager: conversations,
+                          moreLabel: 'Earlier conversations',
+                          loadingLabel: 'Opening conversations…',
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _searchField() {
+    const radius = BorderRadius.all(Radius.circular(15));
+    return TextField(
+      controller: search,
+      focusNode: searchFocus,
+      onChanged: (_) => setState(() {}),
+      textInputAction: TextInputAction.search,
+      style: const TextStyle(fontSize: 14, color: VimiColors.ink),
+      decoration: InputDecoration(
+        hintText: 'Search chats',
+        hintStyle: const TextStyle(color: VimiColors.muted, fontSize: 14),
+        fillColor: VimiColors.surface,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 13),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: BorderSide(color: VimiColors.tonal),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: radius,
+          borderSide: BorderSide(color: VimiColors.violet),
+        ),
+        prefixIcon: const Center(
+          widthFactor: 1,
+          heightFactor: 1,
+          child: VIcon(Glyph.search, size: 19, color: VimiColors.violet),
+        ),
+        suffixIcon: search.text.isEmpty
+            ? null
+            : VIconButton(
+                Glyph.close,
+                label: 'Clear chat search',
+                onPressed: () => setState(search.clear),
+              ),
+      ),
+    );
+  }
+}
+
+class _InboxFilter extends StatelessWidget {
+  const _InboxFilter({
+    required this.label,
+    required this.selected,
+    required this.onPressed,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    selected: selected,
+    child: TextButton(
+      style: TextButton.styleFrom(
+        minimumSize: const Size(48, 48),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        foregroundColor: selected ? VimiColors.cyan : VimiColors.muted,
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+      ),
+      onPressed: onPressed,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label),
+          const SizedBox(height: 5),
+          SizedBox(
+            width: 14,
+            height: 2,
+            child: ColoredBox(
+              color: selected ? VimiColors.cyan : Colors.transparent,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _InboxEmpty extends StatelessWidget {
+  const _InboxEmpty({required this.glyph, required this.title, this.detail});
+
+  final Glyph glyph;
+  final String title;
+  final String? detail;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 34, 16, 28),
+    child: Column(
+      children: [
+        DecoratedBox(
+          decoration: const BoxDecoration(
+            color: VimiColors.surface,
+            borderRadius: BorderRadius.all(Radius.circular(17)),
+            border: Border.fromBorderSide(BorderSide(color: VimiColors.tonal)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: VIcon(glyph, size: 27, color: VimiColors.cyan),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        ),
+        if (detail != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            detail!,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 13, color: VimiColors.muted),
+          ),
+        ],
+      ],
+    ),
+  );
+}
+
+class _FindDancersShelf extends StatefulWidget {
+  const _FindDancersShelf({super.key, required this.onOpenAll});
+
+  final VoidCallback onOpenAll;
+
+  @override
+  State<_FindDancersShelf> createState() => _FindDancersShelfState();
+}
+
+class _FindDancersShelfState extends State<_FindDancersShelf> {
+  late Future<CursorPage<Dancer>> people;
+  int revision = -1;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final app = VimiScope.of(context);
-    return ListView(
-      padding: const EdgeInsets.all(24),
+    if (revision != app.revision) {
+      revision = app.revision;
+      people = app.repo!.dancerPage('');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<CursorPage<Dancer>>(
+    future: people,
+    builder: (context, snapshot) {
+      final dancers = snapshot.data?.items ?? [];
+      if (dancers.isEmpty) {
+        return Align(
+          alignment: Alignment.center,
+          child: VIconButton(
+            Glyph.search,
+            label: 'Find dancers',
+            color: VimiColors.violet,
+            filled: true,
+            onPressed: widget.onOpenAll,
+          ),
+        );
+      }
+      return _ContactShelf(
+        title: 'Find dancers',
+        openAllLabel: 'Browse dancers',
+        people: dancers.take(5),
+        onOpenAll: widget.onOpenAll,
+        onSelect: (dancer) => openPage(context, DancerPage(id: dancer.id)),
+      );
+    },
+  );
+}
+
+class _ContactShelf extends StatelessWidget {
+  const _ContactShelf({
+    required this.title,
+    required this.openAllLabel,
+    required this.people,
+    required this.onOpenAll,
+    required this.onSelect,
+  });
+
+  final String title, openAllLabel;
+  final Iterable<Dancer> people;
+  final VoidCallback onOpenAll;
+  final ValueChanged<Dancer>? onSelect;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Expanded(
               child: Text(
-                'Messages',
-                style: Theme.of(context).textTheme.displaySmall,
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             VIconButton(
-              Glyph.refresh,
-              label: 'Refresh conversations',
-              onPressed: () => pager?.refresh(),
+              Glyph.next,
+              label: openAllLabel,
+              color: VimiColors.violet,
+              onPressed: onOpenAll,
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        const Text(
-          'Practice notes and conversations with your mutual follows.',
-        ),
-        const SizedBox(height: 24),
-        if (!app.signedIn)
-          EmptyNote(
-            'Find your dance people.',
-            'Sign in to start conversations with mutual follows.',
-            action: VButton(
-              'Sign in',
-              onPressed: () => openPage(context, const AuthPage(signUp: false)),
-            ),
-          )
-        else
-          AnimatedBuilder(
-            animation: pager!,
-            builder: (context, _) {
-              final rows = pager!.items;
-              final empty = EmptyNote(
-                'A good conversation starts on the floor.',
-                'Find a dancer whose movement speaks to you. Follow each other to exchange messages.',
-                action: VButton(
-                  'Discover dancers',
-                  glyph: Glyph.search,
-                  onPressed: () => openPage(context, const DancerDirectory()),
-                ),
-              );
-              return Column(
-                children: [
-                  if (pager!.loaded && rows.isEmpty && pager!.error == null)
-                    empty,
-                  ...rows.map((row) {
-                    final peer = Dancer.fromJson(jsonMap(row['peer']));
-                    final unread = (row['unread'] as num).toInt();
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: SurfacePanel(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        child: TextButton(
-                          onPressed: () =>
-                              openPage(context, ChatPage(peer: peer)),
-                          child: Row(
-                            children: [
-                              SignedAvatar(peer),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      peer.name,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleMedium,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      row['body'] as String,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: VimiColors.muted,
-                                      ),
-                                    ),
-                                    if (unread > 0)
-                                      Text(
-                                        '$unread unread',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: VimiColors.accent,
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                displayDate(
-                                  DateTime.parse(row['created_at'] as String),
-                                ),
-                                style: const TextStyle(color: VimiColors.muted),
-                              ),
-                            ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final dancer in people)
+                SizedBox(
+                  width: 74,
+                  child: TextButton(
+                    onPressed: onSelect == null
+                        ? null
+                        : () => onSelect!(dancer),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+                      foregroundColor: VimiColors.ink,
+                    ),
+                    child: Column(
+                      children: [
+                        SignedAvatar(dancer, size: 49),
+                        const SizedBox(height: 6),
+                        Text(
+                          dancer.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                    );
-                  }),
-                  PageFooter(
-                    pager: pager!,
-                    moreLabel: 'Earlier conversations',
-                    loadingLabel: 'Opening conversations…',
+                      ],
+                    ),
                   ),
-                ],
-              );
-            },
+                ),
+            ],
           ),
+        ),
       ],
+    ),
+  );
+}
+
+int _unreadMessages(Json row) => (row['unread'] as num?)?.toInt() ?? 0;
+
+class _InboxConversation extends StatelessWidget {
+  const _InboxConversation({super.key, required this.row});
+  final Json row;
+
+  @override
+  Widget build(BuildContext context) {
+    final peer = Dancer.fromJson(jsonMap(row['peer']));
+    final unread = _unreadMessages(row);
+    final time = DateTime.parse(row['created_at'] as String).toLocal();
+    final today = DateUtils.isSameDay(DateTime.now(), time);
+    return _ConversationRow(
+      key: ValueKey(peer.id),
+      peer: peer,
+      detail: row['body'] as String,
+      highlighted: unread > 0,
+      onTap: () => openPage(context, ChatPage(peer: peer)),
+      trailing: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 84),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              today
+                  ? MaterialLocalizations.of(context).formatTimeOfDay(
+                      TimeOfDay.fromDateTime(time),
+                      alwaysUse24HourFormat: MediaQuery.alwaysUse24HourFormatOf(
+                        context,
+                      ),
+                    )
+                  : displayDate(time),
+              textAlign: TextAlign.end,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: unread > 0 ? VimiColors.cyan : VimiColors.muted,
+                fontSize: 11,
+              ),
+            ),
+            if (unread > 0) ...[
+              const SizedBox(height: 5),
+              Semantics(
+                label: '$unread unread messages',
+                excludeSemantics: true,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: VimiColors.cyan,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    child: Text(
+                      unread > 99 ? '99+' : '$unread',
+                      style: const TextStyle(
+                        color: VimiColors.onAccent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
+}
+
+class _ConversationRow extends StatelessWidget {
+  const _ConversationRow({
+    super.key,
+    required this.peer,
+    this.detail,
+    this.trailing,
+    this.onTap,
+    this.highlighted = false,
+  });
+  final Dancer peer;
+  final String? detail;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    enabled: onTap != null,
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Ink(
+          decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: VimiColors.tonal)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 11),
+            child: Row(
+              children: [
+                SignedAvatar(peer, size: 48),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        peer.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      if (detail != null && detail!.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Text(
+                          detail!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: highlighted
+                                ? VimiColors.ink
+                                : VimiColors.muted,
+                            fontSize: 13,
+                            fontWeight: highlighted
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+class _NewConversationPage extends StatefulWidget {
+  const _NewConversationPage({required this.owner, required this.contacts});
+  final String owner;
+  final CursorPager<Dancer> contacts;
+
+  @override
+  State<_NewConversationPage> createState() => _NewConversationPageState();
+}
+
+class _NewConversationPageState extends State<_NewConversationPage> {
+  String? checking;
+
+  Future<void> choose(Dancer dancer) async {
+    if (checking != null) return;
+    final app = VimiScope.of(context);
+    if (!app.signedIn || app.account != widget.owner) return;
+    setState(() => checking = dancer.id);
+    try {
+      final allowed = await app.repo!.canMessage(dancer.id);
+      if (!mounted ||
+          !app.signedIn ||
+          app.account != widget.owner ||
+          ModalRoute.of(context)?.isCurrent != true) {
+        return;
+      }
+      if (allowed) {
+        Navigator.of(context).pop(dancer);
+      } else {
+        feedback(context, 'Messaging is no longer available with this dancer.');
+        unawaited(widget.contacts.refresh());
+      }
+    } catch (error) {
+      if (mounted &&
+          app.signedIn &&
+          app.account == widget.owner &&
+          ModalRoute.of(context)?.isCurrent == true) {
+        feedback(context, readableError(error));
+      }
+    } finally {
+      if (mounted) setState(() => checking = null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final app = VimiScope.of(context);
+    final current = widget.contacts;
+    return VPage(
+      title: 'New conversation',
+      actions: [
+        VIconButton(
+          Glyph.search,
+          label: 'Discover dancers',
+          onPressed: checking == null
+              ? () => openPage(context, const DancerDirectory())
+              : null,
+        ),
+      ],
+      child: !app.signedIn || app.account != widget.owner
+          ? const SizedBox.shrink()
+          : AnimatedBuilder(
+              animation: current,
+              builder: (context, _) => ListView(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
+                children: [
+                  if (current.loaded &&
+                      current.items.isEmpty &&
+                      current.error == null &&
+                      !current.loading)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 8, 4, 16),
+                      child: Text(
+                        current.hasMore
+                            ? 'No matches yet. Check more of your follows.'
+                            : 'You can message dancers who follow you back.',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          height: 1.4,
+                          color: VimiColors.muted,
+                        ),
+                      ),
+                    ),
+                  for (final dancer in current.items)
+                    _ConversationRow(
+                      key: ValueKey(dancer.id),
+                      peer: dancer,
+                      detail: dancer.styles.join(' · '),
+                      trailing: checking == dancer.id
+                          ? const SizedBox.square(
+                              dimension: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const VIcon(
+                              Glyph.next,
+                              size: 18,
+                              color: VimiColors.muted,
+                            ),
+                      onTap: checking == null ? () => choose(dancer) : null,
+                    ),
+                  if (current.loading)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        'Looking for mutual follows…',
+                        style: TextStyle(color: VimiColors.muted, fontSize: 13),
+                      ),
+                    ),
+                  if (current.error != null)
+                    ErrorNote(
+                      readableError(current.error!),
+                      onRetry: current.retry,
+                    ),
+                  if (current.loaded &&
+                      current.hasMore &&
+                      current.error == null &&
+                      !current.loading)
+                    Align(
+                      alignment: Alignment.center,
+                      child: VIconButton(
+                        Glyph.more,
+                        label: 'Check more follows',
+                        onPressed: current.loadMore,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+    );
+  }
+}
+
+Future<CursorPage<Dancer>> _mutualPage(
+  DanceRepository repo,
+  String owner,
+  TimelineCursor? cursor,
+) async {
+  final following = await repo.relationPage(
+    owner,
+    followers: false,
+    cursor: cursor,
+  );
+  if (following.items.isEmpty) return following;
+  // The reverse look-up covers only this page and uses the same RLS as follows.
+  final reverse = jsonRows(
+    await repo.client
+        .from('follows')
+        .select('follower_id')
+        .eq('following_id', owner)
+        .inFilter(
+          'follower_id',
+          following.items.map((dancer) => dancer.id).toList(),
+        ),
+  );
+  final mutualIds = reverse.map((row) => row['follower_id'] as String).toSet();
+  final items = <Dancer>[];
+  final cursors = <TimelineCursor>[];
+  for (final (index, dancer) in following.items.indexed) {
+    if (mutualIds.contains(dancer.id)) {
+      items.add(dancer);
+      cursors.add(following.cursors[index]);
+    }
+  }
+  return CursorPage(
+    items,
+    next: following.next,
+    hasMore: following.hasMore,
+    cursors: cursors,
+  );
 }
 
 class ChatPage extends StatefulWidget {
@@ -273,7 +974,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> send() async {
-    if (busy || input.text.trim().isEmpty) return;
+    if (!allowed || busy || input.text.trim().isEmpty) return;
     final app = VimiScope.of(context);
     final text = input.text.trim();
     setState(() => busy = true);
@@ -290,7 +991,7 @@ class _ChatPageState extends State<ChatPage> {
         nonce = const Uuid().v4();
         await load();
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (scroll.hasClients) scroll.jumpTo(0);
+          if (mounted && scroll.hasClients) scroll.jumpTo(0);
         });
       }
     } catch (e) {
@@ -309,170 +1010,353 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   @override
-  Widget build(BuildContext context) => VPage(
-    title: widget.peer.name,
-
-    actions: [
-      VIconButton(
-        Glyph.refresh,
-        label: 'Refresh conversation',
-        onPressed: load,
-      ),
-      VIconButton(
-        Glyph.person,
-        label: 'Open dancer profile',
-        onPressed: () => openPage(context, DancerPage(id: widget.peer.id)),
-      ),
-    ],
-    child: Column(
-      children: [
-        Expanded(
-          child: AnimatedBuilder(
-            animation: history,
-            builder: (context, _) => ListView(
-              controller: scroll,
-              reverse: true,
-              padding: const EdgeInsets.all(20),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              children: [
-                if (history.loaded &&
-                    history.items.isEmpty &&
-                    history.error == null)
-                  const EmptyNote(
-                    'Say it with a little kindness.',
-                    'Trade a practice tip or ask about a routine.',
-                  ),
-                for (final m in history.items)
-                  Align(
-                    key: ValueKey(m['id']),
-                    alignment: m['sender_id'] == VimiScope.of(context).account
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth:
-                            MediaQuery.sizeOf(context).width.clamp(280, 640) *
-                            .82,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: SurfacePanel(
-                          illuminated:
-                              m['sender_id'] == VimiScope.of(context).account,
-                          padding: const EdgeInsets.fromLTRB(16, 12, 8, 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                m['body'] as String,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  Text(
-                                    displayMessageTime(
-                                      DateTime.parse(m['created_at'] as String),
-                                    ),
-                                    style: const TextStyle(
-                                      color: VimiColors.muted,
-                                    ),
+  Widget build(BuildContext context) {
+    final app = VimiScope.of(context);
+    final peer = widget.peer;
+    final canUseThread = app.signedIn && app.account == owner;
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: NeonBackdrop(
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 640),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    child: Row(
+                      children: [
+                        VIconButton(
+                          Glyph.back,
+                          label: 'Go back',
+                          onPressed: () => Navigator.maybePop(context),
+                        ),
+                        if (canUseThread)
+                          Expanded(
+                            child: Tooltip(
+                              message: 'Open dancer profile',
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: VimiColors.ink,
+                                  padding: const EdgeInsets.fromLTRB(
+                                    6,
+                                    6,
+                                    10,
+                                    6,
                                   ),
-                                  if (m['sender_id'] ==
-                                      VimiScope.of(context).account)
-                                    Text(
-                                      m['read_at'] != null
-                                          ? ' · Read'
-                                          : ' · Sent',
-                                      style: const TextStyle(
-                                        color: VimiColors.muted,
+                                  minimumSize: const Size(48, 48),
+                                  alignment: Alignment.centerLeft,
+                                ),
+                                onPressed: () =>
+                                    openPage(context, DancerPage(id: peer.id)),
+                                child: Row(
+                                  children: [
+                                    SignedAvatar(peer, size: 36),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        peer.name,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium,
                                       ),
                                     ),
-                                  if (m['sender_id'] !=
-                                      VimiScope.of(context).account)
-                                    VIconButton(
-                                      Glyph.report,
-                                      label: 'Report message',
-                                      onPressed: () => reportContent(
-                                        context,
-                                        'message',
-                                        m['id'] as String,
-                                      ),
-                                    ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ],
+                            ),
                           ),
+                        if (canUseThread)
+                          VIconButton(
+                            Glyph.refresh,
+                            label: 'Refresh conversation',
+                            color: VimiColors.muted,
+                            onPressed: load,
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (canUseThread) ...[
+                    const Divider(height: 1, color: VimiColors.tonal),
+                    Expanded(
+                      child: AnimatedBuilder(
+                        animation: history,
+                        builder: (context, _) => ListView(
+                          controller: scroll,
+                          reverse: true,
+                          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
+                          children: [
+                            if (error != null) ErrorNote(error!, onRetry: load),
+                            if (draftError != null) ErrorNote(draftError!),
+                            if (!allowed && !loading && error == null)
+                              const Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  'Messaging is available when you follow each other and neither account has blocked the other.',
+                                  style: _chatMeta,
+                                ),
+                              ),
+                            if (history.loaded &&
+                                history.items.isEmpty &&
+                                history.error == null &&
+                                allowed)
+                              const Padding(
+                                padding: EdgeInsets.all(14),
+                                child: Text(
+                                  'Send a practice tip or ask about a routine.',
+                                  textAlign: TextAlign.center,
+                                  style: _chatMeta,
+                                ),
+                              ),
+                            for (var i = 0; i < history.items.length; i++)
+                              _message(context, history.items, i),
+                            PageFooter(
+                              pager: history,
+                              moreLabel: 'Earlier messages',
+                              loadingLabel: 'Opening your conversation…',
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                PageFooter(
-                  pager: history,
-                  moreLabel: 'Earlier messages',
-                  loadingLabel: 'Opening your conversation…',
-                ),
-              ],
+                    const Divider(height: 1, color: VimiColors.tonal),
+                    _composer(),
+                  ],
+                ],
+              ),
             ),
           ),
         ),
-        if (error != null)
+      ),
+    );
+  }
+
+  static const _chatMeta = TextStyle(
+    color: VimiColors.muted,
+    fontSize: 12,
+    height: 1.35,
+  );
+
+  Widget _message(BuildContext context, List<Json> rows, int index) {
+    final row = rows[index];
+    final sentByMe = row['sender_id'] == owner;
+    final time = DateTime.parse(row['created_at'] as String).toLocal();
+    final startsDay =
+        index == rows.length - 1 ||
+        !DateUtils.isSameDay(
+          time,
+          DateTime.parse(rows[index + 1]['created_at'] as String).toLocal(),
+        );
+    final showPeer =
+        !sentByMe &&
+        (index == 0 ||
+            rows[index - 1]['sender_id'] != row['sender_id'] ||
+            !DateUtils.isSameDay(
+              time,
+              DateTime.parse(rows[index - 1]['created_at'] as String).toLocal(),
+            ));
+    return Column(
+      key: ValueKey(row['id']),
+      children: [
+        if (startsDay)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ErrorNote(error!, onRetry: load),
-          ),
-        if (draftError != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ErrorNote(draftError!),
-          ),
-        if (!allowed && !loading && error == null)
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              'Follow each other to send messages. If either person has blocked the other, messaging stays unavailable.',
-              style: Theme.of(context).textTheme.bodyMedium,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              children: [
+                const Expanded(child: Divider(color: VimiColors.tonal)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(displayDate(time), style: _chatMeta),
+                ),
+                const Expanded(child: Divider(color: VimiColors.tonal)),
+              ],
             ),
           ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 12, 12),
+          padding: const EdgeInsets.only(bottom: 9),
           child: Row(
+            mainAxisAlignment: sentByMe
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Expanded(
-                child: VField(
-                  'Your message',
-                  controller: input,
-                  enabled: !busy,
-                  lines: 2,
-                  maxLength: 2000,
-                  onChanged: (text) {
-                    nonce = const Uuid().v4();
-                    draftError = null;
-                    unawaited(
-                      draftStore
-                          .writeDraft(storedDraftKey, {
-                            'body': text,
-                            'client_id': nonce,
-                          })
-                          .catchError((Object e) {
-                            if (mounted)
-                              setState(() => draftError = readableError(e));
-                          }),
-                    );
-                  },
+              if (!sentByMe)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8, bottom: 18),
+                  child: SizedBox(
+                    width: 24,
+                    child: showPeer
+                        ? ExcludeSemantics(
+                            child: SignedAvatar(widget.peer, size: 24),
+                          )
+                        : null,
+                  ),
+                )
+              else
+                const SizedBox(width: 54),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: sentByMe
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: sentByMe ? VimiColors.tonal : VimiColors.surface,
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(16),
+                          topRight: const Radius.circular(16),
+                          bottomLeft: Radius.circular(sentByMe ? 16 : 5),
+                          bottomRight: Radius.circular(sentByMe ? 5 : 16),
+                        ),
+                        image: sentByMe
+                            ? const DecorationImage(
+                                image: AssetImage(
+                                  'assets/ui/neon-spectrum.webp',
+                                ),
+                                fit: BoxFit.cover,
+                                colorFilter: ColorFilter.mode(
+                                  Color(0xDB322143),
+                                  BlendMode.srcATop,
+                                ),
+                              )
+                            : null,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 9,
+                        ),
+                        child: Text(
+                          row['body'] as String,
+                          style: const TextStyle(fontSize: 14, height: 1.4),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(2, 3, 2, 0),
+                      child: Wrap(
+                        alignment: sentByMe
+                            ? WrapAlignment.end
+                            : WrapAlignment.start,
+                        children: [
+                          Text(
+                            MaterialLocalizations.of(context).formatTimeOfDay(
+                              TimeOfDay.fromDateTime(time),
+                              alwaysUse24HourFormat:
+                                  MediaQuery.alwaysUse24HourFormatOf(context),
+                            ),
+                            style: _chatMeta,
+                          ),
+                          if (sentByMe)
+                            Text(
+                              row['read_at'] != null ? ' · Read' : ' · Sent',
+                              style: _chatMeta.copyWith(
+                                color: row['read_at'] != null
+                                    ? VimiColors.cyan
+                                    : VimiColors.muted,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              VIconButton(
-                Glyph.send,
-                color: VimiColors.accent,
-                label: busy ? 'Sending message' : 'Send message',
-                onPressed: allowed && !busy ? send : null,
-              ),
+              if (!sentByMe)
+                VIconButton(
+                  Glyph.more,
+                  label: 'Report message',
+                  color: VimiColors.muted,
+                  onPressed: () =>
+                      reportContent(context, 'message', row['id'] as String),
+                ),
             ],
           ),
         ),
       ],
-    ),
-  );
+    );
+  }
+
+  Widget _composer() {
+    const inputBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(18)),
+      borderSide: BorderSide(color: VimiColors.tonal),
+    );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 8, 12, 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: TextField(
+              controller: input,
+              enabled: !busy,
+              minLines: 1,
+              maxLines: 3,
+              maxLength: 2000,
+              keyboardType: TextInputType.multiline,
+              textInputAction: TextInputAction.newline,
+              textCapitalization: TextCapitalization.sentences,
+              onTapOutside: (_) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
+              decoration: InputDecoration(
+                labelText: 'Your message',
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+                counterText: '',
+                isDense: true,
+                enabledBorder: inputBorder,
+                disabledBorder: inputBorder,
+                focusedBorder: inputBorder.copyWith(
+                  borderSide: const BorderSide(color: VimiColors.violet),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 14,
+                ),
+              ),
+              onChanged: (text) {
+                nonce = const Uuid().v4();
+                if (draftError != null) setState(() => draftError = null);
+                unawaited(
+                  draftStore
+                      .writeDraft(storedDraftKey, {
+                        'body': text,
+                        'client_id': nonce,
+                      })
+                      .catchError((Object e) {
+                        if (mounted) {
+                          setState(() => draftError = readableError(e));
+                        }
+                      }),
+                );
+              },
+            ),
+          ),
+          const SizedBox(width: 8),
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: input,
+            builder: (_, value, child) {
+              final canSend = allowed && !busy && value.text.trim().isNotEmpty;
+              return VIconButton(
+                Glyph.send,
+                label: busy ? 'Sending message' : 'Send message',
+                busy: busy,
+                primary: canSend,
+                filled: true,
+                color: VimiColors.cyan,
+                onPressed: canSend ? send : null,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 }

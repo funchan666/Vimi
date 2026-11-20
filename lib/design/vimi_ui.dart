@@ -38,26 +38,26 @@ ThemeData vimiTheme() => ThemeData(
   textTheme: const TextTheme(
     displaySmall: TextStyle(
       fontFamily: 'DMSans',
-      fontSize: 40,
+      fontSize: 30,
       height: 1.12,
       fontWeight: FontWeight.w700,
       letterSpacing: -0.9,
     ),
     headlineLarge: TextStyle(
       fontFamily: 'DMSans',
-      fontSize: 32,
+      fontSize: 25,
       height: 1.16,
       fontWeight: FontWeight.w600,
       letterSpacing: -0.7,
     ),
     headlineSmall: TextStyle(
       fontFamily: 'DMSans',
-      fontSize: 24,
+      fontSize: 20,
       height: 1.2,
       fontWeight: FontWeight.w600,
     ),
     titleLarge: TextStyle(
-      fontSize: 20,
+      fontSize: 18,
       height: 1.3,
       fontWeight: FontWeight.w700,
     ),
@@ -66,7 +66,7 @@ ThemeData vimiTheme() => ThemeData(
       height: 1.4,
       fontWeight: FontWeight.w700,
     ),
-    bodyLarge: TextStyle(fontSize: 16, height: 1.5),
+    bodyLarge: TextStyle(fontSize: 15, height: 1.45),
     bodyMedium: TextStyle(fontSize: 14, height: 1.5),
     labelLarge: TextStyle(
       fontSize: 14,
@@ -599,7 +599,7 @@ class VPage extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               child: Row(
                 children: [
                   if (back)
@@ -613,7 +613,9 @@ class VPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: Text(
                         title,
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
                   ),
@@ -842,31 +844,66 @@ String displayMessageTime(DateTime date) {
 }
 
 class Avatar extends StatelessWidget {
-  const Avatar({super.key, this.url, this.size = 48});
+  const Avatar({
+    super.key,
+    required this.name,
+    required this.label,
+    this.url,
+    this.alignment = Alignment.center,
+    this.size = 48,
+  });
+  final String name, label;
   final String? url;
+  final Alignment alignment;
   final double size;
   @override
   Widget build(BuildContext context) {
     final image = url;
+    final initials = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((word) => word.isNotEmpty)
+        .take(2)
+        .map((word) => word.characters.first.toUpperCase())
+        .join();
     final fallback = ColoredBox(
       color: VimiColors.tonal,
       child: Center(
-        child: VIcon(Glyph.person, size: size * .44, color: VimiColors.violet),
+        child: Text(
+          initials.isEmpty ? 'D' : initials,
+          maxLines: 1,
+          textScaler: TextScaler.noScaling,
+          style: TextStyle(
+            fontSize: size * .34,
+            fontWeight: FontWeight.w700,
+            color: VimiColors.violet,
+          ),
+        ),
       ),
     );
-    return ClipOval(
-      child: SizedBox.square(
-        dimension: size,
-        child: image == null
-            ? fallback
-            : Image.network(
-                image,
-                fit: BoxFit.cover,
-                excludeFromSemantics: true,
-                frameBuilder: (context, child, frame, synchronous) =>
-                    frame == null ? fallback : child,
-                errorBuilder: (_, error, stack) => fallback,
-              ),
+    return Semantics(
+      image: true,
+      label: label,
+      excludeSemantics: true,
+      child: ClipOval(
+        child: SizedBox.square(
+          dimension: size,
+          child: image == null
+              ? fallback
+              : Image.network(
+                  image,
+                  cacheWidth: (size * MediaQuery.devicePixelRatioOf(context))
+                      .ceil()
+                      .clamp(32, 216)
+                      .toInt(),
+                  fit: BoxFit.cover,
+                  alignment: alignment,
+                  excludeFromSemantics: true,
+                  frameBuilder: (_, child, frame, _) =>
+                      frame == null ? fallback : child,
+                  errorBuilder: (_, _, _) => fallback,
+                ),
+        ),
       ),
     );
   }

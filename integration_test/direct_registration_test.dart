@@ -33,7 +33,19 @@ void main() {
         'Password',
         const String.fromEnvironment('QA_PASSWORD_C'),
       );
-      await enter(tester, 'Date of birth · YYYY-MM-DD', '2000-01-01');
+      await enter(tester, 'Date of birth', '2000-01-01');
+      await press(tester, 'Create account');
+      expect(find.text('Agreement required'), findsOneWidget);
+      expect(
+        find.text(
+          'Read and agree to the Terms of Use and Community Guidelines before creating an account.',
+        ),
+        findsOneWidget,
+      );
+      expect(appController(tester).signedIn, isFalse);
+      results['signup_blocked_until_terms_accepted'] = 'passed';
+      await press(tester, 'Review agreement');
+      expect(find.text('Agreement required'), findsNothing);
       await press(tester, 'Agree to Terms of Use and Community Guidelines');
       await press(tester, 'Create account');
       await waitFor(

@@ -10,11 +10,11 @@ The brand system retains seven original rasters. Four original assets were produ
 | neon-spectrum | 1,348,845 | 21,786 | Original pink-violet-cyan gradient for actions, filters and ambient backgrounds |
 | neon-welcome | 2,046,195 | 188,292 | Original neon-lit adult dance welcome photograph |
 | neon-floor | 1,932,437 | 133,488 | Original neon-lit dance challenge cover |
-| neon-mark | 1,330,998 | 40,734 | Original gradient Vimi monogram / Android launcher source |
+| vimi-logo | 318,124 | 318,124 | Publisher-supplied PNG for startup, Android launcher, Play Store and local policy-site branding |
 
 The current authoritative mapping is `assets/brand/asset-inventory-v3.json`. New original PNGs are preserved under `assets/brand/sources/neon-v3/`, previous utility sources under `assets/brand/sources/editorial-v2/`. Prompts are in `assets/brand/generation-prompts-v3.json` and `garden-gpt-image-2/prompt/vimi-neon-*-20261119.md`. Sources and prompts are excluded from the app bundle.
 
-New full-color WebP uses quality 94 (96 for the mark). Utility rasters retain their existing lossless/alpha encoding. Only conversion, resizing and compression derived runtime files from original generated art; no replacement icons, illustrations, gradients or textures were drawn in code. Native layout clips/displays the original gradient for primary actions, selected filters, navigation and tinted message/profile panels. Atlas display uses the previously measured raster regions. All launcher densities derive from the new mark.
+The Flutter logo and the Play Store image match the submitted PNG byte for byte. Android launcher densities resize the same source. The retired gradient monogram remains documented in the historical inventories. Utility rasters retain their existing encoding, and the original gradient still supplies primary actions, selected filters, navigation and tinted message/profile panels.
 
 Source and optimized new photography, the original gradient/mark and the 48px launcher were visually inspected. Generated people retain photographic skin, ordinary clothes and credible anatomy; no manga/comic art is used. App crops and actual native text/controls have not been rendered or exercised.
 

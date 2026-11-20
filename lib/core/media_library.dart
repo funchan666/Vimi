@@ -148,6 +148,25 @@ class MediaLibrary {
   final List<LibraryClip> clips;
   final List<LibraryPortrait> portraits;
 
+  LibraryPortrait? defaultAvatarFor(String accountId) {
+    const avatarIds = {
+      'portrait-001',
+      'portrait-007',
+      'portrait-014',
+      'portrait-015',
+      'portrait-017',
+      'portrait-018',
+      'portrait-022',
+      'portrait-030',
+    };
+    final choices = portraits
+        .where((photo) => avatarIds.contains(photo.id))
+        .toList();
+    if (choices.isEmpty) return null;
+    final choice = md5.convert(utf8.encode(accountId)).bytes.first;
+    return choices[choice % choices.length];
+  }
+
   /// Both new IDs and notes/drafts/backups saved by version 1 remain playable.
   LibraryClip clipForSource(String source) => clips.firstWhere(
     (clip) => clip.source == source || clip.legacySource == source,

@@ -1,0 +1,18 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:paddingMode="stack">
+    <item
+        android:drawable="@drawable/vimi_launch_logo"
+        android:gravity="center"
+        android:height="128dp"
+        android:width="128dp" />
+    <!-- Center the 3dp track 20dp below the logo’s bottom edge. -->
+    <item
+        android:gravity="center"
+        android:height="3dp"
+        android:top="171dp"
+        android:width="64dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/vimi_launch_track" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+</layer-list>

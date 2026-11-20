@@ -41,13 +41,18 @@ void main() {
       await tester.pump();
       try {
         for (final label in ['Floor', 'Inbox', 'Me', 'Studio']) {
-          expect(find.text(label), findsNothing);
-          await press(tester, label);
+          final destination = find.byTooltip(label);
+          expect(
+            find.descendant(of: destination, matching: find.text(label)),
+            findsNothing,
+          );
+          await tester.tap(destination);
+          await tester.pump(const Duration(milliseconds: 500));
           expect(
             tester
                 .widget<VIconButton>(
                   find.ancestor(
-                    of: find.byTooltip(label),
+                    of: destination,
                     matching: find.byType(VIconButton),
                   ),
                 )

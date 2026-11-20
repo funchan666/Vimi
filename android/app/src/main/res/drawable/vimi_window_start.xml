@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:paddingMode="stack">
+    <item android:drawable="@color/vimi_background" />
+    <item android:drawable="@drawable/vimi_launch_content" />
+    <item
+        android:drawable="@drawable/vimi_launch_progress"
+        android:gravity="center"
+        android:height="3dp"
+        android:top="171dp"
+        android:width="22dp" />
+</layer-list>

@@ -1,7 +1,8 @@
 <resources>
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
-        <item name="android:windowBackground">@drawable/launch_background</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@drawable/vimi_window_start</item>
+        <item name="android:statusBarColor">@color/vimi_background</item>
+        <item name="android:navigationBarColor">@color/vimi_background</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">

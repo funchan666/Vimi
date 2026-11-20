@@ -19,123 +19,213 @@ import 'media_library_pages.dart';
 
 class StudioPage extends StatelessWidget {
   const StudioPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
+    final cutoff = DateTime.now().subtract(const Duration(days: 7));
+    final minutes = app.practices
+        .where((practice) => !practice.createdAt.isBefore(cutoff))
+        .fold(0, (total, practice) => total + practice.minutes);
     return ListView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'Own your next eight.',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-            ),
-            VIconButton(
-              Glyph.more,
-              label: 'Journal recovery',
-              onPressed: () => openPage(context, const JournalRecoveryPage()),
-            ),
-          ],
+        RehearsalShelf(
+          practiceBuilder: (clip) => PracticeEditor(initialClip: clip),
         ),
-        const SizedBox(height: 16),
-        const Text(
-          'Keep your routines, rehearsal videos and next steps together.',
-        ),
-        const SizedBox(height: 24),
-        VButton(
-          'Start a practice note',
-          glyph: Glyph.add,
-
-          onPressed: () => openPage(context, const PracticeEditor()),
-        ),
-        const SizedBox(height: 12),
-        VActionRow(
-          'Dance video library',
-          detail: '10 clips · Solo, duets & groups',
-          glyph: Glyph.library,
-          onPressed: () => openPage(
-            context,
-            MediaLibraryPage(
-              practiceBuilder: (clip) => PracticeEditor(initialClip: clip),
-            ),
-          ),
-        ),
-        const SizedBox(height: 32),
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'Your rehearsal journal',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ),
-            Text('${app.practices.length} saved'),
-          ],
-        ),
-        if (app.journalError != null)
-          ErrorNote(
-            app.journalError!,
-            onRetry: () => unawaited(app.refreshAccount()),
-          ),
-        if (app.practices.isEmpty && app.journalError == null)
-          const EmptyNote(
-            'Remember what clicked.',
-            'Save a routine, your tempo and one thing to try next time.',
-          ),
-        for (final practice in app.practices)
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Tooltip(
-              message: 'Open practice',
-              child: SurfacePanel(
-                padding: const EdgeInsets.all(8),
-                child: VActionRow(
-                  practice.routine,
-                  glyph: practice.videoPath == null
-                      ? Glyph.studio
-                      : Glyph.video,
-                  detail:
-                      '${practice.style} · ${practice.minutes} min · ${practice.counts} eights · ${displayDate(practice.createdAt)}'
-                      '${practice.notes.isEmpty ? '' : '\n${practice.notes}'}',
-                  onPressed: () =>
-                      openPage(context, PracticeEditor(session: practice)),
+        const SizedBox(height: 20),
+        SurfacePanel(
+          padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+          child: Row(
+            children: [
+              const VIcon(Glyph.studio, size: 20, color: VimiColors.cyan),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Practice journal',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (app.journalError == null)
+                      Text(
+                        app.practices.isEmpty
+                            ? 'No practice notes yet'
+                            : '$minutes min · Last 7 days',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: VimiColors.muted,
+                        ),
+                      ),
+                  ],
                 ),
               ),
-            ),
+              VIconButton(
+                Glyph.more,
+                label: 'Journal recovery',
+                color: VimiColors.muted,
+                onPressed: () => openPage(context, const JournalRecoveryPage()),
+              ),
+              VIconButton(
+                Glyph.add,
+                label: 'Start a practice note',
+                color: VimiColors.cyan,
+                onPressed: () => openPage(context, const PracticeEditor()),
+              ),
+            ],
           ),
-        const SizedBox(height: 40),
-        Text(
-          'Build a practice habit',
-          style: Theme.of(context).textTheme.headlineSmall,
         ),
-        const SizedBox(height: 8),
-        const Text(
-          'Reusable planning packs. Your everyday journal is always free.',
+        if (app.journalError case final error?)
+          ErrorNote(error, onRetry: () => unawaited(app.refreshAccount())),
+        for (final practice in app.practices)
+          Tooltip(
+            message: 'Open practice',
+            child: _PracticeNoteRow(practice: practice),
+          ),
+        const SizedBox(height: 18),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(4, 0, 4, 6),
+          child: Text(
+            'Practice packs',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          ),
         ),
         for (final pack in StudioPack.all)
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Tooltip(
-              message: app.unlocked.contains(pack.id)
-                  ? 'Open your pack'
-                  : 'See pack · ${pack.cost} coins',
-              child: VActionRow(
-                pack.title,
-                detail:
-                    '${app.unlocked.contains(pack.id) ? 'Unlocked' : '${pack.cost} coins'} · ${pack.description}',
-                glyph: app.unlocked.contains(pack.id)
-                    ? Glyph.check
-                    : Glyph.coin,
-                onPressed: () => openPage(context, StudioPackPage(pack: pack)),
-              ),
+          Tooltip(
+            message: app.unlocked.contains(pack.id)
+                ? 'Open your pack'
+                : 'See pack · ${pack.cost} coins',
+            child: _StudioRow(
+              name: pack.title,
+              metadata: app.unlocked.contains(pack.id)
+                  ? 'Unlocked'
+                  : '${pack.cost} coins',
+              glyph: app.unlocked.contains(pack.id) ? Glyph.check : Glyph.coin,
+              onPressed: () => openPage(context, StudioPackPage(pack: pack)),
             ),
           ),
       ],
     );
   }
+}
+
+class PracticeHistoryPage extends StatelessWidget {
+  const PracticeHistoryPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final app = VimiScope.of(context);
+    final error = app.journalError;
+    void startNote() => openPage(context, const PracticeEditor());
+
+    return VPage(
+      title: 'Practice history',
+      actions: [
+        VIconButton(
+          Glyph.more,
+          label: 'Journal recovery',
+          onPressed: () => openPage(context, const JournalRecoveryPage()),
+        ),
+        if (error == null && app.practices.isNotEmpty)
+          VIconButton(
+            Glyph.add,
+            label: 'Start a practice note',
+            color: VimiColors.cyan,
+            onPressed: startNote,
+          ),
+      ],
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        children: [
+          if (error != null)
+            ErrorNote(error, onRetry: () => unawaited(app.refreshAccount()))
+          else if (app.practices.isEmpty)
+            SurfacePanel(
+              padding: const EdgeInsets.all(6),
+              child: VActionRow(
+                'Start a practice note',
+                detail: 'Save a routine, video or rehearsal cue.',
+                glyph: Glyph.studio,
+                onPressed: startNote,
+              ),
+            ),
+          for (final practice in app.practices)
+            Tooltip(
+              message: 'Open practice',
+              child: _PracticeNoteRow(practice: practice),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PracticeNoteRow extends StatelessWidget {
+  const _PracticeNoteRow({required this.practice});
+  final PracticeSession practice;
+
+  @override
+  Widget build(BuildContext context) => _StudioRow(
+    name: practice.routine,
+    metadata:
+        '${practice.minutes} min · ${practice.counts} eights · ${displayDate(practice.createdAt)}',
+    glyph: practice.videoPath == null ? Glyph.studio : Glyph.video,
+    onPressed: () => openPage(context, PracticeEditor(session: practice)),
+  );
+}
+
+class _StudioRow extends StatelessWidget {
+  const _StudioRow({
+    required this.name,
+    required this.metadata,
+    required this.glyph,
+    required this.onPressed,
+  });
+  final String name, metadata;
+  final Glyph glyph;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => TextButton(
+    onPressed: onPressed,
+    style: TextButton.styleFrom(
+      foregroundColor: VimiColors.ink,
+      minimumSize: const Size(48, 52),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+    ),
+    child: Row(
+      children: [
+        VIcon(glyph, size: 20, color: VimiColors.violet),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                metadata,
+                style: const TextStyle(fontSize: 12, color: VimiColors.muted),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        const VIcon(Glyph.next, size: 14, color: VimiColors.muted),
+      ],
+    ),
+  );
 }
 
 class PracticeEditor extends StatefulWidget {
