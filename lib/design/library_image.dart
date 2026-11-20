@@ -12,6 +12,7 @@ class LibraryImage extends StatefulWidget {
     this.cacheWidth,
     this.label,
     this.compact = false,
+    this.alignment = Alignment.center,
   });
   final String url;
   final BoxFit fit;
@@ -19,6 +20,7 @@ class LibraryImage extends StatefulWidget {
   final int? cacheWidth;
   final String? label;
   final bool compact;
+  final Alignment alignment;
   @override
   State<LibraryImage> createState() => _LibraryImageState();
 }
@@ -37,6 +39,7 @@ class _LibraryImageState extends State<LibraryImage> {
     width: widget.width,
     height: widget.height,
     fit: widget.fit,
+    alignment: widget.alignment,
     cacheWidth: widget.cacheWidth,
     semanticLabel: widget.label,
     excludeFromSemantics: widget.label == null,

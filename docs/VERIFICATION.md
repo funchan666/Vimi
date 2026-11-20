@@ -1,6 +1,12 @@
-# Vimi verification · November 19, 2026
+# Vimi verification · updated November 20, 2026
 
 The current user request authorized runnable verification for this task. Android builds, emulator runs, focused tests and isolated hosted checks were executed. This supersedes the earlier source-only review; it does not establish a signed store release or a Google Play payment result.
+
+## Welcome revision · November 20
+
+The redesigned welcome uses actual publisher duet/group covers with one primary registration action. Active-source analysis and all 26 widget/storage tests passed again, including narrow/expanded secondary layouts at larger type. `integration_test/welcome_routes_test.dart` passed on Android: both cover files decoded, signup/sign-in forms opened, Privacy and Child safety were readable as a guest, the genuine duet stream advanced and paused, and Explore entered Studio. The test did not register an account, submit content or change hosted data.
+
+Evidence is under `verification/2026-11-20/welcome/`: `native-results.json` records the debug interaction run; `preview-welcome-phone.png` and `preview-welcome-expanded.png` show the installed main-entrypoint profile build. The expanded display was 1600×1000, density 160 and font scale 1.3; the original display settings were restored. `preview-artifact.json` and `apk-packaging.json` identify the 36,720,586-byte preview, verify its installed hash, exclude the retired generated welcome photo and bundled publisher media, and record source-byte matching, v2 signing and static 16 KB alignment. The two retained private passwords were checked and absent. Earlier service and journey results below retain their November 19 source snapshots; they were not all rerun for this welcome-only revision.
 
 ## Environment and evidence
 
@@ -57,11 +63,11 @@ See `BACKEND.md`, `GOOGLE_PLAY_PRODUCTS.md` and `HANDOFF.md` for operation and p
 
 ## Deliverable and cleanup
 
-`dist/Vimi-1.0.0-arm64-preview.apk` is the recommended **36,909,069-byte** ARM64 profile preview with all 65 supplied source items served online and no bundled publisher media. It uses the local Android debug certificate for preview installation; it is not an upload-signed store release. Signature scheme v2 verifies. It was installed and cold-launched successfully on Android; `cloud-library/preview-cloud-player.png` is the current installed-preview capture; cold launch is recorded separately. SHA-256 is in `artifacts.json`; earlier measurements remain in the before-history/before-play/before-media/before-controls/before-cloud-library records.
+`dist/Vimi-1.0.0-arm64-preview.apk` is the recommended **36,720,586-byte** ARM64 profile preview with all 65 supplied source items served online and no bundled publisher media. It uses the local Android debug certificate for preview installation; it is not an upload-signed store release. Signature scheme v2 verifies. It was installed and cold-launched successfully on Android; the current screenshot and SHA-256 are in `verification/2026-11-20/welcome/`. The previous 36,909,069-byte cloud-library artifact remains recorded in `verification/2026-11-19/artifacts.json`; earlier measurements retain their original verification snapshots.
 
 The native flows were verified with debug builds of their recorded source snapshots; the smaller profile preview has separate installation/startup evidence. A profile startup is not represented as repeating every interaction suite on an AOT binary.
 
-The current distributable APK was checked for three actual passwords (the two retained operator/App-access credentials and this pass’s disposable QA credential), private configurations and native-test labels: none were found. The disposable local credential was removed after scanning. The earlier media snapshot also checked its two additional temporary credentials before those private files were removed. Temporary local QA credentials were removed; the separate private operator and ordinary Play App-access credential files are retained, ignored and mode 0600. Hosted final state is **zero temporary users, posts, messages, reports, uploaded media and follows**, with **one fixed content operator**, **one ordinary maintained Play review account** and zero wallet balance. The email-test account was also deleted after recovery verification; the support/child-safety contact remains configured.
+The current distributable APK was checked for both retained operator/App-access passwords, private configurations and native-test labels: none were found. The November 19 snapshot additionally checked its disposable QA password before that local credential was removed. Earlier media checks included two additional temporary credentials before deletion. The separate private operator and ordinary Play App-access credential files remain ignored and mode 0600. The last hosted acceptance recorded **zero temporary users, posts, messages, reports, uploaded media and follows**, with **one fixed content operator**, **one ordinary maintained Play review account** and zero wallet balance. The welcome revision did not write hosted data. The email-test account was deleted after recovery verification; the support/child-safety contact remains configured.
 
 `test/fixtures/rehearsal-sample.mp4` is a 12-second still-photo decoder fixture, not sample choreography and not an application asset. The historical email-confirmation test is retained as `.dart.txt`; current signup acceptance uses `direct_registration_test.dart`.
 
@@ -121,9 +127,9 @@ The November 19 UI refinement removes visible captions from bottom navigation an
 
 The native acceptance screenshot `compact-rehearsal-controls.png` shows the complete preserved frame and the compact controls. No fictional community content was added, and no hosted moderation, auth or billing configuration changed in this UI pass.
 
-## Current cloud-library delivery and local removal
+## Cloud-library delivery and local removal · November 19 snapshot
 
-The publisher explicitly selected migration of all 55 images and ten videos to Supabase, followed by removing their package copies after verification. The current main-entrypoint ARM64 preview is **36,909,069 bytes**, compared with **67,253,150 bytes** in `artifacts-before-cloud-library.json`. All 128 former content files and their four Flutter registrations were removed after verification. Original/optimized recovery copies are ignored outside the app assets. No additional image/video compression or audio modification occurred.
+The publisher explicitly selected migration of all 55 images and ten videos to Supabase, followed by removing their package copies after verification. That main-entrypoint ARM64 preview was **36,909,069 bytes**, compared with **67,253,150 bytes** in `artifacts-before-cloud-library.json`. All 128 former content files and their four Flutter registrations were removed after verification. Original/optimized recovery copies were subsequently deleted at the publisher's explicit request, as recorded below. No additional image/video compression or audio modification occurred.
 
 - `cloud-library/public-object-verification.json`: anonymous GET byte/hash matches for all 128 optimized files (30,324,892 bytes), correct MIME types and HTTP 206 ranges for all ten MP4s. The lightweight catalogue remains bundled; images and videos do not.
 - `cloud-library/native/native-results.json`: API-35 ARM64 downloads/decodes all 55 portraits and streams all ten complete videos through actual native network controllers. It resolves a prior bundled asset reference, saves/reopens a cloud practice note and bookmark, downloads/selects the last portrait, saves it through the real private-avatar upload and compares the returned bytes. The actual native account-deletion flow removes that disposable actor and avatar. A transient TLS termination in the first attempt led to bounded transport retries; the complete subsequent suite passed in about two minutes.

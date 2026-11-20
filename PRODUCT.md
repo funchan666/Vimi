@@ -8,6 +8,8 @@ The user explicitly selected Flutter/Android and Supabase. These choices overrid
 
 On November 19, 2026 the user approved the neon social direction: midnight violet surfaces, orchid-pink/violet/cyan gradients, credible dance photography and prominent dancer/cover/posting interactions. Follow `DESIGN.md` and the accepted reference `docs/design-preview/vimi-neon-floor-v3-concept.png` for subsequent screens and refinements. Preserve this identity while completing the functional journeys and acceptance requirements below. Approval concerns the visual direction, not successful runtime or payment verification.
 
+On November 20 the user rejected the welcome screen's staged imagery, layout and weak social emphasis. Its replacement uses actual publisher-supplied group/duet covers, a working duet-preview entry and a single dominant registration action, with light sign-in, guest and legal links. This changes the welcome composition while preserving the approved neon identity and existing authentication and social contracts.
+
 ## Journeys
 
 - Floor: browse approved dance photos/videos, filter by style, discover dancers, join original eight-count challenges, publish with gallery/camera, comment, save, report and block.

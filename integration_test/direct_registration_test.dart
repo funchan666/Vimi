@@ -25,7 +25,7 @@ void main() {
       );
       await binding.convertFlutterSurfaceToImage();
       await tester.pump();
-      await press(tester, 'Get started');
+      await press(tester, 'Join the crew');
       await enter(tester, 'Display name', 'Vimi QA Direct Registration');
       await enter(tester, 'Email', const String.fromEnvironment('QA_EMAIL_C'));
       await enter(

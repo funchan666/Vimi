@@ -59,7 +59,6 @@
     "id": "neon-welcome",
     "role": "Original neon-lit adult dance welcome photograph",
     "source": "assets/brand/sources/neon-v3/neon-welcome.png",
-    "runtime": "assets/ui/neon-welcome.webp",
     "source_bytes": 2046195,
     "runtime_bytes": 188292,
     "dimensions": [
@@ -67,7 +66,9 @@
       1536
     ],
     "alpha": false,
-    "origin": "original built-in host image generation; fictional adults where pictured"
+    "origin": "original built-in host image generation; fictional adults where pictured",
+    "former_runtime": "assets/ui/neon-welcome.webp",
+    "status": "retired 2026-11-20; replaced by actual publisher performances; not bundled"
   },
   {
     "id": "neon-floor",

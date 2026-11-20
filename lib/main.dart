@@ -98,31 +98,30 @@ class _VimiBootstrapState extends State<VimiBootstrap> {
       debugShowCheckedModeBanner: false,
       theme: vimiTheme(),
       home: Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    'assets/ui/neon-mark.webp',
-                    width: 120,
-                    height: 120,
-                  ),
-                  const SizedBox(height: 28),
-                  Text(
-                    failure == null
-                        ? 'Getting the floor ready…'
-                        : 'Vimi needs another moment.',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontFamily: 'DMSans', fontSize: 24),
-                  ),
-                  if (failure != null) ...[
-                    const SizedBox(height: 24),
-                    VButton('Try again', onPressed: start),
+        body: NeonBackdrop(
+          child: SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        failure == null
+                            ? 'Getting the floor ready…'
+                            : 'Couldn’t open the app.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    ),
+                    if (failure != null) ...[
+                      const SizedBox(height: 24),
+                      VButton('Try again', onPressed: start),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),
@@ -255,8 +254,8 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
               ),
             ),
           )
-        : widget.controller.signedIn || widget.controller.exploring
-        ? DanceShell(initialTab: widget.controller.signedIn ? 0 : 1)
+        : widget.controller.signedIn
+        ? const DanceShell()
         : const WelcomePage(),
   );
 }

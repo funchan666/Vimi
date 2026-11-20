@@ -6,152 +6,31 @@ import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
 import '../../design/vimi_ui.dart';
 import 'account_security_pages.dart';
+import 'welcome_scene.dart';
+import '../studio/media_library_pages.dart';
+import '../studio/studio_pages.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
-  Widget _intro(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const VimiWordmark(),
-      const SizedBox(height: 22),
-      Text(
-        'Find your\nnext crew.',
-        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-          fontWeight: FontWeight.w700,
-          fontSize: 38,
-          height: 1.12,
-        ),
-      ),
-      const SizedBox(height: 14),
-      const Text(
-        'Share your covers. Connect through the moves you love.',
-        style: TextStyle(fontSize: 16, height: 1.5, color: VimiColors.muted),
-      ),
-      const SizedBox(height: 10),
-      const Text(
-        'K-pop · Girl group · Boy group',
-        style: TextStyle(fontSize: 14, height: 1.5, color: VimiColors.cyan),
-      ),
-    ],
-  );
-  Widget _actions(BuildContext context, AppController app) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      VButton(
-        'Get started',
-        onPressed: () => openPage(context, const AuthPage(signUp: true)),
-      ),
-      const SizedBox(height: 8),
-      Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        spacing: 8,
-        children: [
-          VButton(
-            'Sign in',
-            quiet: true,
-            onPressed: () => openPage(context, const AuthPage(signUp: false)),
-          ),
-          VButton('Explore the studio', quiet: true, onPressed: app.explore),
-        ],
-      ),
-      const SizedBox(height: 8),
-      Wrap(
-        spacing: 8,
-        children: [
-          VButton(
-            'Privacy Policy',
-            quiet: true,
-            onPressed: () =>
-                openPage(context, const LegalPage('Privacy Policy', 'privacy')),
-          ),
-          VButton(
-            'Child safety',
-            quiet: true,
-            onPressed: () => openPage(
-              context,
-              const LegalPage('Child safety standards', 'child-safety'),
-            ),
-          ),
-        ],
-      ),
-    ],
-  );
   @override
-  Widget build(BuildContext context) {
-    final app = VimiScope.of(context);
-    return Scaffold(
-      body: NeonBackdrop(
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, box) {
-              final wide = box.maxWidth >= 760;
-              final image = ClipRRect(
-                borderRadius: BorderRadius.circular(22),
-                child: Image.asset(
-                  'assets/ui/neon-welcome.webp',
-                  fit: BoxFit.cover,
-                  alignment: const Alignment(0, -.8),
-                ),
-              );
-              if (wide) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: SizedBox.expand(child: image),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 440),
-                          child: SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 40,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                _intro(context),
-                                const SizedBox(height: 40),
-                                _actions(context, app),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-              final photoHeight = (box.maxHeight * .34)
-                  .clamp(210.0, 330.0)
-                  .toDouble();
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: photoHeight, child: image),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(4, 26, 4, 0),
-                        child: _intro(context),
-                      ),
-                      const SizedBox(height: 28),
-                      _actions(context, app),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+  Widget build(BuildContext context) => DanceWelcomeScene(
+    onJoin: () => openPage(context, const AuthPage(signUp: true)),
+    onSignIn: () => openPage(context, const AuthPage(signUp: false)),
+    onExplore: VimiScope.of(context).explore,
+    onPrivacy: () =>
+        openPage(context, const LegalPage('Privacy Policy', 'privacy')),
+    onSafety: () => openPage(
+      context,
+      const LegalPage('Child safety standards', 'child-safety'),
+    ),
+    onPreview: (clip) => openPage(
+      context,
+      ClipLibraryDetail(
+        clip: clip,
+        practiceBuilder: (value) => PracticeEditor(initialClip: value),
       ),
-    );
-  }
+    ),
+  );
 }
 
 Future<bool> requireSignIn(BuildContext context) async {

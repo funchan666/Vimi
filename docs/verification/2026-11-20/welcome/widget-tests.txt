@@ -1,0 +1,28 @@
+00:00 +0: loading /Users/chengdupengyuyan/Fun/Vimi/test/pagination_test.dart
+00:00 +0: /Users/chengdupengyuyan/Fun/Vimi/test/pagination_test.dart: timestamp ties and fractional seconds survive more than 100 rows
+00:00 +1: /Users/chengdupengyuyan/Fun/Vimi/test/pagination_test.dart: timestamp ties and fractional seconds survive more than 100 rows
+00:00 +2: /Users/chengdupengyuyan/Fun/Vimi/test/pagination_test.dart: arrivals and removed tail keep loaded depth, without fetching every older page
+00:00 +3: /Users/chengdupengyuyan/Fun/Vimi/test/pagination_test.dart: ascending review queue keeps its oldest-first cursor when items are resolved
+00:00 +4: /Users/chengdupengyuyan/Fun/Vimi/test/pagination_test.dart: failed second page retries the same cursor and preserves existing items
+00:00 +5: /Users/chengdupengyuyan/Fun/Vimi/test/pagination_test.dart: failed refresh keeps rows and retries from the head
+00:00 +6: /Users/chengdupengyuyan/Fun/Vimi/test/pagination_test.dart: double taps and queued refreshes share work and do not duplicate rows
+00:00 +7: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +8: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +9: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +10: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +11: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +12: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +13: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +14: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +15: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +16: /Users/chengdupengyuyan/Fun/Vimi/test/play_safety_test.dart: child safety standards remain readable without a signed-in account
+00:00 +17: /Users/chengdupengyuyan/Fun/Vimi/test/comment_refresh_test.dart: pending and failed post refresh preserves the comment editor and focus
+00:00 +18: /Users/chengdupengyuyan/Fun/Vimi/test/comment_refresh_test.dart: pending and failed post refresh preserves the comment editor and focus
+00:00 +19: /Users/chengdupengyuyan/Fun/Vimi/test/comment_refresh_test.dart: pending and failed post refresh preserves the comment editor and focus
+00:00 +20: /Users/chengdupengyuyan/Fun/Vimi/test/comment_refresh_test.dart: pending and failed post refresh preserves the comment editor and focus
+00:00 +21: /Users/chengdupengyuyan/Fun/Vimi/test/comment_refresh_test.dart: pending and failed post refresh preserves the comment editor and focus
+00:00 +22: /Users/chengdupengyuyan/Fun/Vimi/test/secondary_flows_test.dart: practice draft reopens, saves, edits and deletes actual stored note
+00:01 +23: /Users/chengdupengyuyan/Fun/Vimi/test/secondary_flows_test.dart: publisher restores challenge and caption, and discard clears real draft
+00:01 +24: /Users/chengdupengyuyan/Fun/Vimi/test/secondary_flows_test.dart: icon-only navigation keeps labels, selected state and all destinations
+00:01 +25: /Users/chengdupengyuyan/Fun/Vimi/test/secondary_flows_test.dart: secondary neon pages fit narrow and expanded layouts with larger type
+00:02 +26: All tests passed!

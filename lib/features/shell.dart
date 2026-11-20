@@ -49,24 +49,15 @@ class _DanceShellState extends State<DanceShell> {
     child: SurfacePanel(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: expanded
-          ? Column(
-              children: [
-                const SizedBox(height: 24),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/ui/neon-mark.webp',
-                    width: 38,
-                    height: 38,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                for (var i = 0; i < 4; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: destination(i),
-                  ),
-              ],
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  for (var i = 0; i < titles.length; i++) ...[
+                    if (i > 0) const SizedBox(height: 16),
+                    destination(i),
+                  ],
+                ],
+              ),
             )
           : Row(
               children: [
@@ -89,12 +80,10 @@ class _DanceShellState extends State<DanceShell> {
               child: Row(
                 children: [
                   Expanded(
-                    child: expanded
-                        ? Text(
-                            titles[tab],
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          )
-                        : const VimiWordmark(),
+                    child: Text(
+                      titles[tab],
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(

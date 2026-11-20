@@ -579,35 +579,6 @@ class NeonBackdrop extends StatelessWidget {
   );
 }
 
-class VimiWordmark extends StatelessWidget {
-  const VimiWordmark({super.key});
-  @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      ClipRRect(
-        borderRadius: BorderRadius.circular(11),
-        child: Image.asset('assets/ui/neon-mark.webp', width: 38, height: 38),
-      ),
-      const SizedBox(width: 10),
-      const Flexible(
-        child: Text(
-          'vimi',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontFamily: 'DMSans',
-            fontSize: 30,
-            height: 1,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -.8,
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
 class VPage extends StatelessWidget {
   const VPage({
     super.key,
@@ -875,21 +846,28 @@ class Avatar extends StatelessWidget {
   final String? url;
   final double size;
   @override
-  Widget build(BuildContext context) => ClipOval(
-    child: SizedBox.square(
-      dimension: size,
-      child: url == null
-          ? Image.asset('assets/ui/neon-mark.webp', fit: BoxFit.cover)
-          : Image.network(
-              url!,
-              fit: BoxFit.cover,
-              frameBuilder: (context, child, frame, synchronous) =>
-                  frame == null
-                  ? Image.asset('assets/ui/neon-mark.webp', fit: BoxFit.cover)
-                  : child,
-              errorBuilder: (_, __, ___) =>
-                  Image.asset('assets/ui/neon-mark.webp', fit: BoxFit.cover),
-            ),
-    ),
-  );
+  Widget build(BuildContext context) {
+    final image = url;
+    final fallback = ColoredBox(
+      color: VimiColors.tonal,
+      child: Center(
+        child: VIcon(Glyph.person, size: size * .44, color: VimiColors.violet),
+      ),
+    );
+    return ClipOval(
+      child: SizedBox.square(
+        dimension: size,
+        child: image == null
+            ? fallback
+            : Image.network(
+                image,
+                fit: BoxFit.cover,
+                excludeFromSemantics: true,
+                frameBuilder: (context, child, frame, synchronous) =>
+                    frame == null ? fallback : child,
+                errorBuilder: (_, error, stack) => fallback,
+              ),
+      ),
+    );
+  }
 }

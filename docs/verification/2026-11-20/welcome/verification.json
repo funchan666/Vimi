@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-20",
+  "scope": "welcome redesign; existing routes and cloud performance preview",
+  "source_sha256": {
+    "lib/features/auth/auth_pages.dart": "813cf62957085ba8c276860eb09fc8635e9f6bfa52e4208f5535ce8545029df9",
+    "lib/features/auth/welcome_scene.dart": "83b58dd8331398b7622267631b877c049003027241bc1a9bb30badcc4af923dd",
+    "lib/design/library_image.dart": "c167983cbd154653955176afa0caef80e720678ecc87740aa92c02847a368207",
+    "lib/main.dart": "1ef25e8e6a9f28206c56cfa81219cf98145e36e9a90df904f95ea766c90f1680",
+    "assets/data/media_library.json": "80c5a070829da51ff4088e5d5b66a79daa5e0e0e386da25650efdc2edf6d63ba",
+    "pubspec.yaml": "7519d820b8ca3fd8fb70129c1ffe3c46e178c5876b7c2069288de38c90769fc6",
+    "integration_test/welcome_routes_test.dart": "92dec76078f13551e8efee189d1ac4ade2f0522238ad97476a0ace71c0211086",
+    "integration_test/direct_registration_test.dart": "92da2a3c68d7bfc139835fad077b997c6f963c3d811fe6e3b10694a8f0c9aa10",
+    "test/secondary_flows_test.dart": "b92e32b70dad655f0836c8c1e50cd446ab3318ebd858533d3f818b71c698070f"
+  },
+  "analysis": "no issues",
+  "widget_storage_cases": 26,
+  "native_route_results": "native-results.json",
+  "phone_capture": "preview-welcome-phone.png",
+  "expanded_capture": "preview-welcome-expanded.png",
+  "display_state": "restored; see display-verification.json",
+  "artifact": "preview-artifact.json",
+  "installed_artifact_checks": "apk-packaging.json",
+  "hosted_account_or_content_writes": false,
+  "new_generated_artwork": false,
+  "publisher_media_copies_created": false,
+  "retired_runtime_art": "assets/ui/neon-welcome.webp removed",
+  "remaining_validation": "physical device and store-release/payment work unchanged; this pass concerns welcome UI"
+}

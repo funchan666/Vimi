@@ -1,10 +1,14 @@
 """Inspect a main-entrypoint APK against the actual private QA/operator values."""
+import argparse
 import hashlib
 import json
 from pathlib import Path
 import zipfile
 
 root=Path(__file__).resolve().parents[1]
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--output', type=Path, default=root/'docs/verification/2026-11-19/preview-artifact.json')
+args=parser.parse_args()
 apk=root/'dist/Vimi-1.0.0-arm64-preview.apk'
 operator=json.loads((root/'config/reviewer-access.json').read_text())
 qa_files=sorted((root/'config').glob('qa-*.json'))
@@ -26,5 +30,6 @@ result={'file':str(apk.relative_to(root)),'mode':'profile','signing':'local debu
         'bytes':apk.stat().st_size,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),
         'qa_credentials_present':False,'private_configs_present':False,'qa_fixture_labels_present':False,
         'actual_distinct_passwords_checked':len(secrets),'arm64':True}
-(root/'docs/verification/2026-11-19/preview-artifact.json').write_text(json.dumps(result,indent=2)+'\n')
+args.output.parent.mkdir(parents=True, exist_ok=True)
+args.output.write_text(json.dumps(result,indent=2)+'\n')
 print(json.dumps(result))

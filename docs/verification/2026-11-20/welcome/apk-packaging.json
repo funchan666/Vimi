@@ -1,0 +1,58 @@
+{
+  "file": "dist/Vimi-1.0.0-arm64-preview.apk",
+  "bytes": 36720586,
+  "sha256": "4ca6de3f57b14587d497dd7d671d57620c0a32e6f7ae0fbb759e62c1755b6f4e",
+  "installed_sha256": "4ca6de3f57b14587d497dd7d671d57620c0a32e6f7ae0fbb759e62c1755b6f4e",
+  "installed_matches": true,
+  "signature_v2_verified": true,
+  "zip_16kb_alignment": true,
+  "elf_16kb_load_alignment": [
+    {
+      "name": "lib/arm64-v8a/libapp.so",
+      "load_alignments": [
+        65536,
+        65536,
+        65536
+      ]
+    },
+    {
+      "name": "lib/arm64-v8a/libdartjni.so",
+      "load_alignments": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "name": "lib/arm64-v8a/libdatastore_shared_counter.so",
+      "load_alignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "name": "lib/arm64-v8a/libflutter.so",
+      "load_alignments": [
+        65536,
+        65536,
+        65536
+      ]
+    },
+    {
+      "name": "lib/arm64-v8a/libvmservice_snapshot.so",
+      "load_alignments": [
+        65536,
+        65536,
+        65536
+      ]
+    }
+  ],
+  "bundled_source_files_matched": 17,
+  "bundled_supplied_media": 0,
+  "retired_welcome_art_bundled": false,
+  "target_api": 36,
+  "min_api": 24,
+  "cold_launch": "passed"
+}

@@ -19,7 +19,6 @@ class AppController extends ChangeNotifier {
   String accountStatus = 'active';
   bool recoveringPassword = false;
   Set<String> unlocked = {};
-  bool exploring = false, authBusy = false;
   bool resumingGuestAction = false;
   String? journalError;
   String? cloudError;
@@ -43,7 +42,6 @@ class AppController extends ChangeNotifier {
     _auth = repo?.client.auth.onAuthStateChange.listen(
       (event) {
         if (event.event == AuthChangeEvent.signedOut) {
-          exploring = false;
           recoveringPassword = false;
         }
         if (event.event == AuthChangeEvent.passwordRecovery) {
@@ -153,11 +151,6 @@ class AppController extends ChangeNotifier {
       }
     }
     if (generation == _generation) _emit();
-  }
-
-  void explore() {
-    exploring = true;
-    _emit();
   }
 
   void changed() {
