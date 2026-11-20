@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import '../../core/media_library.dart';
 import '../../design/library_image.dart';
@@ -9,12 +11,12 @@ class DanceWelcomeScene extends StatefulWidget {
     super.key,
     required this.onJoin,
     required this.onSignIn,
-    required this.onExplore,
+    required this.onTerms,
     required this.onPrivacy,
     required this.onSafety,
     required this.onPreview,
   });
-  final VoidCallback onJoin, onSignIn, onExplore, onPrivacy, onSafety;
+  final VoidCallback onJoin, onSignIn, onTerms, onPrivacy, onSafety;
   final ValueChanged<LibraryClip> onPreview;
   @override
   State<DanceWelcomeScene> createState() => _DanceWelcomeSceneState();
@@ -22,40 +24,6 @@ class DanceWelcomeScene extends StatefulWidget {
 
 class _DanceWelcomeSceneState extends State<DanceWelcomeScene> {
   late Future<MediaLibrary> library = MediaLibrary.load();
-
-  Widget header() => Row(
-    children: [
-      Expanded(
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                'assets/ui/neon-mark.webp',
-                width: 32,
-                height: 32,
-                excludeFromSemantics: true,
-              ),
-            ),
-            const SizedBox(width: 8),
-            const Flexible(
-              child: Text(
-                'vimi',
-                maxLines: 1,
-                style: TextStyle(
-                  fontSize: 28,
-                  height: 1,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -.7,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      _WelcomeLink('Sign in', onPressed: widget.onSignIn, glyph: Glyph.next),
-    ],
-  );
 
   Widget introduction(double width) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,25 +57,26 @@ class _DanceWelcomeSceneState extends State<DanceWelcomeScene> {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       _JoinCrewButton(onPressed: widget.onJoin),
-      const SizedBox(height: 4),
-      Center(
-        child: _WelcomeLink(
-          'Explore the studio',
-          glyph: Glyph.studio,
-          onPressed: widget.onExplore,
-          muted: true,
-        ),
+      const SizedBox(height: 8),
+      Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          const Text(
+            'Already a member?',
+            style: TextStyle(color: VimiColors.muted, fontSize: 14),
+          ),
+          _WelcomeLink('Sign in', onPressed: widget.onSignIn, prominent: true),
+        ],
       ),
+      const SizedBox(height: 8),
       Wrap(
         alignment: WrapAlignment.center,
         spacing: 8,
         children: [
-          _WelcomeLink(
-            'Privacy Policy',
-            onPressed: widget.onPrivacy,
-            muted: true,
-          ),
-          _WelcomeLink('Child safety', onPressed: widget.onSafety, muted: true),
+          _WelcomeLink('Terms of Use', onPressed: widget.onTerms),
+          _WelcomeLink('Privacy Policy', onPressed: widget.onPrivacy),
+          _WelcomeLink('Child safety', onPressed: widget.onSafety),
         ],
       ),
     ],
@@ -127,61 +96,93 @@ class _DanceWelcomeSceneState extends State<DanceWelcomeScene> {
             .firstOrNull;
         return LayoutBuilder(
           builder: (context, box) {
-            final w = box.maxWidth, h = box.maxHeight;
-            return ClipRect(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(
-                    left: -w * .025,
-                    top: h * .12,
-                    width: w * .55,
-                    height: h * .78,
-                    child: Transform.rotate(
-                      angle: -.10,
-                      child: _PerformancePhoto(
-                        url: group?.thumbnail,
-                        alignment: Alignment.topCenter,
-                        label: 'Group covers',
-                      ),
+            final size = box.biggest;
+            return Stack(
+              children: [
+                _placeCover(
+                  size,
+                  widthFraction: .50,
+                  heightFraction: .78,
+                  centerYFraction: .53,
+                  angle: -.10,
+                  child: _PerformancePhoto(
+                    url: group?.thumbnail,
+                    alignment: Alignment.topCenter,
+                    label: 'Group covers',
+                  ),
+                ),
+                _placeCover(
+                  size,
+                  widthFraction: .55,
+                  heightFraction: .88,
+                  centerYFraction: .48,
+                  angle: .075,
+                  trailing: true,
+                  child: _PerformancePhoto(
+                    url: duet?.thumbnail,
+                    alignment: Alignment.topCenter,
+                    label: 'Duet covers',
+                    onPreview: duet == null ? null : () => widget.onPreview(duet),
+                  ),
+                ),
+                if (snapshot.hasError)
+                  Align(
+                    alignment: Alignment.center,
+                    child: VIconButton(
+                      Glyph.refresh,
+                      label: 'Retry welcome media',
+                      filled: true,
+                      onPressed: () =>
+                          setState(() => library = MediaLibrary.load()),
                     ),
                   ),
-                  Positioned(
-                    right: w * .015,
-                    top: h * .045,
-                    width: w * .59,
-                    height: h * .88,
-                    child: Transform.rotate(
-                      angle: .075,
-                      child: _PerformancePhoto(
-                        url: duet?.thumbnail,
-                        alignment: Alignment.topCenter,
-                        label: 'Duet covers',
-                        onPreview: duet == null
-                            ? null
-                            : () => widget.onPreview(duet),
-                      ),
-                    ),
-                  ),
-                  if (snapshot.hasError)
-                    Align(
-                      alignment: Alignment.center,
-                      child: VIconButton(
-                        Glyph.refresh,
-                        label: 'Retry welcome media',
-                        filled: true,
-                        onPressed: () =>
-                            setState(() => library = MediaLibrary.load()),
-                      ),
-                    ),
-                ],
-              ),
+              ],
             );
           },
         );
       },
     ),
   );
+
+  Widget _placeCover(
+    Size stage, {
+    required double widthFraction,
+    required double heightFraction,
+    required double centerYFraction,
+    required double angle,
+    required Widget child,
+    bool trailing = false,
+  }) {
+    final width = stage.width * widthFraction;
+    final height = stage.height * heightFraction;
+    final sine = math.sin(angle).abs(), cosine = math.cos(angle).abs();
+    final paintedWidth = width * cosine + height * sine;
+    final paintedHeight = height * cosine + width * sine;
+    final edge = math.min(4.0, stage.shortestSide / 8);
+    // Position the entire rotated frame inside the stage, including the
+    // corners that extend past its unrotated layout box.
+    final fit = math.min(
+      1.0,
+      math.min(
+        (stage.width - 2 * edge) / paintedWidth,
+        (stage.height - 2 * edge) / paintedHeight,
+      ),
+    );
+    final halfOuterHeight = paintedHeight * fit / 2;
+    final centerY = (stage.height * centerYFraction).clamp(
+      edge + halfOuterHeight,
+      math.max(edge + halfOuterHeight, stage.height - edge - halfOuterHeight),
+    );
+    final side = edge + (paintedWidth - width) * fit / 2;
+    return Positioned(
+      left: trailing ? null : side,
+      right: trailing ? side : null,
+      top: centerY - height * fit / 2,
+      width: width * fit,
+      height: height * fit,
+      child: Transform.rotate(angle: angle, child: child),
+    );
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -190,65 +191,55 @@ class _DanceWelcomeSceneState extends State<DanceWelcomeScene> {
         child: LayoutBuilder(
           builder: (context, box) {
             final scale = MediaQuery.textScalerOf(context).scale(16) / 16;
-            if (box.maxWidth >= 760) {
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(28, 12, 28, 0),
-                    child: header(),
-                  ),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 6,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(28, 8, 12, 20),
-                            child: mosaic(
-                              (box.maxHeight - 84).clamp(240.0, 740.0),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 5,
-                          child: SingleChildScrollView(
-                            padding: const EdgeInsets.fromLTRB(24, 32, 32, 24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                introduction(box.maxWidth * .42),
-                                const SizedBox(height: 28),
-                                actions(),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            }
-            final photoHeight = (box.maxHeight * .415 - (scale - 1) * 80).clamp(
-              220.0,
-              410.0,
-            );
+            final expanded = box.maxWidth >= 760;
+            final photoHeight = expanded
+                ? (box.maxHeight - 48).clamp(200.0, 640.0)
+                : (box.maxHeight * .415 - (scale - 1) * 80).clamp(200.0, 410.0);
             return SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: box.maxHeight),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      header(),
-                      const SizedBox(height: 8),
-                      mosaic(photoHeight),
-                      const SizedBox(height: 16),
-                      introduction(box.maxWidth - 40),
-                      const SizedBox(height: 24),
-                      actions(),
-                    ],
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: expanded ? 1240 : 540),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: expanded ? 28 : 20,
+                        vertical: 24,
+                      ),
+                      child: LayoutBuilder(
+                        builder: (context, content) {
+                          if (expanded) {
+                            return Row(
+                              children: [
+                                Expanded(flex: 6, child: mosaic(photoHeight)),
+                                const SizedBox(width: 32),
+                                Expanded(
+                                  flex: 5,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    children: [
+                                      introduction((content.maxWidth - 32) * 5 / 11),
+                                      const SizedBox(height: 24),
+                                      actions(),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              mosaic(photoHeight),
+                              const SizedBox(height: 16),
+                              introduction(content.maxWidth),
+                              const SizedBox(height: 24),
+                              actions(),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -272,7 +263,14 @@ class _PerformancePhoto extends StatelessWidget {
   final String label;
   final VoidCallback? onPreview;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, box) => _buildPhoto(
+      context,
+      playAboveLabel: box.maxWidth < MediaQuery.textScalerOf(context).scale(156),
+    ),
+  );
+
+  Widget _buildPhoto(BuildContext context, {required bool playAboveLabel}) {
     final photo = ClipRRect(
       borderRadius: BorderRadius.circular(26),
       child: Stack(
@@ -311,7 +309,8 @@ class _PerformancePhoto extends StatelessWidget {
           if (onPreview != null)
             Positioned(
               right: 12,
-              bottom: 12,
+              top: playAboveLabel ? 12 : null,
+              bottom: playAboveLabel ? null : 12,
               width: 48,
               height: 48,
               child: SurfacePanel(
@@ -321,13 +320,13 @@ class _PerformancePhoto extends StatelessWidget {
             ),
           Positioned(
             left: 12,
-            right: onPreview == null ? 12 : 72,
+            right: onPreview == null ? 30 : (playAboveLabel ? 12 : 68),
             bottom: 12,
             child: Align(
               alignment: Alignment.centerLeft,
               child: SurfacePanel(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
+                  horizontal: 10,
                   vertical: 8,
                 ),
                 child: Text(
@@ -347,10 +346,10 @@ class _PerformancePhoto extends StatelessWidget {
     if (onPreview == null) return photo;
     return Semantics(
       button: true,
-      label: 'Preview a duet',
+      label: 'Sign in to preview the duet',
       onTap: onPreview,
       child: Tooltip(
-        message: 'Preview a duet',
+        message: 'Sign in to preview the duet',
         excludeFromSemantics: true,
         child: Material(
           color: Colors.transparent,
@@ -415,44 +414,28 @@ class _WelcomeLink extends StatelessWidget {
   const _WelcomeLink(
     this.label, {
     required this.onPressed,
-    this.glyph,
-    this.muted = false,
+    this.prominent = false,
   });
   final String label;
   final VoidCallback onPressed;
-  final Glyph? glyph;
-  final bool muted;
+  final bool prominent;
   @override
   Widget build(BuildContext context) => TextButton(
     onPressed: onPressed,
     style: TextButton.styleFrom(
-      foregroundColor: muted ? VimiColors.muted : VimiColors.ink,
+      foregroundColor: prominent ? VimiColors.accent : VimiColors.muted,
       minimumSize: const Size(48, 48),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (glyph == Glyph.studio) ...[
-          VIcon(glyph!, size: 18, color: VimiColors.violet),
-          const SizedBox(width: 8),
-        ],
-        Flexible(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.35,
-              fontWeight: muted ? FontWeight.w500 : FontWeight.w700,
-            ),
-          ),
-        ),
-        if (glyph != null && glyph != Glyph.studio) ...[
-          const SizedBox(width: 8),
-          VIcon(glyph!, size: 16),
-        ],
-      ],
+    child: Text(
+      label,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 14,
+        height: 1.35,
+        fontWeight: prominent ? FontWeight.w700 : FontWeight.w500,
+      ),
     ),
   );
 }
