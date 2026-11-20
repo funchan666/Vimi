@@ -63,7 +63,6 @@ void main() {
         'Password',
         const String.fromEnvironment('QA_PASSWORD_A'),
       );
-      await tester.tap(find.byTooltip('Accept Terms and Privacy Policy'));
       await press(tester, 'Sign in');
       await waitFor(
         tester,

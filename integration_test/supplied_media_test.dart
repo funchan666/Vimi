@@ -51,7 +51,16 @@ void main() {
         );
       }
       binding.reportData!['all_55_full_images_decode_on_android'] = 'passed';
-      await press(tester, 'Explore the studio');
+      await press(tester, 'Sign in');
+      await signIn(
+        tester,
+        email: const String.fromEnvironment('QA_EMAIL_C'),
+        password: const String.fromEnvironment('QA_PASSWORD_C'),
+      );
+      final app = appController(tester);
+      final owner = app.account;
+      final savedClipsKey = 'library-saved.v1.$owner';
+      await press(tester, 'Studio');
       await press(tester, 'Dance video library');
       await waitFor(tester, () => find.text('10 clips').evaluate().isNotEmpty);
       await capture(binding, tester, 'supplied-video-library');
@@ -111,9 +120,7 @@ void main() {
       await press(tester, catalog.clips.first.title);
       await press(tester, 'Save clip');
       expect(
-        appController(
-          tester,
-        ).studio.preferences.getStringList('library-saved.v1.guest'),
+        app.studio.preferences.getStringList(savedClipsKey),
         contains(catalog.clips.first.id),
       );
       await press(tester, 'Mirror off');
@@ -128,7 +135,7 @@ void main() {
         'Keep the weight shift clear.',
       );
       await press(tester, 'Save practice');
-      final note = (await appController(tester).studio.load('guest')).first;
+      final note = (await app.studio.load(owner)).first;
       expect(note.videoPath, catalog.clips.first.source);
       await waitFor(
         tester,
@@ -167,17 +174,9 @@ void main() {
       await goBack(tester);
       binding.reportData!['saved_filter_and_cloud_practice_save_reopen'] =
           'passed';
-      await appController(tester).removePractice(note.id);
-      await appController(
-        tester,
-      ).studio.preferences.remove('library-saved.v1.guest');
+      await app.removePractice(note.id);
+      await app.studio.preferences.remove(savedClipsKey);
 
-      await openTestPage(tester, const AuthPage(signUp: false));
-      await signIn(
-        tester,
-        email: const String.fromEnvironment('QA_EMAIL_C'),
-        password: const String.fromEnvironment('QA_PASSWORD_C'),
-      );
       await press(tester, 'Me');
       await press(tester, 'Edit dance profile');
       await press(tester, 'Browse profile images');
@@ -204,7 +203,6 @@ void main() {
         tester,
         () => find.byType(EditProfilePage).evaluate().isEmpty,
       );
-      final app = appController(tester);
       final sourceBytes = await catalog.portraits.last.download();
       final client = HttpClient();
       try {

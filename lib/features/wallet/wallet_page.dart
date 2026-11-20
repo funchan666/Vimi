@@ -83,7 +83,7 @@ class _WalletPageState extends State<WalletPage> {
           context,
           title: 'Add $amount coins?',
           body:
-              'Google Play price: ${detail.price}. Coins unlock Vimi practice packs; basic social features stay free.',
+              'Google Play price: ${detail.price}. Coins unlock practice packs. Basic social features stay free.',
           action: 'Continue · ${detail.price}',
         ) &&
         mounted)
@@ -176,7 +176,7 @@ class _WalletPageState extends State<WalletPage> {
             onPressed: PlayCoins.enabled ? billing.checkPurchases : null,
           ),
           const Text(
-            'Your existing coin balance is tied to your Vimi account. Consumed coin packs are not restored as another purchase.',
+            'Your coin balance is tied to your account. Purchased coins are credited only once.',
             style: TextStyle(color: VimiColors.muted),
           ),
           const SizedBox(height: 32),

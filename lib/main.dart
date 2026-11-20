@@ -113,7 +113,10 @@ class _VimiBootstrapState extends State<VimiBootstrap> {
                             ? 'Getting the floor ready…'
                             : 'Couldn’t open the app.',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     if (failure != null) ...[

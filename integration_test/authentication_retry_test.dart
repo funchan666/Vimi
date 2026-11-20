@@ -27,9 +27,6 @@ void main() {
         const String.fromEnvironment('QA_REVIEWER_EMAIL'),
       );
       await enter(tester, 'Password', 'wrong-password-for-this-fixture');
-      await reveal(tester, find.byTooltip('Accept Terms and Privacy Policy'));
-      await tester.tap(find.byTooltip('Accept Terms and Privacy Policy'));
-      await tester.pump();
       await press(tester, 'Sign in');
       await waitFor(
         tester,

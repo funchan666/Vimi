@@ -34,8 +34,7 @@ void main() {
         const String.fromEnvironment('QA_PASSWORD_C'),
       );
       await enter(tester, 'Date of birth · YYYY-MM-DD', '2000-01-01');
-      await reveal(tester, find.byTooltip('Accept Terms and Privacy Policy'));
-      await tester.tap(find.byTooltip('Accept Terms and Privacy Policy'));
+      await press(tester, 'Agree to Terms of Use and Community Guidelines');
       await press(tester, 'Create account');
       await waitFor(
         tester,
@@ -59,8 +58,6 @@ void main() {
       await press(tester, 'Sign in');
       await enter(tester, 'Email', const String.fromEnvironment('QA_EMAIL_C'));
       await enter(tester, 'Password', 'wrong-password-for-this-fixture');
-      await reveal(tester, find.byTooltip('Accept Terms and Privacy Policy'));
-      await tester.tap(find.byTooltip('Accept Terms and Privacy Policy'));
       await press(tester, 'Sign in');
       await waitFor(
         tester,

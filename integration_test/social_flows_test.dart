@@ -36,23 +36,23 @@ void main() {
       );
       await binding.convertFlutterSurfaceToImage();
       await tester.pump();
-      await press(tester, 'Explore the studio');
+      await press(tester, 'Sign in');
+      await signIn(
+        tester,
+        email: const String.fromEnvironment('QA_EMAIL_B'),
+        password: const String.fromEnvironment('QA_PASSWORD_B'),
+      );
+      await press(tester, 'Studio');
       await press(tester, 'Challenges');
       final first = find.text('Open challenge').first;
       await tester.ensureVisible(first);
       await tester.tap(first);
       await tester.pump(const Duration(milliseconds: 600));
       await press(tester, 'Share your take');
-      await waitFor(tester, () => find.byType(AuthPage).evaluate().isNotEmpty);
-      await signIn(
-        tester,
-        email: const String.fromEnvironment('QA_EMAIL_B'),
-        password: const String.fromEnvironment('QA_PASSWORD_B'),
-      );
       await waitFor(
         tester,
         () => find.byType(PublishPage).evaluate().isNotEmpty,
-        reason: 'Signing in did not resume the selected challenge.',
+        reason: 'The selected challenge did not open the publisher.',
       );
       final app = appController(tester), repo = appController(tester).repo!;
       final peerClient = SupabaseClient(
@@ -68,7 +68,7 @@ void main() {
       final peer = DanceRepository(peerClient);
       final peerId = const String.fromEnvironment('QA_USER_A');
       final ownId = repo.account;
-      results['challenge_auth_continuation'] = 'passed';
+      results['signed_in_challenge_publisher'] = 'passed';
       await capture(binding, tester, 'native-publish-challenge');
       // This is the genuine Android photo picker, with a single labelled QA image
       // imported by the host. No app picker or upload API is mocked.

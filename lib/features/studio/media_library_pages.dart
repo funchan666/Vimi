@@ -242,7 +242,7 @@ class _ClipLibraryDetailState extends State<ClipLibraryDetail> {
           ),
           const SizedBox(height: 12),
           const Text(
-            'Library performances are reference media. The people shown are not presented as registered Vimi members.',
+            'These performances are practice references. The dancers shown may not have an account.',
             style: TextStyle(color: VimiColors.muted),
           ),
         ],

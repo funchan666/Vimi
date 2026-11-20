@@ -176,7 +176,7 @@ class PlayCoins extends ChangeNotifier {
       if (hash == null || token.isEmpty) {
         busy = false;
         status =
-            'This purchase could not be linked to a Vimi account. Contact the publisher through Google Play.';
+            'This purchase could not be linked to your account. Contact the publisher through Google Play.';
         _emit();
         continue;
       }

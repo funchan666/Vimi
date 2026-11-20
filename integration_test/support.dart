@@ -158,9 +158,6 @@ Future<void> signIn(
 }) async {
   await enter(tester, 'Email', email);
   await enter(tester, 'Password', password);
-  final consent = find.byTooltip('Accept Terms and Privacy Policy');
-  await reveal(tester, consent);
-  await tester.tap(consent);
   await press(tester, 'Sign in');
   await waitFor(tester, () => appController(tester).signedIn);
   await waitFor(tester, () => appController(tester).profile != null);

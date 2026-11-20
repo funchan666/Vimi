@@ -880,7 +880,10 @@ class SettingsPage extends StatelessWidget {
             onPressed: () => openPage(context, const DeleteAccountPage()),
           ),
           const SizedBox(height: 24),
-          const Text('Vimi · 1.0.0', style: TextStyle(color: VimiColors.muted)),
+          const Text(
+            'Version 1.0.0',
+            style: TextStyle(color: VimiColors.muted),
+          ),
         ],
       ),
     );
