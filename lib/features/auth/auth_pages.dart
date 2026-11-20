@@ -16,20 +16,25 @@ class WelcomePage extends StatelessWidget {
   Widget build(BuildContext context) => DanceWelcomeScene(
     onJoin: () => openPage(context, const AuthPage(signUp: true)),
     onSignIn: () => openPage(context, const AuthPage(signUp: false)),
-    onExplore: VimiScope.of(context).explore,
+    onTerms: () => openPage(context, const LegalPage('Terms of Use', 'terms')),
     onPrivacy: () =>
         openPage(context, const LegalPage('Privacy Policy', 'privacy')),
     onSafety: () => openPage(
       context,
       const LegalPage('Child safety standards', 'child-safety'),
     ),
-    onPreview: (clip) => openPage(
-      context,
-      ClipLibraryDetail(
-        clip: clip,
-        practiceBuilder: (value) => PracticeEditor(initialClip: value),
-      ),
-    ),
+    onPreview: (clip) async {
+      // The navigator survives the switch from welcome to the signed-in shell.
+      final nav = Navigator.of(context);
+      if (!await requireSignIn(nav.context) || !nav.mounted) return;
+      await openPage(
+        nav.context,
+        ClipLibraryDetail(
+          clip: clip,
+          practiceBuilder: (value) => PracticeEditor(initialClip: value),
+        ),
+      );
+    },
   );
 }
 
@@ -71,11 +76,11 @@ class _AuthPageState extends State<AuthPage> {
       password = TextEditingController(),
       name = TextEditingController(),
       birth = TextEditingController();
-  bool consent = false, busy = false;
-  String? error, notice;
+  bool consent = false, busy = false, showPassword = false;
+  String? error;
   void switchMode(bool signUp) {
     final route = MaterialPageRoute<void>(
-      builder: (_) => AuthPage(signUp: signUp),
+      builder: (_) => AuthPage(signUp: signUp, initialEmail: email.text.trim()),
     );
     if (VimiScope.of(context).resumingGuestAction) {
       Navigator.of(context).push(route);
@@ -105,8 +110,7 @@ class _AuthPageState extends State<AuthPage> {
     final auth = app.repo?.client.auth;
     if (auth == null) {
       setState(
-        () => error =
-            'Sign-in is unavailable right now. You can still explore the studio.',
+        () => error = 'Account access is unavailable. Please try again.',
       );
       return;
     }
@@ -119,9 +123,10 @@ class _AuthPageState extends State<AuthPage> {
       );
       return;
     }
-    if (!consent) {
+    if (widget.signUp && !consent) {
       setState(
-        () => error = 'Please accept the Terms and Privacy Policy to continue.',
+        () => error =
+            'Agree to the Terms of Use and Community Guidelines to create an account.',
       );
       return;
     }
@@ -137,7 +142,7 @@ class _AuthPageState extends State<AuthPage> {
           birthday.toIso8601String().substring(0, 10) != birth.text.trim()) {
         setState(
           () => error =
-              'Add a name and your date of birth as YYYY-MM-DD. Vimi is for ages 18 and over.',
+              'Enter a display name and your date of birth as YYYY-MM-DD. You must be at least 18.',
         );
         return;
       }
@@ -145,7 +150,6 @@ class _AuthPageState extends State<AuthPage> {
     setState(() {
       busy = true;
       error = null;
-      notice = null;
     });
     try {
       if (widget.signUp) {
@@ -178,146 +182,324 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   @override
-  Widget build(BuildContext context) => VPage(
-    title: widget.signUp ? 'Your first eight' : 'Back on the floor',
-
-    child: Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 560),
-        child: ListView(
-          padding: const EdgeInsets.all(24),
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            Text(
-              widget.signUp
-                  ? 'A place for your\nkind of movement.'
-                  : 'Good to have\nyou back.',
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
-            const SizedBox(height: 32),
-            if (widget.signUp)
-              VField(
-                'Display name',
-                controller: name,
-                maxLength: 40,
-                enabled: !busy,
-              ),
-            VField(
-              'Email',
-              controller: email,
-              enabled: !busy,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            VField(
-              'Password',
-              controller: password,
-              obscure: true,
-              enabled: !busy,
-            ),
-            if (widget.signUp) ...[
-              VField(
-                'Date of birth · YYYY-MM-DD',
-                controller: birth,
-                enabled: !busy,
-                keyboardType: TextInputType.datetime,
-              ),
-              const Text(
-                'An adult community, for ages 18 and over.',
-                style: TextStyle(color: VimiColors.muted),
-              ),
-            ],
-            const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                VIconButton(
-                  consent ? Glyph.check : Glyph.add,
-                  label: consent
-                      ? 'Withdraw agreement'
-                      : 'Accept Terms and Privacy Policy',
-                  onPressed: busy
-                      ? null
-                      : () => setState(() => consent = !consent),
-                ),
-                Expanded(
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      const Text('I agree to the '),
-                      TextButton(
-                        onPressed: () => openPage(
-                          context,
-                          const LegalPage('Terms of Use', 'terms'),
-                        ),
-                        child: const Text('Terms'),
+  Widget build(BuildContext context) {
+    final signUp = widget.signUp;
+    return Scaffold(
+      body: NeonBackdrop(
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 4, 8, 2),
+                      child: VIconButton(
+                        Glyph.back,
+                        label: 'Go back',
+                        onPressed: () => Navigator.maybePop(context),
                       ),
-                      const Text(' and '),
-                      TextButton(
-                        onPressed: () => openPage(
-                          context,
-                          const LegalPage('Privacy Policy', 'privacy'),
-                        ),
-                        child: const Text('Privacy Policy'),
-                      ),
-                      TextButton(
-                        onPressed: () => openPage(
-                          context,
-                          const LegalPage('Community guidelines', 'community'),
-                        ),
-                        child: const Text('Community guidelines'),
-                      ),
-                      TextButton(
-                        onPressed: () => openPage(
-                          context,
-                          const LegalPage(
-                            'Child safety standards',
-                            'child-safety',
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      children: [
+                        _AuthHeading(signUp: signUp),
+                        const SizedBox(height: 24),
+                        AutofillGroup(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (signUp)
+                                VField(
+                                  'Display name',
+                                  controller: name,
+                                  maxLength: 40,
+                                  enabled: !busy,
+                                ),
+                              _field('Email', email, isPassword: false),
+                              const SizedBox(height: 12),
+                              _field('Password', password, isPassword: true),
+                              if (signUp) ...[
+                                const SizedBox(height: 16),
+                                VField(
+                                  'Date of birth · YYYY-MM-DD',
+                                  controller: birth,
+                                  enabled: !busy,
+                                  keyboardType: TextInputType.datetime,
+                                ),
+                                const Text(
+                                  'We use your birth date to check that you’re 18 or older.',
+                                  style: TextStyle(color: VimiColors.muted),
+                                ),
+                              ] else
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: _AuthLink(
+                                    'Forgot password?',
+                                    onPressed: busy
+                                        ? null
+                                        : () => openPage(
+                                            context,
+                                            const RecoverAccountPage(),
+                                          ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                        child: const Text('Child safety standards'),
-                      ),
-                    ],
+                        if (signUp) ...[
+                          const SizedBox(height: 20),
+                          _SignupAgreement(
+                            accepted: consent,
+                            onChanged: busy
+                                ? null
+                                : () => setState(() {
+                                    consent = !consent;
+                                    error = null;
+                                  }),
+                          ),
+                        ],
+                        if (error != null) ...[
+                          const SizedBox(height: 12),
+                          Semantics(liveRegion: true, child: ErrorNote(error!)),
+                        ],
+                        SizedBox(height: signUp ? 20 : 12),
+                        VButton(
+                          signUp ? 'Create account' : 'Sign in',
+                          glyph: Glyph.next,
+                          busy: busy,
+                          onPressed: submit,
+                        ),
+                        const SizedBox(height: 8),
+                        Center(
+                          child: _AuthLink(
+                            signUp
+                                ? 'Already a member? Sign in'
+                                : 'New here? Create an account',
+                            onPressed: busy ? null : () => switchMode(!signUp),
+                          ),
+                        ),
+                        if (!signUp)
+                          const _AuthPolicyLinks(includeAgreement: false),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            if (error != null) ...[
-              const SizedBox(height: 16),
-              ErrorNote(error!),
-            ],
-            if (notice != null) ...[
-              const SizedBox(height: 16),
-              SurfacePanel(child: Text(notice!)),
-            ],
-            const SizedBox(height: 24),
-            VButton(
-              widget.signUp ? 'Create account' : 'Sign in',
-              busy: busy,
-              onPressed: submit,
-            ),
-            if (!widget.signUp)
-              VButton(
-                'Forgot password?',
-                quiet: true,
-                onPressed: () => openPage(context, const RecoverAccountPage()),
+                ],
               ),
-            if (widget.signUp && notice != null)
-              VButton(
-                'Continue to sign in',
-                quiet: true,
-                onPressed: () => switchMode(false),
-              ),
-            VButton(
-              widget.signUp
-                  ? 'Already a member? Sign in'
-                  : 'New here? Create an account',
-              quiet: true,
-              onPressed: busy ? null : () => switchMode(!widget.signUp),
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _field(
+    String label,
+    TextEditingController controller, {
+    required bool isPassword,
+  }) => TextField(
+    controller: controller,
+    enabled: !busy,
+    obscureText: isPassword && !showPassword,
+    autocorrect: false,
+    enableSuggestions: false,
+    keyboardType: isPassword
+        ? TextInputType.visiblePassword
+        : TextInputType.emailAddress,
+    autofillHints: isPassword
+        ? [widget.signUp ? AutofillHints.newPassword : AutofillHints.password]
+        : const [AutofillHints.email],
+    textInputAction: isPassword && !widget.signUp
+        ? TextInputAction.done
+        : TextInputAction.next,
+    onSubmitted: isPassword && !widget.signUp ? (_) => submit() : null,
+    onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+    decoration: InputDecoration(
+      labelText: label,
+      suffixIcon: isPassword
+          ? _AuthLink(
+              showPassword ? 'Hide' : 'Show',
+              onPressed: busy
+                  ? null
+                  : () => setState(() => showPassword = !showPassword),
+            )
+          : null,
     ),
+  );
+}
+
+class _AuthHeading extends StatelessWidget {
+  const _AuthHeading({required this.signUp});
+  final bool signUp;
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: BorderRadius.circular(18),
+    child: Stack(
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            'assets/ui/neon-spectrum.webp',
+            fit: BoxFit.cover,
+            alignment: signUp ? Alignment.centerLeft : Alignment.centerRight,
+            excludeFromSemantics: true,
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 2),
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+          color: VimiColors.background.withValues(alpha: .85),
+          child: Semantics(
+            header: true,
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(text: signUp ? 'Join the\n' : 'Back on\n'),
+                  TextSpan(
+                    text: signUp ? 'crew.' : 'the floor.',
+                    style: TextStyle(
+                      color: signUp ? VimiColors.accent : VimiColors.cyan,
+                    ),
+                  ),
+                ],
+              ),
+              style: const TextStyle(
+                fontSize: 40,
+                height: 1.04,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -1.05,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _SignupAgreement extends StatelessWidget {
+  const _SignupAgreement({required this.accepted, required this.onChanged});
+  final bool accepted;
+  final VoidCallback? onChanged;
+
+  @override
+  Widget build(BuildContext context) => SurfacePanel(
+    padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Tooltip(
+          message: 'Agree to Terms of Use and Community Guidelines',
+          excludeFromSemantics: true,
+          child: Semantics(
+            checked: accepted,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: VimiColors.ink,
+                minimumSize: const Size(48, 48),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: onChanged,
+              child: Row(
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: accepted ? VimiColors.accent : VimiColors.line,
+                      ),
+                      color: accepted
+                          ? VimiColors.accent
+                          : VimiColors.background,
+                    ),
+                    child: accepted
+                        ? const VIcon(
+                            Glyph.check,
+                            color: VimiColors.onAccent,
+                            size: 16,
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'I agree to the Terms of Use and Community Guidelines.',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const _AuthPolicyLinks(includeAgreement: true),
+      ],
+    ),
+  );
+}
+
+class _AuthPolicyLinks extends StatelessWidget {
+  const _AuthPolicyLinks({required this.includeAgreement});
+  final bool includeAgreement;
+
+  @override
+  Widget build(BuildContext context) => Wrap(
+    alignment: WrapAlignment.center,
+    children: [
+      if (includeAgreement) ...[
+        _policy(context, 'Terms of Use', 'terms'),
+        _policy(context, 'Community Guidelines', 'community'),
+      ],
+      _policy(context, 'Privacy Policy', 'privacy'),
+      _policy(
+        context,
+        'Child safety',
+        'child-safety',
+        title: 'Child safety standards',
+      ),
+    ],
+  );
+
+  Widget _policy(
+    BuildContext context,
+    String label,
+    String file, {
+    String? title,
+  }) => _AuthLink(
+    label,
+    onPressed: () => openPage(context, LegalPage(title ?? label, file)),
+  );
+}
+
+class _AuthLink extends StatelessWidget {
+  const _AuthLink(this.label, {required this.onPressed});
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => TextButton(
+    style: TextButton.styleFrom(
+      foregroundColor: VimiColors.violet,
+      minimumSize: const Size(48, 48),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    onPressed: onPressed,
+    child: Text(label, textAlign: TextAlign.center),
   );
 }
 

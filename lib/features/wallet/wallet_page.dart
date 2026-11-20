@@ -176,7 +176,7 @@ class _WalletPageState extends State<WalletPage> {
             onPressed: PlayCoins.enabled ? billing.checkPurchases : null,
           ),
           const Text(
-            'Your coin balance is tied to your account. Purchased coins are credited only once.',
+            'Your coin balance is tied to your account. Consumed coin packs are not restored as another purchase.',
             style: TextStyle(color: VimiColors.muted),
           ),
           const SizedBox(height: 32),
