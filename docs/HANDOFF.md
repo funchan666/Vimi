@@ -16,18 +16,16 @@ The November 20 welcome redesign replaces the generated welcome people with actu
 | Supabase account/organization | User confirmed Primary and its organization; project created |
 | Hosted database, private bucket, functions | Deployed; definition/configuration reads completed |
 | Auth | Native redirects saved; signup email confirmation disabled as requested. Production recovery SMTP remains publisher setup. |
-| Google Play products | Create the seven IDs in GOOGLE_PLAY_PRODUCTS.md |
-| Google Play verifier credential | Configure server secret; it has not been supplied |
-| Billing | Implemented but disabled until Play/backend setup and validation |
+| App pricing | Free, including all three practice plans |
 | Moderation | Independent fixed operator created and native sign-in verified. Child-safety filtering and actual content/media removal are verified. Credentials: private config/reviewer-access.json. |
 | App access | Ordinary reusable review login prepared in private config/play-review-access.json; no moderator role. See GOOGLE_PLAY_APP_ACCESS.md. |
 | Support/legal | Support and child-safety contact: funchan7777777@gmail.com. English bundled policies and matching standard HTML pages are ready. Publisher identity, jurisdiction and public URL publication remain required before release. |
 | Android upload signing | Supply your upload keystore and local key.properties |
-| Runtime and store acceptance | Android debug/emulator and focused live-service checks performed; see VERIFICATION.md. No signed store release or Play transaction. |
+| Runtime and store acceptance | Prior Android and live-service checks are in VERIFICATION.md. The free revision requires its own build and install. |
 
 The build configuration lives in ignored `config/app.json`; copy `config/app.example.json` when moving to another machine and supply this project's publishable key. Do not put privileged keys in the client. The project identity `com.vimistudio.vimi` must stay the same in Gradle, Play and verification code.
 
-Practice journal/video copies, saved library selections and drill progress stay on the current device/account. Cloud reference clips are reused by stable note references, without copying the video. Social and wallet data live in Supabase; a library profile image uploads only after explicit profile save. This version does not claim cross-device practice synchronization, end-to-end encrypted messaging, a standalone music catalogue, live audio/video calls or automated AI dance scoring.
+Practice notes, retained videos, saved library selections and checklist progress stay on the current device and account. Reference videos use stable cloud references. Supabase stores the account and social data. A library profile image uploads after explicitly saving the profile. Voice and video calls use WebRTC between eligible mutual follows while the app is open.
 
 ## Checks actually performed
 
@@ -37,7 +35,7 @@ Use the independent reviewer credentials from `config/reviewer-access.json` in t
 
 ## Installable preview
 
-Use `dist/Vimi-1.0.0-arm64-preview.apk` (37.7 MB, profile mode, local test signature). All 65 publisher-supplied source items are available online through Floor and the media libraries. Current install, screenshots and native route evidence are in `verification/2026-11-20/community-refresh/`. Earlier artifact measurements retain their dated verification records. The APK is ignored by Git.
+The prior signed-in preview is in `dist/Vimi-1.0.0-arm64-preview.apk` (37.7 MB, profile mode, local test signature). Its screenshots and native route evidence are in `verification/2026-11-20/community-refresh/`. The APK is ignored by Git.
 
 November 19 supplied-media acceptance decoded all 55 full images on Android, streamed all ten videos, reopened saved filters/practice notes, matched actual avatar upload/download hashes and confirmed a rendered network avatar frame. Both temporary actors and their uploads were deleted. All 128 hosted publisher objects were hash-verified before their local package copies were removed. Optimized media totals 30.3 MB, compared with 54.0 MB before compression, with all source items retained online.
 

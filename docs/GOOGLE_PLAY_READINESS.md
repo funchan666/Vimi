@@ -19,7 +19,7 @@
 | Area | Observed evidence | What remains |
 | --- | --- | --- |
 | Target API | Current 36,909,069-byte preview targets API 36; source pins 36 | Check the final submitted AAB again |
-| Permissions | Current preview has Internet, Billing, network state, wake lock and an app-private receiver permission; no broad gallery, contacts, location, all-files or advertising-ID permission | Reinspect every final merged release manifest after SDK changes |
+| Permissions | Current source declares network, camera and audio permissions for uploads and calls. Gallery imports use the system picker. | Reinspect the merged release manifest after SDK changes. |
 | App pricing | Current source removes Google Play Billing and the wallet. The three practice plans are free. | Confirm the final AAB manifest and Play Console listing. |
 | 16 KB pages | Current ARM64 preview ELF load segments and APK zip alignment pass static 16 KB checks | A final AAB and actual 16 KB device/runtime run are separate checks |
 | Child safety / moderation | SQL rollback and actual harmless-fixture API removal/role checks are recorded under verification/2026-11-19 | A trained, available human operator and legally appropriate escalation/reporting procedure; code cannot replace this |

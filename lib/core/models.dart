@@ -170,21 +170,13 @@ class PracticeSession {
 }
 
 class StudioPack {
-  const StudioPack(
-    this.id,
-    this.title,
-    this.cost,
-    this.description,
-    this.drills,
-  );
+  const StudioPack(this.id, this.title, this.description, this.drills);
   final String id, title, description;
-  final int cost;
   final List<String> drills;
   static const all = [
     StudioPack(
       'chorus-builder',
       'Chorus Builder',
-      120,
       'A repeatable four-phrase practice plan.',
       [
         'Mark the ending of each eight-count phrase.',
@@ -196,7 +188,6 @@ class StudioPack {
     StudioPack(
       'formation-notes',
       'Formation Notes',
-      180,
       'Plan spacing, facing and transitions for a group cover.',
       [
         'Write one floor-position cue for every dancer.',
@@ -208,7 +199,6 @@ class StudioPack {
     StudioPack(
       'comeback-planner',
       'Comeback Planner',
-      240,
       'A seven-session cover preparation journal.',
       [
         'Session 1: choose a rights-cleared routine and mark its sections.',
