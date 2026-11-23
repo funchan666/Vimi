@@ -6,19 +6,54 @@ import 'package:vimi/core/app_controller.dart';
 import 'package:vimi/core/local_studio.dart';
 import 'package:vimi/core/models.dart';
 
-PracticeSession note(String id) => PracticeSession(
-  id: id,
-  routine: 'Chorus $id',
-  style: 'K-pop',
-  minutes: 20,
-  counts: 4,
-  bpm: 100,
-  notes: 'Repeat the transition.',
-  createdAt: DateTime.utc(2026, 11, 19),
-);
+PracticeSession note(String id, {DateTime? createdAt, int minutes = 20}) =>
+    PracticeSession(
+      id: id,
+      routine: 'Chorus $id',
+      style: 'K-pop',
+      minutes: minutes,
+      counts: 4,
+      bpm: 100,
+      notes: 'Repeat the transition.',
+      createdAt: createdAt ?? DateTime.utc(2026, 11, 19),
+    );
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  test('weekly progress uses local Monday boundaries for saved UTC notes', () {
+    final sunday = DateTime(2026, 3, 8, 23, 59, 59);
+    final monday = DateTime(2026, 3, 9);
+    final notes = [
+      note('prior', createdAt: sunday.toUtc()),
+      note('new', createdAt: monday.toUtc(), minutes: 35),
+      note('future', createdAt: DateTime(2026, 3, 9, 18).toUtc()),
+    ];
+    expect(practiceWeek(sunday).start, DateTime(2026, 3, 2));
+    expect(practiceWeek(sunday).end, monday);
+    expect(practiceMinutesThisWeek(notes, sunday), 20);
+    expect(practiceMinutesThisWeek(notes, monday), 35);
+  });
+
+  test('weekly goals reopen by account and reject invalid targets', () async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    final studio = LocalStudio(prefs);
+    await Future.wait([
+      studio.setWeeklyPracticeGoal('a', 60),
+      studio.setWeeklyPracticeGoal('a', 90),
+      studio.setWeeklyPracticeGoal('b', 120),
+    ]);
+    await expectLater(
+      studio.setWeeklyPracticeGoal('a', 0),
+      throwsArgumentError,
+    );
+    await prefs.reload();
+    final reopened = LocalStudio(prefs);
+    expect(reopened.weeklyPracticeGoal('a'), 90);
+    expect(reopened.weeklyPracticeGoal('b'), 120);
+    expect(reopened.weeklyPracticeGoal('c'), isNull);
+  });
 
   test(
     'account refresh preserves notes under the legacy local owner key',

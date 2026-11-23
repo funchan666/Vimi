@@ -148,6 +148,7 @@ enum Glyph {
   forward,
   next,
   library,
+  phone,
 }
 
 class VIcon extends StatelessWidget {
@@ -204,8 +205,25 @@ class VIcon extends StatelessWidget {
   final Glyph glyph;
   final double size;
   final Color color;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: Center(
+      widthFactor: 1,
+      heightFactor: 1,
+      child: SizedBox.square(dimension: size, child: _image()),
+    ),
+  );
+
+  Widget _image() {
+    if (glyph == Glyph.phone) {
+      return Image.asset(
+        'assets/ui/call-handset.webp',
+        fit: BoxFit.contain,
+        color: color,
+        colorBlendMode: BlendMode.srcIn,
+      );
+    }
     final utility = glyph.index >= _regions.length;
     final region = utility
         ? _utilityRegions[glyph.index - _regions.length]
@@ -214,33 +232,28 @@ class VIcon extends StatelessWidget {
     final atlasWidth = 1774.0 * scale;
     final atlasHeight = 887.0 * scale;
     // Display an original raster atlas; no paths or replacement artwork are drawn.
-    return ExcludeSemantics(
-      child: SizedBox.square(
-        dimension: size,
-        child: ClipRect(
-          child: OverflowBox(
-            alignment: Alignment.topLeft,
-            minWidth: atlasWidth,
-            maxWidth: atlasWidth,
-            minHeight: atlasHeight,
-            maxHeight: atlasHeight,
-            child: Transform.translate(
-              offset: Offset(
-                size / 2 - region.center.dx * scale,
-                size / 2 - region.center.dy * scale,
-              ),
-              child: Image.asset(
-                utility
-                    ? 'assets/ui/utility-controls-v4.webp'
-                    : 'assets/ui/glyphs-clean.webp',
-                width: atlasWidth,
-                height: atlasHeight,
-                fit: BoxFit.fill,
-                color: color,
-                colorBlendMode: BlendMode.srcIn,
-                filterQuality: FilterQuality.high,
-              ),
-            ),
+    return ClipRect(
+      child: OverflowBox(
+        alignment: Alignment.topLeft,
+        minWidth: atlasWidth,
+        maxWidth: atlasWidth,
+        minHeight: atlasHeight,
+        maxHeight: atlasHeight,
+        child: Transform.translate(
+          offset: Offset(
+            size / 2 - region.center.dx * scale,
+            size / 2 - region.center.dy * scale,
+          ),
+          child: Image.asset(
+            utility
+                ? 'assets/ui/utility-controls-v4.webp'
+                : 'assets/ui/glyphs-clean.webp',
+            width: atlasWidth,
+            height: atlasHeight,
+            fit: BoxFit.fill,
+            color: color,
+            colorBlendMode: BlendMode.srcIn,
+            filterQuality: FilterQuality.high,
           ),
         ),
       ),

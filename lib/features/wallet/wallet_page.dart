@@ -6,6 +6,7 @@ import '../../core/models.dart';
 import '../../core/pagination.dart';
 import '../../design/page_footer.dart';
 import '../../design/vimi_ui.dart';
+import 'coin_pack_grid.dart';
 import 'play_coins.dart';
 
 class WalletPage extends StatefulWidget {
@@ -18,6 +19,9 @@ class _WalletPageState extends State<WalletPage> {
   late final PlayCoins billing;
   CursorPager<Json>? ledger;
   bool loading = false;
+  bool checkingOut = false;
+  bool checkingPurchases = false;
+  String? selectedId;
   int? shownBalance, shownDebt;
   String? error;
   bool initialized = false;
@@ -58,7 +62,7 @@ class _WalletPageState extends State<WalletPage> {
     final app = VimiScope.of(context);
     try {
       await Future.wait([
-        billing.loadCatalog(),
+        billing.loadCatalog().then((_) => changed()),
         app.refreshWallet(),
         ledger!.refresh(),
       ]);
@@ -76,171 +80,345 @@ class _WalletPageState extends State<WalletPage> {
     super.dispose();
   }
 
-  Future<void> choose(String id, int amount) async {
-    final detail = billing.products[id] ?? await billing.price(id);
-    if (detail == null || !mounted) return;
-    if (await confirmAction(
-          context,
-          title: 'Add $amount coins?',
-          body:
-              'Google Play price: ${detail.price}. Coins unlock practice packs. Basic social features stay free.',
-          action: 'Continue · ${detail.price}',
-        ) &&
-        mounted)
-      await billing.buy(id);
+  bool get purchaseBusy => checkingOut || checkingPurchases || billing.busy;
+
+  Future<void> checkout(String id, int amount) async {
+    final app = VimiScope.of(context);
+    if (!PlayCoins.enabled || purchaseBusy || !app.signedIn) return;
+    final owner = app.account;
+    final coins = MaterialLocalizations.of(context).formatDecimal(amount);
+    setState(() => checkingOut = true);
+    try {
+      final detail = billing.products[id] ?? await billing.price(id);
+      if (detail == null || !mounted || !app.signedIn || app.account != owner) {
+        return;
+      }
+      final confirmed = await confirmAction(
+        context,
+        title: 'Add $coins coins?',
+        body:
+            'This pack costs ${detail.price} through Google Play. '
+            'Coins unlock practice packs.',
+        action: 'Continue to Google Play',
+      );
+      if (confirmed && mounted && app.signedIn && app.account == owner) {
+        await billing.buy(id);
+      }
+    } finally {
+      if (mounted) setState(() => checkingOut = false);
+    }
+  }
+
+  Future<void> recoverPurchases() async {
+    if (purchaseBusy) return;
+    setState(() => checkingPurchases = true);
+    try {
+      await billing.checkPurchases();
+    } finally {
+      if (mounted) setState(() => checkingPurchases = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
+    final type = Theme.of(context).textTheme;
+    final numbers = MaterialLocalizations.of(context);
+    final packs = [
+      for (final product in billing.catalog)
+        (
+          id: product['id'] as String,
+          coins: (product['coins'] as num).toInt(),
+          price: billing.products[product['id']]?.price,
+        ),
+    ];
+    final selected = packs.where((pack) => pack.id == selectedId).firstOrNull;
+    final price = selected?.price;
+    final checkoutLabel = switch ((selected, price)) {
+      (null, _) => 'Choose a coin pack',
+      (_, final String value) => 'Continue · $value',
+      _ => 'Check Google Play price',
+    };
     return VPage(
-      title: 'Your coin wallet',
+      title: 'Coin wallet',
       actions: [
-        VIconButton(Glyph.refresh, label: 'Refresh wallet', onPressed: load),
+        VIconButton(
+          Glyph.refresh,
+          label: 'Refresh wallet',
+          onPressed: load,
+          busy: loading,
+        ),
       ],
-      child: ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             children: [
-              const VIcon(Glyph.coin, size: 40, color: VimiColors.cyan),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  '${app.coins}',
-                  style: Theme.of(context).textTheme.displaySmall,
+              _BalanceCard(amount: numbers.formatDecimal(app.coins)),
+              if (app.reversalDebt > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: ErrorNote(
+                    'A reversed Google Play purchase left '
+                    '${numbers.formatDecimal(app.reversalDebt)} coins owed. '
+                    'New purchases settle this amount before paid packs resume.',
+                  ),
                 ),
+              if (error != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: ErrorNote(error!, onRetry: load),
+                ),
+              const SizedBox(height: 24),
+              Semantics(
+                header: true,
+                child: Text('Coin packs', style: type.titleLarge),
               ),
+              if (!PlayCoins.enabled)
+                const Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: Text(
+                    'Purchases are currently unavailable.',
+                    style: TextStyle(color: VimiColors.muted),
+                  ),
+                ),
+              const SizedBox(height: 10),
+              if (packs.isEmpty && loading)
+                Semantics(
+                  liveRegion: true,
+                  child: const Text('Loading packs…'),
+                ),
+              CoinPackGrid(
+                packs: packs,
+                selectedId: selectedId,
+                onSelected: !PlayCoins.enabled || purchaseBusy
+                    ? null
+                    : (id) => setState(() => selectedId = id),
+              ),
+              if (PlayCoins.enabled && packs.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: VButton(
+                    checkoutLabel,
+                    busy: checkingOut || billing.busy,
+                    onPressed: selected == null || purchaseBusy
+                        ? null
+                        : () => checkout(selected.id, selected.coins),
+                  ),
+                ),
+              ],
+              if (PlayCoins.enabled)
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: VimiColors.violet,
+                      minimumSize: const Size(48, 48),
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: purchaseBusy ? null : recoverPurchases,
+                    child: Text(
+                      checkingPurchases
+                          ? 'Checking purchases…'
+                          : 'Check pending purchases',
+                    ),
+                  ),
+                ),
+              if (billing.status case final status?)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      status,
+                      style: const TextStyle(color: VimiColors.cyan),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 20),
+              Divider(color: VimiColors.line.withValues(alpha: .32)),
+              const SizedBox(height: 12),
+              Semantics(
+                header: true,
+                child: Text('Transactions', style: type.titleLarge),
+              ),
+              const SizedBox(height: 4),
+              _WalletLedger(pager: ledger!),
             ],
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'For practice packs that stay with your account. Following, messaging, reporting and blocking are free.',
-          ),
-          const SizedBox(height: 24),
-          if (app.reversalDebt > 0)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: ErrorNote(
-                '${app.reversalDebt} coins are owed after a reversed Google Play purchase. New coin purchases settle this amount first; paid packs resume when it is settled.',
-              ),
-            ),
-          if (!PlayCoins.enabled)
-            const SurfacePanel(
-              child: Text(
-                'Coin purchases are not available yet. You can keep using the community and your practice journal.',
-              ),
-            ),
-          if (error != null) ErrorNote(error!, onRetry: load),
-          if (billing.status != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Semantics(liveRegion: true, child: Text(billing.status!)),
-            ),
-          const SizedBox(height: 16),
-          Text('Coin packs', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 8),
-          for (final product in billing.catalog)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: SurfacePanel(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${product['coins']} coins',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    if (PlayCoins.enabled)
-                      VButton(
-                        billing.products[product['id']]?.price ?? 'Check price',
-                        quiet: true,
-                        busy: billing.busy,
-                        onPressed: billing.busy
-                            ? null
-                            : () => choose(
-                                product['id'] as String,
-                                (product['coins'] as num).toInt(),
-                              ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          if (PlayCoins.enabled)
-            VButton(
-              'Check pending purchases',
-              quiet: true,
-              onPressed: billing.checkPurchases,
-            ),
-          const Text(
-            'Your coin balance is tied to your account. Consumed coin packs are not restored as another purchase.',
-            style: TextStyle(color: VimiColors.muted),
-          ),
-          const SizedBox(height: 32),
-          Text('Your ledger', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 16),
-          AnimatedBuilder(
-            animation: ledger!,
-            builder: (context, _) {
-              final entries = ledger!.items;
-              return Column(
-                children: [
-                  if (ledger!.loaded &&
-                      entries.isEmpty &&
-                      ledger!.error == null)
-                    const Text(
-                      'Coin purchases and pack unlocks will appear here.',
-                    ),
-                  ...entries
-                      .map(
-                        (e) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(e['description'] as String),
-                                    Text(
-                                      displayDate(
-                                        DateTime.parse(
-                                          e['created_at'] as String,
-                                        ),
-                                      ),
-                                      style: const TextStyle(
-                                        color: VimiColors.muted,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text(
-                                '${(e['delta'] as num) > 0 ? '+' : ''}${e['delta']}',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ],
-                          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BalanceCard extends StatelessWidget {
+  const _BalanceCard({required this.amount});
+
+  final String amount;
+
+  @override
+  Widget build(BuildContext context) {
+    final type = Theme.of(context).textTheme;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 12, 12, 12),
+      decoration: BoxDecoration(
+        color: VimiColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: VimiColors.violet.withValues(alpha: .36)),
+        image: const DecorationImage(
+          image: AssetImage('assets/ui/neon-spectrum.webp'),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(Color(0xCD211039), BlendMode.srcATop),
+        ),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final largeType = MediaQuery.textScalerOf(context).scale(16) > 24;
+          final artSize = (constraints.maxWidth * (largeType ? .27 : .43))
+              .clamp(0.0, 148.0)
+              .toDouble();
+          return Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        amount,
+                        style: type.displaySmall?.copyWith(
+                          fontSize: 42,
+                          height: 1.05,
+                          fontFeatures: const [FontFeature.tabularFigures()],
                         ),
-                      )
-                      .toList(),
-                  PageFooter(
-                    pager: ledger!,
-                    moreLabel: 'Earlier transactions',
-                    loadingLabel: 'Opening your ledger…',
+                      ),
+                      const SizedBox(height: 3),
+                      Text('coins available', style: type.labelLarge),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Unlock practice packs.',
+                        style: type.bodyMedium?.copyWith(
+                          color: VimiColors.muted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Image.asset(
+                'assets/ui/wallet-coin.webp',
+                width: artSize,
+                height: artSize,
+                fit: BoxFit.contain,
+                excludeFromSemantics: true,
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _WalletLedger extends StatelessWidget {
+  const _WalletLedger({required this.pager});
+
+  final CursorPager<Json> pager;
+
+  @override
+  Widget build(BuildContext context) {
+    final type = Theme.of(context).textTheme;
+    return AnimatedBuilder(
+      animation: pager,
+      builder: (context, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (pager.loaded && pager.items.isEmpty && pager.error == null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                children: [
+                  const VIcon(Glyph.clock, size: 18, color: VimiColors.violet),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'No transactions yet.',
+                      style: type.bodyMedium?.copyWith(color: VimiColors.muted),
+                    ),
                   ),
                 ],
-              );
-            },
+              ),
+            ),
+          for (final entry in pager.items) ...[
+            _LedgerEntry(entry: entry),
+            Divider(height: 1, color: VimiColors.line.withValues(alpha: .26)),
+          ],
+          PageFooter(
+            pager: pager,
+            moreLabel: 'Earlier transactions',
+            loadingLabel: 'Loading transactions…',
           ),
-          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+}
+
+class _LedgerEntry extends StatelessWidget {
+  const _LedgerEntry({required this.entry});
+
+  final Json entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final type = Theme.of(context).textTheme;
+    final numbers = MaterialLocalizations.of(context);
+    final delta = (entry['delta'] as num).toInt();
+    final sign = delta > 0
+        ? '+'
+        : delta < 0
+        ? '−'
+        : '';
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(entry['description'] as String),
+                Text(
+                  displayDate(DateTime.parse(entry['created_at'] as String)),
+                  style: type.bodySmall?.copyWith(color: VimiColors.muted),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Flexible(
+            flex: 2,
+            child: Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Text(
+                '$sign${numbers.formatDecimal(delta.abs())}',
+                textAlign: TextAlign.end,
+                style: type.titleMedium?.copyWith(
+                  color: delta > 0 ? VimiColors.cyan : VimiColors.ink,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

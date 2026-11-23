@@ -36,6 +36,9 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
   String? account;
   int revision = -1;
   int page = 0;
+  int modeVersion = 0;
+  int? scanningMode;
+  bool following = false;
   bool muted = true;
   bool loadingClips = true;
   bool failedClips = false;
@@ -94,16 +97,20 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
     }
   }
 
-  void rebuildEntries() {
+  void rebuildEntries({bool restart = false}) {
     if (!mounted) return;
-    final current = entries.elementAtOrNull(page)?.id;
-    final atEnd = entries.isNotEmpty && page == entries.length;
+    final current = restart ? null : entries.elementAtOrNull(page)?.id;
+    final atEnd = !restart && entries.isNotEmpty && page == entries.length;
     final previousIds = atEnd ? entries.map((entry) => entry.id).toSet() : null;
-    final posts = members?.items ?? [];
+    final feed = members;
+    final posts = feed?.items ?? [];
+    final waitingForMembers =
+        feed != null && !feed.loaded && feed.error == null;
     final next = [
-      if (clips.isNotEmpty) _CoverEntry.library(clips.first),
-      for (final post in posts) _CoverEntry.member(post),
-      for (final clip in clips.skip(1)) _CoverEntry.library(clip),
+      for (final post in posts)
+        if (!following || post.author.isFollowing) _CoverEntry.member(post),
+      if (!following && !waitingForMembers)
+        for (final clip in clips) _CoverEntry.library(clip),
     ];
     final index = next.indexWhere((entry) => entry.id == current);
     final newMember = previousIds == null
@@ -111,26 +118,182 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
         : next.indexWhere(
             (entry) => entry.post != null && !previousIds.contains(entry.id),
           );
-    final selected = index >= 0
+    final selected = restart
+        ? 0
+        : index >= 0
         ? index
         : newMember >= 0
         ? newMember
         : atEnd && canLoadMore
         ? next.length
         : page.clamp(0, next.isEmpty ? 0 : next.length - 1).toInt();
-    final move = selected != page && pages.hasClients;
+    final move = !restart && selected != page && pages.hasClients;
     setState(() {
       entries = next;
       page = selected;
+      if (restart) changingPages = false;
       if (move) changingPages = true;
     });
     if (move) {
+      final mode = modeVersion;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
+        if (!mounted || mode != modeVersion) return;
         if (pages.hasClients) pages.jumpToPage(page);
         setState(() => changingPages = false);
       });
     }
+  }
+
+  void selectFeed(bool value) {
+    if (following == value) return;
+    following = value;
+    modeVersion++;
+    rebuildEntries(restart: true);
+    if (following) unawaited(findFollowingVideos());
+  }
+
+  Future<void> findFollowingVideos() async {
+    final feed = members;
+    final mode = modeVersion;
+    if (!following ||
+        feed == null ||
+        scanningMode == mode ||
+        VimiScope.of(context).profile?.following == 0 ||
+        entries.isNotEmpty) {
+      return;
+    }
+    scanningMode = mode;
+    try {
+      // Look beyond photo-heavy batches without draining a long feed at once.
+      for (
+        var attempt = 0;
+        attempt < 3 &&
+            mounted &&
+            widget.active &&
+            mode == modeVersion &&
+            identical(feed, members) &&
+            entries.isEmpty &&
+            feed.hasMore &&
+            feed.error == null;
+        attempt++
+      ) {
+        await feed.loadMore();
+      }
+    } finally {
+      if (scanningMode == mode) scanningMode = null;
+    }
+  }
+
+  void discoverDancers() => openPage(context, const DancerDirectory());
+
+  Widget followingEmpty(CursorPager<DancePost>? feed, bool hasNoFollows) {
+    final looking = !hasNoFollows && feed?.loading == true;
+    final error = hasNoFollows ? null : feed?.error;
+    final canContinue = feed != null && feed.hasMore && !hasNoFollows;
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(12),
+        child: SurfacePanel(
+          padding: const EdgeInsets.fromLTRB(14, 18, 14, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const VIcon(Glyph.person, size: 30, color: VimiColors.cyan),
+              const SizedBox(height: 10),
+              Text(
+                hasNoFollows
+                    ? 'No followed covers yet'
+                    : looking
+                    ? 'Looking for followed dancers’ videos…'
+                    : error != null
+                    ? 'Couldn’t load followed covers'
+                    : canContinue
+                    ? 'No followed covers in these results'
+                    : 'No videos from followed dancers yet',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              if (hasNoFollows)
+                const Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: Text(
+                    'Follow dancers to see their videos here.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: VimiColors.muted, fontSize: 13),
+                  ),
+                ),
+              if (looking)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              else if (error != null)
+                VActionRow(
+                  'Retry covers',
+                  glyph: Glyph.refresh,
+                  onPressed: feed!.retry,
+                )
+              else if (canContinue)
+                VActionRow(
+                  'Check earlier videos',
+                  glyph: Glyph.video,
+                  onPressed: findFollowingVideos,
+                )
+              else if (!hasNoFollows && feed != null)
+                VActionRow(
+                  'Refresh covers',
+                  glyph: Glyph.refresh,
+                  onPressed: () async {
+                    final mode = modeVersion;
+                    await feed.refresh();
+                    if (mounted && mode == modeVersion) {
+                      await findFollowingVideos();
+                    }
+                  },
+                )
+              else
+                VActionRow(
+                  'Discover dancers',
+                  glyph: Glyph.search,
+                  onPressed: discoverDancers,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget feedMode(String label, bool value) {
+    final selected = following == value;
+    return Semantics(
+      selected: selected,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: selected ? VimiColors.cyan : VimiColors.muted,
+          minimumSize: const Size(48, 48),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+          textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+        ),
+        onPressed: () => selectFeed(value),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(label),
+            const SizedBox(height: 4),
+            SizedBox(
+              width: 14,
+              height: 2,
+              child: ColoredBox(
+                color: selected ? VimiColors.cyan : Colors.transparent,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -213,6 +376,7 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
     final feed = members;
     final hasMore = canLoadMore;
     final slides = entries;
+    final mode = modeVersion;
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 490),
@@ -220,44 +384,58 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Column(
             children: [
-              Row(
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  VIconButton(
-                    Glyph.library,
-                    label: 'Discover',
-                    onPressed: () => openPage(
-                      context,
-                      const VPage(title: 'Discover', child: FloorPage()),
-                    ),
+                  Wrap(
+                    children: [
+                      feedMode('All covers', false),
+                      feedMode('Following', true),
+                    ],
                   ),
-                  VIconButton(
-                    Glyph.search,
-                    label: 'Find dancers',
-                    onPressed: () => openPage(context, const DancerDirectory()),
-                  ),
-                  const Spacer(),
-                  VIconButton(
-                    muted ? Glyph.mute : Glyph.sound,
-                    label: muted ? 'Turn on video sound' : 'Mute videos',
-                    color: muted ? VimiColors.muted : VimiColors.cyan,
-                    onPressed: () => setState(() => muted = !muted),
-                  ),
-                  VIconButton(
-                    Glyph.add,
-                    label: 'Post',
-                    color: VimiColors.cyan,
-                    filled: true,
-                    onPressed: () async {
-                      if (await requireSignIn(context) && context.mounted) {
-                        await openPage(context, const PublishPage());
-                      }
-                    },
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      VIconButton(
+                        Glyph.library,
+                        label: 'Discover',
+                        onPressed: () => openPage(
+                          context,
+                          const VPage(title: 'Discover', child: FloorPage()),
+                        ),
+                      ),
+                      VIconButton(
+                        Glyph.search,
+                        label: 'Find dancers',
+                        onPressed: discoverDancers,
+                      ),
+                      VIconButton(
+                        muted ? Glyph.mute : Glyph.sound,
+                        label: muted ? 'Turn on video sound' : 'Mute videos',
+                        color: muted ? VimiColors.muted : VimiColors.cyan,
+                        onPressed: () => setState(() => muted = !muted),
+                      ),
+                      VIconButton(
+                        Glyph.add,
+                        label: 'Post',
+                        color: VimiColors.cyan,
+                        filled: true,
+                        onPressed: () async {
+                          if (await requireSignIn(context) && context.mounted) {
+                            await openPage(context, const PublishPage());
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Expanded(
-                child: slides.isEmpty && !hasMore
+                child: slides.isEmpty && following
+                    ? followingEmpty(feed, app.profile?.following == 0)
+                    : slides.isEmpty && !hasMore
                     ? Center(
                         child: loadingClips
                             ? const CircularProgressIndicator(strokeWidth: 2)
@@ -269,11 +447,12 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
                             : const Text('No video covers yet.'),
                       )
                     : PageView.builder(
+                        key: ValueKey(following),
                         controller: pages,
                         scrollDirection: Axis.vertical,
                         allowImplicitScrolling: true,
                         onPageChanged: (index) {
-                          if (changingPages) return;
+                          if (changingPages || mode != modeVersion) return;
                           setState(() => page = index);
                           if (feed != null &&
                               feed.loaded &&
@@ -414,9 +593,38 @@ class _CoverSlide extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: _CoverCredit(
-            title: clip.title,
-            detail: 'Practice reference · ${clip.durationLabel}',
+          child: Tooltip(
+            message: 'Open Studio library',
+            child: TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: VimiColors.ink,
+                minimumSize: const Size(48, 48),
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+              ),
+              onPressed: () => openPage(
+                context,
+                MediaLibraryPage(
+                  practiceBuilder: (value) =>
+                      PracticeEditor(initialClip: value),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const VIcon(
+                    Glyph.library,
+                    size: 22,
+                    color: VimiColors.violet,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: _CoverCredit(
+                      title: clip.title,
+                      detail: 'Studio library · ${clip.durationLabel}',
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
         VIconButton(
@@ -445,21 +653,6 @@ class _CoverSlide extends StatelessWidget {
   }
 
   Widget _memberCredit(BuildContext context, DancePost post) {
-    final author = InkWell(
-      onTap: () => openPage(context, DancerPage(id: post.author.id)),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 48),
-        child: Row(
-          children: [
-            SignedAvatar(post.author, size: 34),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _CoverCredit(title: post.author.name, detail: post.style),
-            ),
-          ],
-        ),
-      ),
-    );
     final actions = [
       VIconButton(
         post.liked ? Glyph.heartFull : Glyph.heart,
@@ -487,39 +680,88 @@ class _CoverSlide extends StatelessWidget {
         onPressed: () => postOptions(context, post),
       ),
     ];
-    final caption = Text(
-      post.caption,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-      style: const TextStyle(fontSize: 13),
-    );
+    final hasCaption = post.caption.trim().isNotEmpty;
     return LayoutBuilder(
       builder: (context, bounds) {
-        final compact = bounds.maxWidth < 320;
+        final combineCaptionAndActions =
+            bounds.maxWidth >= 340 &&
+            MediaQuery.textScalerOf(context).scale(13) <= 18;
+        final caption = hasCaption
+            ? Padding(
+                padding: const EdgeInsets.only(right: 8, bottom: 4),
+                child: Text(
+                  post.caption,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 13),
+                ),
+              )
+            : null;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Expanded(child: author),
-                if (!compact) ...actions,
-              ],
-            ),
-            if (compact || post.caption.isNotEmpty)
+            _CoverAuthor(author: post.author, style: post.style),
+            if (combineCaptionAndActions)
               Row(
                 children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 4, bottom: 4),
-                      child: caption,
-                    ),
-                  ),
-                  if (compact) ...actions,
+                  Expanded(child: caption ?? const SizedBox.shrink()),
+                  ...actions,
                 ],
-              ),
+              )
+            else ...[
+              if (caption != null) caption,
+              Wrap(alignment: WrapAlignment.end, children: actions),
+            ],
           ],
         );
       },
+    );
+  }
+}
+
+class _CoverAuthor extends StatelessWidget {
+  const _CoverAuthor({required this.author, required this.style});
+
+  final Dancer author;
+  final String style;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = 'Open ${author.name}’s profile';
+    void openProfile() => openPage(context, DancerPage(id: author.id));
+
+    return Semantics(
+      button: true,
+      label: label,
+      focusable: true,
+      onTap: openProfile,
+      excludeSemantics: true,
+      child: Tooltip(
+        excludeFromSemantics: true,
+        message: label,
+        child: TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: VimiColors.ink,
+            minimumSize: const Size(48, 48),
+            padding: const EdgeInsets.fromLTRB(2, 5, 12, 5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onPressed: openProfile,
+          child: Row(
+            children: [
+              SignedAvatar(author, size: 38),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _CoverCredit(title: author.name, detail: style),
+              ),
+              const SizedBox(width: 8),
+              const VIcon(Glyph.next, size: 16, color: VimiColors.cyan),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

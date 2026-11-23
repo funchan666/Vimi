@@ -58,3 +58,9 @@ Migration `20261119055131_vimi_cursor_history.sql` adds RLS-preserving `get_feed
 `moderate-content` version 4 accepts `{"action":"queue","section":"comments"}` (or posts/reports) and returns `items`, up to 26 rows for 25 visible entries. Reports also accept `"child_safety_only": true` to include Child safety and Underage user reasons. For another page supply `after_created` as an exact UTC ISO timestamp ending in Z, retaining its fractional seconds, and `after_id` from the last visible row. Invalid sections/cursors are rejected. The legacy unsectioned response remains compatible with previous clients.
 
 Hosted rollback contracts, actual reviewer API pagination/role checks, and the two current native history/continuity suites are recorded in `verification/2026-11-19/`. Temporary fixture actors/content/media and zero-value ledger entries were removed after acceptance.
+
+## Direct calls
+
+Migration `20261123072821_vimi_direct_calls.sql` adds one-to-one voice and video calls between eligible mutual follows. Realtime delivers incoming call state while the app is open. The server binds signaling to the participants' Auth sessions and ends active calls when a block, unfollow, user report or account restriction makes the pair ineligible. Ringing expires after 45 seconds. An accepted call expires if either side stops sending heartbeats. A scheduled job removes expired signaling and clears ended call metadata after about a day.
+
+Flutter uses WebRTC with STUN for direct connections. The optional `VIMI_CALL_ICE_FUNCTION` build setting names an authenticated Supabase Edge Function that returns an object with `iceServers` containing temporary TURN credentials. Persistent TURN credentials belong in server secrets. The preview configuration has no TURN issuer, and background push calling is unconfigured.

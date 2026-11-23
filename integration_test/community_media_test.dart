@@ -111,6 +111,18 @@ void main() {
       );
       report['short_covers'] = 'vertical swipe opens and plays the next source';
 
+      await press(tester, 'Following');
+      expect(
+        tester
+            .widgetList<CoverVideoCanvas>(activeCover)
+            .every((canvas) => !canvas.sourceId.startsWith('library:')),
+        isTrue,
+        reason: 'Publisher reference clips do not enter the Following feed.',
+      );
+      await press(tester, 'All covers');
+      await waitFor(tester, () => feedPlayer.evaluate().isNotEmpty);
+      report['following_filter'] = 'filter excludes publisher reference clips';
+
       await press(tester, 'Discover');
       await waitFor(tester, () => decodedCovers() >= 3);
       await capture(binding, tester, 'discover');

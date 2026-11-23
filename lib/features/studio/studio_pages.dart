@@ -16,6 +16,7 @@ import '../wallet/wallet_page.dart';
 import 'rehearsal_player.dart';
 import 'journal_recovery_page.dart';
 import 'media_library_pages.dart';
+import 'weekly_practice_goal.dart';
 
 class StudioPage extends StatelessWidget {
   const StudioPage({super.key});
@@ -33,6 +34,8 @@ class StudioPage extends StatelessWidget {
         RehearsalShelf(
           practiceBuilder: (clip) => PracticeEditor(initialClip: clip),
         ),
+        const SizedBox(height: 12),
+        const WeeklyPracticeGoal(),
         const SizedBox(height: 20),
         SurfacePanel(
           padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),

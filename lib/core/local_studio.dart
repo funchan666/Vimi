@@ -4,13 +4,38 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models.dart';
 
+({DateTime start, DateTime end}) practiceWeek(DateTime time) {
+  final local = time.toLocal();
+  final monday = local.day - (local.weekday - DateTime.monday);
+  return (
+    start: DateTime(local.year, local.month, monday),
+    // Construct the next local midnight so DST never moves the boundary.
+    end: DateTime(local.year, local.month, monday + DateTime.daysPerWeek),
+  );
+}
+
+int practiceMinutesThisWeek(Iterable<PracticeSession> sessions, DateTime time) {
+  final week = practiceWeek(time);
+  return sessions
+      .where(
+        (session) =>
+            session.minutes > 0 &&
+            !session.createdAt.isBefore(week.start) &&
+            session.createdAt.isBefore(week.end) &&
+            !session.createdAt.isAfter(time),
+      )
+      .fold(0, (total, session) => total + session.minutes);
+}
+
 class LocalStudio {
   LocalStudio(this.preferences);
+  static const maxWeeklyPracticeGoal = 7 * 24 * 60;
   final SharedPreferences preferences;
   Future<void> _journalWork = Future.value();
   Future<void> _draftWork = Future.value();
   Future<void> _libraryClipWork = Future.value();
   final _unconfirmedLibraryClips = <String, Set<String>>{};
+  final _unconfirmedGoals = <String, int?>{};
 
   Future<T> _journal<T>(Future<T> Function() action) {
     final next = _journalWork.then((_) => action());
@@ -77,6 +102,29 @@ class LocalStudio {
     );
     return next;
   }
+
+  int? weeklyPracticeGoal(String account) {
+    if (_unconfirmedGoals.containsKey(account))
+      return _unconfirmedGoals[account];
+    final value = preferences.get('practice-goal.v1.$account');
+    return value is int && value > 0 && value <= maxWeeklyPracticeGoal
+        ? value
+        : null;
+  }
+
+  Future<void> setWeeklyPracticeGoal(String account, int minutes) => _journal(
+    () async {
+      if (minutes < 1 || minutes > maxWeeklyPracticeGoal) {
+        throw ArgumentError.value(minutes, 'minutes', 'Invalid weekly target');
+      }
+      // Keep the last confirmed value visible if a platform write fails.
+      _unconfirmedGoals[account] = weeklyPracticeGoal(account);
+      if (!await preferences.setInt('practice-goal.v1.$account', minutes)) {
+        throw const FileSystemException('Your weekly goal could not be saved.');
+      }
+      _unconfirmedGoals.remove(account);
+    },
+  );
 
   Future<List<PracticeSession>> update(
     String account,
@@ -186,6 +234,8 @@ class LocalStudio {
     await _draftWork;
     await _libraryClipWork;
     _unconfirmedLibraryClips.remove(account);
+    _unconfirmedGoals.remove(account);
+    await preferences.remove('practice-goal.v1.$account');
     await preferences.remove('practice.v1.$account');
     final root = await getApplicationSupportDirectory();
     final directory = Directory('${root.path}/practice/$account');

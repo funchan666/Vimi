@@ -1,5 +1,5 @@
 Vimi Privacy Policy
-Effective November 18, 2026; updated November 19, 2026
+Effective November 18, 2026; updated November 23, 2026
 
 Vimi is an adult dance community. For privacy requests or questions, contact funchan7777777@gmail.com. This policy applies to the Vimi Android application and its account, social, practice and coin features.
 
@@ -13,7 +13,13 @@ Messages, media and safety
 
 Direct messages and participant identifiers are stored for conversations between mutual follows. They are not end-to-end encrypted. Participants and authorized support or moderation processing may access them. Reports, review decisions and account restrictions are processed to respond to abuse, copyright concerns and child-safety incidents.
 
-Only media you choose for an avatar or social post is uploaded when you save or submit it. A submitted upload can remain as a private draft if publication is interrupted, until you discard it or delete the account. An external system camera or photo picker handles capture and selection; Vimi does not request broad photo-library access, precise location, an address book, or access to unrelated files. Selected videos can contain audio.
+Only media you choose for an avatar or social post is uploaded when you save or submit it. A submitted upload can remain as a private draft if publication is interrupted, until you discard it or delete the account. An external system camera or photo picker handles profile and post capture and selection. Vimi does not request broad photo-library access, precise location, an address book, or access to unrelated files. Selected videos can contain audio.
+
+Voice and video calls
+
+Vimi uses your microphone when you start or answer a call, and uses your camera for video calls. You can mute your microphone, turn your camera off, or end the call. Live audio and video are sent to the other participant over an encrypted WebRTC connection. Vimi does not record or store the call audio or video. Participants may independently record what they see or hear.
+
+Supabase processes participant account IDs, call type, status, timestamps and temporary WebRTC connection details such as IP addresses. This information is used to connect calls, enforce account safety rules and avoid overlapping calls. Connection details in the call database are cleared after calls end or expire. Call metadata is scheduled for deletion about one day after a call ends. Provider logs and backups follow the schedules described below.
 
 Local practice and drafts
 

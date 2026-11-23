@@ -72,4 +72,6 @@ Inbox places search and compose beside each other, above the All and Unread filt
 
 Member avatars use the saved profile photo first. Accounts without one display an account-specific selection from eight publisher library thumbnails. These images are display defaults, and users can tap their own avatar to select and save a photo. An unavailable image shows the member’s initials.
 
+The Floor toolbar switches between All covers and Following. Following filters the existing paginated, approved member results using the signed-in dancer’s follow relationships. An empty result offers discovery or a way to browse older covers. Studio’s weekly practice goal shows actual journal minutes for the local Monday–Sunday week. The chat toolbar’s practice invitation adds an editable routine and plan to the composer after verifying the mutual follow.
+
 The screens use the supplied cloud media and existing original glyphs. UI Design Reference, UI Taste, Impeccable and Claude Design informed the compact hierarchy. Android execution is documented in the dated community verification record.

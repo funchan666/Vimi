@@ -10,6 +10,8 @@ import 'core/local_studio.dart';
 import 'core/secure_session.dart';
 import 'design/vimi_ui.dart';
 import 'features/auth/auth_pages.dart';
+import 'features/messages/direct_call_page.dart';
+import 'features/messages/direct_calls.dart';
 import 'features/shell.dart';
 import 'features/profile/profile_pages.dart';
 import 'features/studio/rehearsal_player.dart';
@@ -189,12 +191,16 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
   String account = 'guest';
   late final PlayCoins billing;
   late final PlaybackRouteObserver routes;
+  late final DirectCalls calls;
+  bool showingCall = false;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     account = widget.controller.account;
     billing = PlayCoins(widget.controller);
+    calls = DirectCalls(widget.controller)..addListener(openCall);
+    calls.syncAccount();
     routes = PlaybackRouteObserver(
       onReturned: () {
         if (mounted) widget.controller.changed();
@@ -204,6 +210,7 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
   }
 
   void changed() {
+    calls.syncAccount();
     final next = widget.controller.account;
     if (account != next || widget.controller.recoveringPassword) {
       final resume =
@@ -227,8 +234,43 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
     if (mounted) setState(() {});
   }
 
+  void openCall() {
+    final call = calls.current;
+    if (!mounted || showingCall || call == null) return;
+    showingCall = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final nav = navigator.currentState;
+      if (!mounted || nav == null || !identical(calls.current, call)) {
+        showingCall = false;
+        return;
+      }
+      if (call.incoming && !call.finished) {
+        unawaited(HapticFeedback.mediumImpact());
+      }
+      unawaited(
+        nav
+            .push<void>(
+              MaterialPageRoute(
+                builder: (_) => DirectCallPage(calls: calls, call: call),
+              ),
+            )
+            .whenComplete(() {
+              showingCall = false;
+              if (mounted) calls.dismiss(call);
+            }),
+      );
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      calls.setForeground(false);
+    } else if (state == AppLifecycleState.resumed) {
+      calls.setForeground(true);
+    }
     if (state != AppLifecycleState.resumed) {
       PlaybackCoordinator.pauseAll();
     } else {
@@ -240,6 +282,8 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
   @override
   void dispose() {
     widget.controller.removeListener(changed);
+    calls.removeListener(openCall);
+    calls.dispose();
     billing.dispose();
     WidgetsBinding.instance.removeObserver(this);
     widget.controller.dispose();
@@ -247,61 +291,67 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
   }
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    navigatorKey: navigator,
-    debugShowCheckedModeBanner: false,
-    title: 'Vimi',
-    theme: vimiTheme(),
-    navigatorObservers: [routes],
-    home: widget.controller.recoveringPassword
-        ? UpdatePasswordPage(
-            onSaved: () {
-              widget.controller.recoveringPassword = false;
-              widget.controller.changed();
-            },
-          )
-        : widget.controller.signedIn &&
-              widget.controller.accountStatus == 'deleting'
-        ? const DeleteAccountPage()
-        : widget.controller.signedIn &&
-              widget.controller.accountStatus != 'active'
-        ? Builder(
-            builder: (pageContext) => VPage(
-              title: 'Your account',
-              back: false,
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: ListView(
-                  children: [
-                    const Text(
-                      'This account is currently unavailable. You can sign out and return later.',
-                    ),
-                    VButton(
-                      'Sign out',
-                      onPressed: () => widget.controller.signOut(),
-                    ),
-                    VButton(
-                      'Help & safety',
-                      quiet: true,
-                      onPressed: () => openPage(
-                        pageContext,
-                        const LegalPage('Help & account deletion', 'deletion'),
+  Widget build(BuildContext context) => DirectCallScope(
+    calls: calls,
+    child: MaterialApp(
+      navigatorKey: navigator,
+      debugShowCheckedModeBanner: false,
+      title: 'Vimi',
+      theme: vimiTheme(),
+      navigatorObservers: [routes],
+      home: widget.controller.recoveringPassword
+          ? UpdatePasswordPage(
+              onSaved: () {
+                widget.controller.recoveringPassword = false;
+                widget.controller.changed();
+              },
+            )
+          : widget.controller.signedIn &&
+                widget.controller.accountStatus == 'deleting'
+          ? const DeleteAccountPage()
+          : widget.controller.signedIn &&
+                widget.controller.accountStatus != 'active'
+          ? Builder(
+              builder: (pageContext) => VPage(
+                title: 'Your account',
+                back: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: ListView(
+                    children: [
+                      const Text(
+                        'This account is currently unavailable. You can sign out and return later.',
                       ),
-                    ),
-                    VButton(
-                      'Delete account',
-                      glyph: Glyph.delete,
-                      quiet: true,
-                      onPressed: () =>
-                          openPage(pageContext, const DeleteAccountPage()),
-                    ),
-                  ],
+                      VButton(
+                        'Sign out',
+                        onPressed: () => widget.controller.signOut(),
+                      ),
+                      VButton(
+                        'Help & safety',
+                        quiet: true,
+                        onPressed: () => openPage(
+                          pageContext,
+                          const LegalPage(
+                            'Help & account deletion',
+                            'deletion',
+                          ),
+                        ),
+                      ),
+                      VButton(
+                        'Delete account',
+                        glyph: Glyph.delete,
+                        quiet: true,
+                        onPressed: () =>
+                            openPage(pageContext, const DeleteAccountPage()),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          )
-        : widget.controller.signedIn
-        ? const DanceShell()
-        : const WelcomePage(),
+            )
+          : widget.controller.signedIn
+          ? const DanceShell()
+          : const WelcomePage(),
+    ),
   );
 }

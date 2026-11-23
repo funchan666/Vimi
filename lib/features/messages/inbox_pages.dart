@@ -11,6 +11,7 @@ import '../../design/vimi_ui.dart';
 import '../auth/auth_pages.dart';
 import '../community/community_pages.dart';
 import '../profile/profile_pages.dart';
+import 'direct_calls.dart';
 
 class InboxPage extends StatefulWidget {
   const InboxPage({super.key, this.active = true});
@@ -884,10 +885,13 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  static const _messageLimit = 2000;
+
   final input = TextEditingController();
   final scroll = ScrollController();
   late CursorPager<Json> history;
   bool allowed = false, busy = false, loading = true, started = false;
+  bool planning = false;
   int revision = -1, generation = 0;
   String? error;
   String? draftError, owner;
@@ -974,7 +978,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> send() async {
-    if (!allowed || busy || input.text.trim().isEmpty) return;
+    if (!allowed || busy || planning || input.text.trim().isEmpty) return;
     final app = VimiScope.of(context);
     final text = input.text.trim();
     setState(() => busy = true);
@@ -1001,6 +1005,128 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  Future<void> planRehearsal() async {
+    final app = VimiScope.of(context);
+    final repo = app.repo;
+    final route = ModalRoute.of(context);
+    final peer = widget.peer.id;
+    bool isSameThread() =>
+        mounted &&
+        app.signedIn &&
+        owner == app.account &&
+        app.repo == repo &&
+        widget.peer.id == peer;
+
+    if (planning ||
+        busy ||
+        !allowed ||
+        repo == null ||
+        !isSameThread() ||
+        route?.isCurrent != true) {
+      return;
+    }
+    final draft = input.text;
+    final separator = draft.isEmpty ? '' : '\n\n';
+    FocusScope.of(context).unfocus();
+    setState(() => planning = true);
+    try {
+      final invitation = await showModalBottomSheet<String>(
+        context: context,
+        useSafeArea: true,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => _RehearsalInviteSheet(
+          charactersLeft: _messageLimit - draft.runes.length - separator.length,
+          checkPermission: () async {
+            final canMessage = await repo.canMessage(peer);
+            if (!isSameThread()) return false;
+            if (allowed != canMessage) setState(() => allowed = canMessage);
+            return canMessage;
+          },
+        ),
+      );
+      if (invitation == null || !isSameThread() || route?.isCurrent != true) {
+        return;
+      }
+      if (!allowed) {
+        feedback(context, 'Messaging is currently unavailable in this chat.');
+        return;
+      }
+      if (input.text != draft) {
+        feedback(context, 'Your draft changed. Open the invitation again.');
+        return;
+      }
+      final next = '$draft$separator$invitation';
+      input.value = TextEditingValue(
+        text: next,
+        selection: TextSelection.collapsed(offset: next.length),
+      );
+      saveDraft(next);
+    } catch (e) {
+      if (isSameThread() && route?.isCurrent == true) {
+        feedback(context, readableError(e));
+      }
+    } finally {
+      if (mounted) setState(() => planning = false);
+    }
+  }
+
+  void startCall(DirectCalls calls, {required bool video}) {
+    if (!allowed) return;
+    FocusScope.of(context).unfocus();
+    if (!calls.start(widget.peer, video: video)) {
+      feedback(context, 'Calling is currently unavailable.');
+    }
+  }
+
+  Future<void> conversationActions() async {
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      useSafeArea: true,
+      builder: (sheetContext) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: SurfacePanel(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (allowed)
+                VActionRow(
+                  'Invite to practice',
+                  glyph: Glyph.clock,
+                  onPressed: () => Navigator.pop(sheetContext, 'practice'),
+                ),
+              VActionRow(
+                'Refresh conversation',
+                glyph: Glyph.refresh,
+                onPressed: () => Navigator.pop(sheetContext, 'refresh'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (!mounted || ModalRoute.of(context)?.isCurrent != true) return;
+    if (action == 'practice') await planRehearsal();
+    if (action == 'refresh') await load();
+  }
+
+  void saveDraft(String text) {
+    final clientId = const Uuid().v4();
+    nonce = clientId;
+    if (draftError != null) setState(() => draftError = null);
+    unawaited(
+      draftStore
+          .writeDraft(storedDraftKey, {'body': text, 'client_id': clientId})
+          .catchError((Object e) {
+            if (mounted && nonce == clientId) {
+              setState(() => draftError = readableError(e));
+            }
+          }),
+    );
+  }
+
   @override
   void dispose() {
     history.dispose();
@@ -1012,6 +1138,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
+    final calls = DirectCallScope.maybeOf(context);
     final peer = widget.peer;
     final canUseThread = app.signedIn && app.account == owner;
     return Scaffold(
@@ -1070,12 +1197,30 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                             ),
                           ),
+                        if (canUseThread && calls != null) ...[
+                          VIconButton(
+                            Glyph.phone,
+                            label: 'Voice call',
+                            color: VimiColors.cyan,
+                            onPressed: allowed && !planning
+                                ? () => startCall(calls, video: false)
+                                : null,
+                          ),
+                          VIconButton(
+                            Glyph.video,
+                            label: 'Video call',
+                            color: VimiColors.cyan,
+                            onPressed: allowed && !planning
+                                ? () => startCall(calls, video: true)
+                                : null,
+                          ),
+                        ],
                         if (canUseThread)
                           VIconButton(
-                            Glyph.refresh,
-                            label: 'Refresh conversation',
+                            Glyph.more,
+                            label: 'Conversation actions',
                             color: VimiColors.muted,
-                            onPressed: load,
+                            onPressed: conversationActions,
                           ),
                       ],
                     ),
@@ -1098,7 +1243,7 @@ class _ChatPageState extends State<ChatPage> {
                               const Padding(
                                 padding: EdgeInsets.all(10),
                                 child: Text(
-                                  'Messaging is available when you follow each other and neither account has blocked the other.',
+                                  'Messages and calls are available between mutual follows without a block.',
                                   style: _chatMeta,
                                 ),
                               ),
@@ -1109,7 +1254,7 @@ class _ChatPageState extends State<ChatPage> {
                               const Padding(
                                 padding: EdgeInsets.all(14),
                                 child: Text(
-                                  'Send a practice tip or ask about a routine.',
+                                  'Invite them to practice or ask about a routine.',
                                   textAlign: TextAlign.center,
                                   style: _chatMeta,
                                 ),
@@ -1297,10 +1442,10 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: TextField(
               controller: input,
-              enabled: !busy,
+              enabled: !busy && !planning,
               minLines: 1,
               maxLines: 3,
-              maxLength: 2000,
+              maxLength: _messageLimit,
               keyboardType: TextInputType.multiline,
               textInputAction: TextInputAction.newline,
               textCapitalization: TextCapitalization.sentences,
@@ -1321,29 +1466,15 @@ class _ChatPageState extends State<ChatPage> {
                   vertical: 14,
                 ),
               ),
-              onChanged: (text) {
-                nonce = const Uuid().v4();
-                if (draftError != null) setState(() => draftError = null);
-                unawaited(
-                  draftStore
-                      .writeDraft(storedDraftKey, {
-                        'body': text,
-                        'client_id': nonce,
-                      })
-                      .catchError((Object e) {
-                        if (mounted) {
-                          setState(() => draftError = readableError(e));
-                        }
-                      }),
-                );
-              },
+              onChanged: saveDraft,
             ),
           ),
           const SizedBox(width: 8),
           ValueListenableBuilder<TextEditingValue>(
             valueListenable: input,
             builder: (_, value, child) {
-              final canSend = allowed && !busy && value.text.trim().isNotEmpty;
+              final canSend =
+                  allowed && !busy && !planning && value.text.trim().isNotEmpty;
               return VIconButton(
                 Glyph.send,
                 label: busy ? 'Sending message' : 'Send message',
@@ -1359,4 +1490,124 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+}
+
+class _RehearsalInviteSheet extends StatefulWidget {
+  const _RehearsalInviteSheet({
+    required this.charactersLeft,
+    required this.checkPermission,
+  });
+
+  final int charactersLeft;
+  final Future<bool> Function() checkPermission;
+
+  @override
+  State<_RehearsalInviteSheet> createState() => _RehearsalInviteSheetState();
+}
+
+class _RehearsalInviteSheetState extends State<_RehearsalInviteSheet> {
+  final routine = TextEditingController();
+  final plan = TextEditingController();
+  bool checking = false;
+  String? error;
+
+  @override
+  void dispose() {
+    plan.dispose();
+    routine.dispose();
+    super.dispose();
+  }
+
+  Future<void> addToDraft() async {
+    if (checking) return;
+    final title = routine.text.trim();
+    final detail = plan.text.trim();
+    if (title.isEmpty || detail.isEmpty) {
+      setState(() => error = 'Add a routine and a proposed time or note.');
+      return;
+    }
+    final invitation = 'Want to rehearse $title together?\n$detail';
+    if (invitation.runes.length > widget.charactersLeft) {
+      setState(
+        () =>
+            error = 'Shorten your chat draft to make room for this invitation.',
+      );
+      return;
+    }
+    FocusScope.of(context).unfocus();
+    setState(() {
+      checking = true;
+      error = null;
+    });
+    try {
+      final allowed = await widget.checkPermission();
+      if (!mounted || ModalRoute.of(context)?.isCurrent != true) return;
+      if (allowed) {
+        Navigator.pop(context, invitation);
+      } else {
+        setState(
+          () => error = 'Messaging is currently unavailable in this chat.',
+        );
+      }
+    } catch (e) {
+      if (mounted) setState(() => error = readableError(e));
+    } finally {
+      if (mounted) setState(() => checking = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+    child: SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
+        child: SurfacePanel(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  const VIcon(Glyph.clock, size: 20, color: VimiColors.cyan),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Invite to practice',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  VIconButton(
+                    Glyph.close,
+                    label: 'Close invitation',
+                    color: VimiColors.muted,
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              VField(
+                'Routine or song',
+                controller: routine,
+                maxLength: 80,
+                enabled: !checking,
+              ),
+              VField(
+                'Proposed time or practice note',
+                controller: plan,
+                lines: 2,
+                maxLength: 240,
+                enabled: !checking,
+              ),
+              if (error != null) ...[
+                ErrorNote(error!),
+                const SizedBox(height: 8),
+              ],
+              VButton('Add to draft', busy: checking, onPressed: addToDraft),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
