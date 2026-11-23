@@ -448,27 +448,59 @@ class _FindDancersShelfState extends State<_FindDancersShelf> {
     }
   }
 
+  void retry() {
+    final repository = VimiScope.of(context).repo!;
+    setState(() => people = repository.dancerPage(''));
+  }
+
+  Widget status(String message, {bool canRetry = false}) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Row(
+      children: [
+        Expanded(
+          child: Semantics(
+            liveRegion: true,
+            child: Text(
+              message,
+              style: const TextStyle(fontSize: 13, color: VimiColors.muted),
+            ),
+          ),
+        ),
+        if (canRetry)
+          VIconButton(
+            Glyph.refresh,
+            label: 'Retry finding dancers',
+            color: VimiColors.violet,
+            onPressed: retry,
+          ),
+        VIconButton(
+          Glyph.search,
+          label: 'Browse dancers',
+          color: VimiColors.cyan,
+          onPressed: widget.onOpenAll,
+        ),
+      ],
+    ),
+  );
+
   @override
   Widget build(BuildContext context) => FutureBuilder<CursorPage<Dancer>>(
     future: people,
     builder: (context, snapshot) {
+      if (snapshot.connectionState != ConnectionState.done) {
+        return status('Finding dancers…');
+      }
+      if (snapshot.hasError) {
+        return status('Couldn’t load dancer suggestions.', canRetry: true);
+      }
       final dancers = snapshot.data?.items ?? [];
       if (dancers.isEmpty) {
-        return Align(
-          alignment: Alignment.center,
-          child: VIconButton(
-            Glyph.search,
-            label: 'Find dancers',
-            color: VimiColors.violet,
-            filled: true,
-            onPressed: widget.onOpenAll,
-          ),
-        );
+        return status('No dancer suggestions yet.');
       }
       return _ContactShelf(
         title: 'Find dancers',
         openAllLabel: 'Browse dancers',
-        people: dancers.take(5),
+        people: dancers.take(8),
         onOpenAll: widget.onOpenAll,
         onSelect: (dancer) => openPage(context, DancerPage(id: dancer.id)),
       );

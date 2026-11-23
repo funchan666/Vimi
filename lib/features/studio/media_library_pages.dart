@@ -49,31 +49,39 @@ abstract final class StudioPublisher {
 }
 
 class StudioPublisherAvatar extends StatelessWidget {
-  const StudioPublisherAvatar({super.key, required this.size});
+  const StudioPublisherAvatar({
+    super.key,
+    required this.clip,
+    required this.size,
+  });
 
+  final LibraryClip clip;
   final double size;
 
   @override
-  Widget build(BuildContext context) => SizedBox.square(
-    dimension: size,
-    child: ClipOval(
-      child: Image.asset(
-        'assets/ui/studio-publisher-avatar.webp',
-        fit: BoxFit.cover,
-        excludeFromSemantics: true,
-        errorBuilder: (context, error, stackTrace) => ColoredBox(
-          color: VimiColors.tonal,
-          child: Center(
-            child: VIcon(
-              Glyph.studio,
-              size: size * .52,
-              color: VimiColors.cyan,
-            ),
-          ),
+  Widget build(BuildContext context) {
+    final placeholder = ColoredBox(
+      color: VimiColors.tonal,
+      child: Center(
+        child: VIcon(Glyph.studio, size: size * .52, color: VimiColors.cyan),
+      ),
+    );
+    return SizedBox.square(
+      dimension: size,
+      child: ClipOval(
+        child: Image.network(
+          clip.thumbnail,
+          fit: BoxFit.cover,
+          cacheWidth: 576,
+          alignment: const Alignment(0, -.42),
+          excludeFromSemantics: true,
+          frameBuilder: (context, child, frame, synchronous) =>
+              frame != null || synchronous ? child : placeholder,
+          errorBuilder: (context, error, stackTrace) => placeholder,
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class RehearsalShelf extends StatelessWidget {
@@ -154,15 +162,18 @@ class MediaLibraryPage extends StatefulWidget {
     super.key,
     required this.practiceBuilder,
     this.showSaved = false,
-  }) : _publisher = false;
+  }) : _publisherClip = null;
 
-  const MediaLibraryPage.publisher({super.key, required this.practiceBuilder})
-    : showSaved = false,
-      _publisher = true;
+  const MediaLibraryPage.publisher({
+    super.key,
+    required LibraryClip clip,
+    required this.practiceBuilder,
+  }) : showSaved = false,
+       _publisherClip = clip;
 
   final Widget Function(LibraryClip) practiceBuilder;
   final bool showSaved;
-  final bool _publisher;
+  final LibraryClip? _publisherClip;
   @override
   State<MediaLibraryPage> createState() => _MediaLibraryPageState();
 }
@@ -174,7 +185,9 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
     final app = VimiScope.of(context);
     final saved = app.studio.savedLibraryClips(app.account);
     return VPage(
-      title: widget._publisher ? 'Publisher profile' : 'Dance video library',
+      title: widget._publisherClip == null
+          ? 'Dance video library'
+          : 'Publisher profile',
       child: _Catalog(
         builder: (context, library) {
           final clips = library.clips
@@ -188,10 +201,12 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
               .toList();
           return CustomScrollView(
             slivers: [
-              if (widget._publisher)
-                const SliverPadding(
-                  padding: EdgeInsets.fromLTRB(16, 4, 16, 10),
-                  sliver: SliverToBoxAdapter(child: _PublisherIdentity()),
+              if (widget._publisherClip case final clip?)
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                  sliver: SliverToBoxAdapter(
+                    child: _PublisherIdentity(clip: clip),
+                  ),
                 ),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
@@ -303,7 +318,9 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
 }
 
 class _PublisherIdentity extends StatelessWidget {
-  const _PublisherIdentity();
+  const _PublisherIdentity({required this.clip});
+
+  final LibraryClip clip;
 
   @override
   Widget build(BuildContext context) => SurfacePanel(
@@ -311,7 +328,7 @@ class _PublisherIdentity extends StatelessWidget {
     padding: const EdgeInsets.all(16),
     child: Row(
       children: [
-        const StudioPublisherAvatar(size: 64),
+        StudioPublisherAvatar(clip: clip, size: 64),
         const SizedBox(width: 14),
         Expanded(
           child: Column(

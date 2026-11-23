@@ -64,3 +64,9 @@ Hosted rollback contracts, actual reviewer API pagination/role checks, and the t
 Migration `20261123072821_vimi_direct_calls.sql` adds one-to-one voice and video calls between eligible mutual follows. Realtime delivers incoming call state while the app is open. The server binds signaling to the participants' Auth sessions and ends active calls when a block, unfollow, user report or account restriction makes the pair ineligible. Ringing expires after 45 seconds. An accepted call expires if either side stops sending heartbeats. A scheduled job removes expired signaling and clears ended call metadata after about a day.
 
 Flutter uses WebRTC with STUN for direct connections. The optional `VIMI_CALL_ICE_FUNCTION` build setting names an authenticated Supabase Edge Function that returns an object with `iceServers` containing temporary TURN credentials. Persistent TURN credentials belong in server secrets. The preview configuration has no TURN issuer, and background push calling is unconfigured.
+
+## Publisher clip engagement
+
+The ten publisher clip IDs match `assets/data/media_library.json`. Likes and approved comment counts are calculated per clip. Library comments share the existing comment review queue, reporting, block visibility, and author deletion. Public comment lists show approved comments, with pending and rejected comments visible to their author.
+
+The app displays Studio as the publishing source unless a verified creator is associated with the clip. The publisher may set `private.library_clips.author_profile_id` to a consenting creator’s existing profile UUID after verifying the credit. The catalog starts with no creator associations or seeded interactions.

@@ -39,7 +39,7 @@ class DanceRepository {
 
   Future<List<Dancer>> searchDancers(String query) async {
     final safe = query.replaceAll(RegExp(r'[%_\\]'), '').trim();
-    var request = client.from('profiles').select();
+    var request = client.from('discoverable_profiles').select();
     if (safe.isNotEmpty) request = request.ilike('display_name', '%$safe%');
     return jsonRows(
       await request.order('created_at', ascending: false).limit(30),
@@ -317,7 +317,7 @@ class DanceRepository {
     TimelineCursor? cursor,
   }) async {
     final safe = query.replaceAll(RegExp(r'[%_\\]'), '').trim();
-    var request = client.from('profiles').select().neq('id', account);
+    var request = client.from('discoverable_profiles').select();
     if (safe.isNotEmpty) request = request.ilike('display_name', '%$safe%');
     if (cursor != null) request = request.or(cursor.filter());
     return CursorPage.rows(
@@ -374,6 +374,48 @@ class DanceRepository {
       (row) => row,
     );
   }
+
+  Future<Map<String, LibraryClipEngagement>> libraryClipStats() async => {
+    for (final row in jsonRows(await client.rpc('get_library_clip_stats')))
+      row['clip_id'] as String: LibraryClipEngagement.fromJson(row),
+  };
+
+  Future<LibraryClipEngagement> setLibraryClipLike(
+    String clipId, {
+    required bool liked,
+  }) async => LibraryClipEngagement.fromJson(
+    jsonMap(
+      await client.rpc(
+        'set_library_clip_like',
+        params: {'p_clip_id': clipId, 'p_liked': liked},
+      ),
+    ),
+  );
+
+  Future<CursorPage<Json>> libraryCommentPage(
+    String clipId, {
+    TimelineCursor? cursor,
+  }) async => CursorPage.rows(
+    jsonRows(
+      await client.rpc(
+        'get_library_clip_comments',
+        params: {'p_clip_id': clipId, ...?cursor?.beforeParameters},
+      ),
+    ),
+    (row) => row,
+    size: 50,
+  );
+
+  Future<String> submitLibraryComment(
+    String clipId,
+    String body,
+    String nonce,
+  ) async =>
+      await client.rpc(
+            'submit_library_clip_comment',
+            params: {'p_clip_id': clipId, 'p_body': body, 'p_client_id': nonce},
+          )
+          as String;
 
   Future<CursorPage<Json>> reportPage({TimelineCursor? cursor}) async {
     var request = client

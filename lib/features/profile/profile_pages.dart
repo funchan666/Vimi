@@ -393,6 +393,8 @@ class _DancerDirectoryState extends State<DancerDirectory> {
   final query = TextEditingController();
   CursorPager<Dancer>? pager;
   String? owner;
+  String submittedQuery = '';
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -406,15 +408,16 @@ class _DancerDirectoryState extends State<DancerDirectory> {
     pager?.dispose();
     owner = app.account;
     final currentOwner = owner;
-    final term = query.text;
+    final term = query.text.trim();
     final repo = app.repo!;
-    setState(
-      () => pager = CursorPager(
+    setState(() {
+      submittedQuery = term;
+      pager = CursorPager(
         fetch: (cursor) => repo.dancerPage(term, cursor: cursor),
         identity: (dancer) => dancer.id,
         isCurrent: () => app.signedIn && app.account == currentOwner,
-      ),
-    );
+      );
+    });
     unawaited(pager!.refresh());
   }
 
@@ -465,11 +468,36 @@ class _DancerDirectoryState extends State<DancerDirectory> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (pager!.loaded &&
+                      !pager!.loading &&
                       pager!.items.isEmpty &&
                       pager!.error == null)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('No dancers found.', style: _profileMeta),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Semantics(
+                              liveRegion: true,
+                              child: Text(
+                                submittedQuery.isEmpty
+                                    ? 'No dancers to browse yet.'
+                                    : 'No dancers match this search.',
+                                style: _profileMeta,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (submittedQuery.isNotEmpty)
+                          VIconButton(
+                            Glyph.close,
+                            label: 'Clear dancer search',
+                            color: VimiColors.violet,
+                            onPressed: () {
+                              query.clear();
+                              submitSearch();
+                            },
+                          ),
+                      ],
                     ),
                   for (final dancer in pager!.items)
                     DancerRow(dancer, key: ValueKey(dancer.id)),

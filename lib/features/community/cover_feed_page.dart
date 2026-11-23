@@ -16,6 +16,7 @@ import '../studio/media_library_pages.dart';
 import '../studio/studio_pages.dart';
 import 'community_pages.dart';
 import 'cover_video_canvas.dart';
+import 'library_comments_page.dart';
 import 'publish_page.dart';
 
 class CoverFeedPage extends StatefulWidget {
@@ -30,6 +31,8 @@ class CoverFeedPage extends StatefulWidget {
 class _CoverFeedPageState extends State<CoverFeedPage> {
   final pages = PageController(keepPage: false);
   final saving = <String>{};
+  final likingLibrary = <String>{};
+  Map<String, LibraryClipEngagement> libraryStats = {};
   CursorPager<DancePost>? members;
   List<LibraryClip> clips = [];
   List<_CoverEntry> entries = [];
@@ -37,6 +40,7 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
   int revision = -1;
   int page = 0;
   int modeVersion = 0;
+  int libraryStatsRequest = 0;
   int? scanningMode;
   bool following = false;
   bool muted = true;
@@ -58,6 +62,9 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
       members?.dispose();
       account = app.account;
       revision = -1;
+      libraryStats = {};
+      likingLibrary.clear();
+      libraryStatsRequest++;
       final repo = app.repo;
       final owner = account;
       members = app.signedIn && repo != null
@@ -74,7 +81,73 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
       revision = app.revision;
       final feed = members;
       if (feed != null) unawaited(feed.refresh());
+      unawaited(refreshLibraryStats(app));
     }
+  }
+
+  @override
+  void didUpdateWidget(CoverFeedPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.active && !oldWidget.active) {
+      unawaited(refreshLibraryStats(VimiScope.of(context)));
+    }
+  }
+
+  Future<void> refreshLibraryStats(AppController app) async {
+    final repo = app.repo;
+    if (!app.signedIn || repo == null) return;
+    final owner = app.account;
+    final request = ++libraryStatsRequest;
+    try {
+      final stats = await repo.libraryClipStats();
+      if (!mounted || app.account != owner || request != libraryStatsRequest) {
+        return;
+      }
+      setState(() => libraryStats = stats);
+    } catch (_) {
+      // Leave the video available. The like button retries if counts are missing.
+    }
+  }
+
+  Future<void> toggleLibraryLike(LibraryClip clip) async {
+    final app = VimiScope.of(context);
+    final repo = app.repo;
+    if (!app.signedIn || repo == null || !likingLibrary.add(clip.id)) return;
+    final owner = app.account;
+    setState(() {});
+    try {
+      if (libraryStats[clip.id] == null) await refreshLibraryStats(app);
+      if (!mounted || app.account != owner) return;
+      final stats = libraryStats[clip.id];
+      if (stats == null) {
+        feedback(context, 'Likes could not load. Please try again.');
+        return;
+      }
+      final updated = await repo.setLibraryClipLike(
+        clip.id,
+        liked: !stats.liked,
+      );
+      if (!mounted || app.account != owner) return;
+      libraryStatsRequest++;
+      setState(() => libraryStats[clip.id] = updated);
+    } catch (error) {
+      if (mounted && app.account == owner) {
+        feedback(context, readableError(error));
+        unawaited(refreshLibraryStats(app));
+      }
+    } finally {
+      if (app.account == owner) {
+        likingLibrary.remove(clip.id);
+        if (mounted) setState(() {});
+      }
+    }
+  }
+
+  Future<void> openLibraryComments(LibraryClip clip) async {
+    final app = VimiScope.of(context);
+    final owner = app.account;
+    await openPage(context, LibraryCommentsPage(clip: clip));
+    if (mounted && app.account == owner) await refreshLibraryStats(app);
   }
 
   Future<void> loadClips() async {
@@ -482,6 +555,7 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
                             );
                           }
                           final entry = slides[index];
+                          final clipId = entry.clip?.id;
                           return _CoverSlide(
                             key: ValueKey(entry.id),
                             entry: entry,
@@ -493,8 +567,12 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
                             muted: muted,
                             account: app,
                             saving: saving.contains(entry.id),
+                            libraryStats: libraryStats[clipId],
+                            likingLibrary: likingLibrary.contains(clipId),
                             onMemberAction: memberAction,
                             onBookmark: toggleSaved,
+                            onLibraryLike: toggleLibraryLike,
+                            onLibraryComments: openLibraryComments,
                             onPractice: openPractice,
                           );
                         },
@@ -524,16 +602,22 @@ class _CoverSlide extends StatelessWidget {
     required this.muted,
     required this.account,
     required this.saving,
+    required this.libraryStats,
+    required this.likingLibrary,
     required this.onMemberAction,
     required this.onBookmark,
+    required this.onLibraryLike,
+    required this.onLibraryComments,
     required this.onPractice,
   });
 
   final _CoverEntry entry;
-  final bool active, muted, saving;
+  final bool active, muted, saving, likingLibrary;
+  final LibraryClipEngagement? libraryStats;
   final AppController account;
   final Future<void> Function(DancePost, String) onMemberAction;
   final Future<void> Function(LibraryClip) onBookmark;
+  final Future<void> Function(LibraryClip) onLibraryLike, onLibraryComments;
   final ValueChanged<LibraryClip> onPractice;
 
   Future<String> resolveUrl(bool forceRefresh) async {
@@ -590,42 +674,43 @@ class _CoverSlide extends StatelessWidget {
     final saved = account.studio
         .savedLibraryClips(account.account)
         .contains(clip.id);
-    return Row(
-      children: [
-        Expanded(
-          child: Tooltip(
-            message: 'Open Studio library',
-            child: TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: VimiColors.ink,
-                minimumSize: const Size(48, 48),
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-              ),
+    final stats = libraryStats;
+    final liked = stats?.liked == true;
+    final author = stats?.author;
+    return _CoverFooter(
+      author: author != null
+          ? _dancerCredit(context, author, 'Creator')
+          : _CoverAuthor(
+              avatar: StudioPublisherAvatar(clip: clip, size: 38),
+              name: StudioPublisher.name,
+              detail: 'Official publisher',
+              label: 'Open ${StudioPublisher.name} publisher profile',
               onPressed: () => openPage(
                 context,
-                MediaLibraryPage(
+                MediaLibraryPage.publisher(
+                  clip: clip,
                   practiceBuilder: (value) =>
                       PracticeEditor(initialClip: value),
                 ),
               ),
-              child: Row(
-                children: [
-                  const VIcon(
-                    Glyph.library,
-                    size: 22,
-                    color: VimiColors.violet,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: _CoverCredit(
-                      title: clip.title,
-                      detail: 'Studio library · ${clip.durationLabel}',
-                    ),
-                  ),
-                ],
-              ),
             ),
-          ),
+      caption: '${clip.title} · ${clip.durationLabel}',
+      actions: [
+        _CoverCountAction(
+          glyph: liked ? Glyph.heartFull : Glyph.heart,
+          label: liked ? 'Remove like' : 'Like video',
+          count: stats?.likes,
+          unit: 'like',
+          color: liked ? VimiColors.accent : VimiColors.ink,
+          busy: likingLibrary,
+          onPressed: () => onLibraryLike(clip),
+        ),
+        _CoverCountAction(
+          glyph: Glyph.comment,
+          label: 'Read comments',
+          count: stats?.comments,
+          unit: 'comment',
+          onPressed: () => onLibraryComments(clip),
         ),
         VIconButton(
           Glyph.save,
@@ -654,16 +739,20 @@ class _CoverSlide extends StatelessWidget {
 
   Widget _memberCredit(BuildContext context, DancePost post) {
     final actions = [
-      VIconButton(
-        post.liked ? Glyph.heartFull : Glyph.heart,
-        label: '${post.liked ? 'Remove like' : 'Like post'} · ${post.likes}',
+      _CoverCountAction(
+        glyph: post.liked ? Glyph.heartFull : Glyph.heart,
+        label: post.liked ? 'Remove like' : 'Like post',
+        count: post.likes,
+        unit: 'like',
         color: post.liked ? VimiColors.accent : VimiColors.ink,
         busy: saving,
         onPressed: () => onMemberAction(post, 'like'),
       ),
-      VIconButton(
-        Glyph.comment,
-        label: 'Read comments · ${post.comments}',
+      _CoverCountAction(
+        glyph: Glyph.comment,
+        label: 'Read comments',
+        count: post.comments,
+        unit: 'comment',
         onPressed: () =>
             openPage(context, PostDetailPage(post: post, commentsOnly: true)),
       ),
@@ -680,90 +769,181 @@ class _CoverSlide extends StatelessWidget {
         onPressed: () => postOptions(context, post),
       ),
     ];
-    final hasCaption = post.caption.trim().isNotEmpty;
-    return LayoutBuilder(
-      builder: (context, bounds) {
-        final combineCaptionAndActions =
-            bounds.maxWidth >= 340 &&
-            MediaQuery.textScalerOf(context).scale(13) <= 18;
-        final caption = hasCaption
-            ? Padding(
-                padding: const EdgeInsets.only(right: 8, bottom: 4),
-                child: Text(
-                  post.caption,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 13),
+    return _CoverFooter(
+      author: _dancerCredit(context, post.author, post.style),
+      caption: post.caption,
+      actions: actions,
+    );
+  }
+
+  Widget _dancerCredit(BuildContext context, Dancer dancer, String detail) =>
+      _CoverAuthor(
+        avatar: SignedAvatar(dancer, size: 38),
+        name: dancer.name,
+        detail: detail,
+        label: 'Open ${dancer.name}’s profile',
+        onPressed: () => openPage(context, DancerPage(id: dancer.id)),
+      );
+}
+
+class _CoverCountAction extends StatelessWidget {
+  const _CoverCountAction({
+    required this.glyph,
+    required this.label,
+    required this.count,
+    required this.unit,
+    required this.onPressed,
+    this.color = VimiColors.ink,
+    this.busy = false,
+  });
+
+  final Glyph glyph;
+  final String label, unit;
+  final int? count;
+  final VoidCallback onPressed;
+  final Color color;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    final value = count;
+    final formatted = value == null
+        ? null
+        : MaterialLocalizations.of(context).formatDecimal(value);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        VIconButton(
+          glyph,
+          label: formatted == null
+              ? label
+              : '$label · $formatted ${value == 1 ? unit : '${unit}s'}',
+          color: color,
+          busy: busy,
+          onPressed: onPressed,
+        ),
+        if (formatted != null)
+          ExcludeSemantics(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 56),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    formatted,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: VimiColors.muted,
+                    ),
+                  ),
                 ),
-              )
-            : null;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _CoverAuthor(author: post.author, style: post.style),
-            if (combineCaptionAndActions)
-              Row(
-                children: [
-                  Expanded(child: caption ?? const SizedBox.shrink()),
-                  ...actions,
-                ],
-              )
-            else ...[
-              if (caption != null) caption,
-              Wrap(alignment: WrapAlignment.end, children: actions),
-            ],
-          ],
-        );
-      },
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
 
-class _CoverAuthor extends StatelessWidget {
-  const _CoverAuthor({required this.author, required this.style});
+class _CoverFooter extends StatelessWidget {
+  const _CoverFooter({
+    required this.author,
+    required this.caption,
+    required this.actions,
+  });
 
-  final Dancer author;
-  final String style;
+  final Widget author;
+  final String caption;
+  final List<Widget> actions;
 
   @override
-  Widget build(BuildContext context) {
-    final label = 'Open ${author.name}’s profile';
-    void openProfile() => openPage(context, DancerPage(id: author.id));
-
-    return Semantics(
-      button: true,
-      label: label,
-      focusable: true,
-      onTap: openProfile,
-      excludeSemantics: true,
-      child: Tooltip(
-        excludeFromSemantics: true,
-        message: label,
-        child: TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: VimiColors.ink,
-            minimumSize: const Size(48, 48),
-            padding: const EdgeInsets.fromLTRB(2, 5, 12, 5),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          onPressed: openProfile,
-          child: Row(
-            children: [
-              SignedAvatar(author, size: 38),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _CoverCredit(title: author.name, detail: style),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, bounds) {
+      final combineCaptionAndActions =
+          bounds.maxWidth >= 340 &&
+          MediaQuery.textScalerOf(context).scale(13) <= 18;
+      final captionText = caption.trim().isEmpty
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(right: 8, bottom: 4),
+              child: Text(
+                caption,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 13),
               ),
-              const SizedBox(width: 8),
-              const VIcon(Glyph.next, size: 16, color: VimiColors.cyan),
-            ],
+            );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          author,
+          if (combineCaptionAndActions)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: captionText ?? const SizedBox.shrink()),
+                ...actions,
+              ],
+            )
+          else ...[
+            if (captionText != null) captionText,
+            Wrap(alignment: WrapAlignment.end, children: actions),
+          ],
+        ],
+      );
+    },
+  );
+}
+
+class _CoverAuthor extends StatelessWidget {
+  const _CoverAuthor({
+    required this.avatar,
+    required this.name,
+    required this.detail,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final Widget avatar;
+  final String name, detail, label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: label,
+    focusable: true,
+    onTap: onPressed,
+    excludeSemantics: true,
+    child: Tooltip(
+      excludeFromSemantics: true,
+      message: label,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: VimiColors.ink,
+          minimumSize: const Size(48, 48),
+          padding: const EdgeInsets.fromLTRB(2, 5, 12, 5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
+        onPressed: onPressed,
+        child: Row(
+          children: [
+            avatar,
+            const SizedBox(width: 10),
+            Expanded(
+              child: _CoverCredit(title: name, detail: detail),
+            ),
+            const SizedBox(width: 8),
+            const VIcon(Glyph.next, size: 16, color: VimiColors.cyan),
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
 }
 
 class _CoverCredit extends StatelessWidget {

@@ -82,6 +82,28 @@ class DancePost {
   );
 }
 
+class LibraryClipEngagement {
+  const LibraryClipEngagement({
+    required this.likes,
+    required this.comments,
+    required this.liked,
+    this.author,
+  });
+
+  final int likes, comments;
+  final bool liked;
+  final Dancer? author;
+
+  factory LibraryClipEngagement.fromJson(Json row) => LibraryClipEngagement(
+    likes: (row['likes_count'] as num).toInt(),
+    comments: (row['comments_count'] as num).toInt(),
+    liked: row['liked'] == true,
+    author: row['author'] == null
+        ? null
+        : Dancer.fromJson(jsonMap(row['author'])),
+  );
+}
+
 class ChoreographyPrompt {
   const ChoreographyPrompt({
     required this.id,

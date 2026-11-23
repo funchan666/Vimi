@@ -163,11 +163,7 @@ class _CommunityDancersState extends State<CommunityDancers> {
           ),
         );
       }
-      final app = VimiScope.of(context);
-      final people = (snapshot.data ?? [])
-          .where((p) => p.id != app.account)
-          .take(6)
-          .toList();
+      final people = (snapshot.data ?? []).take(8);
       if (people.isEmpty) {
         return const Padding(
           padding: EdgeInsets.symmetric(vertical: 12),
@@ -693,6 +689,8 @@ Future<void> postOptions(BuildContext context, DancePost post) async {
 Future<void> reportContent(BuildContext context, String type, String id) async {
   final app = VimiScope.of(context);
   if (!app.signedIn) return;
+  final owner = app.account;
+  bool canReport() => context.mounted && app.signedIn && app.account == owner;
   final reason = await showModalBottomSheet<String>(
     context: context,
     isScrollControlled: true,
@@ -739,7 +737,7 @@ Future<void> reportContent(BuildContext context, String type, String id) async {
       ),
     ),
   );
-  if (reason == null || !context.mounted) return;
+  if (reason == null || !canReport()) return;
   if (!await confirmAction(
         context,
         title: 'Send this report?',
@@ -747,15 +745,15 @@ Future<void> reportContent(BuildContext context, String type, String id) async {
             'The item will be hidden for you and added to the moderation queue.',
         action: 'Send report',
       ) ||
-      !context.mounted)
+      !canReport())
     return;
   try {
     await app.repo!.report(type, id, reason);
+    if (!canReport()) return;
     app.changed();
-    if (context.mounted)
-      feedback(context, 'Report sent. This item is now hidden for you.');
+    feedback(context, 'Report sent. This item is now hidden for you.');
   } catch (e) {
-    if (context.mounted) feedback(context, readableError(e));
+    if (canReport()) feedback(context, readableError(e));
   }
 }
 
