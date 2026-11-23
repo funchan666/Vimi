@@ -15,6 +15,7 @@ import '../auth/auth_pages.dart';
 import '../profile/profile_pages.dart';
 import 'community_pages.dart';
 import 'content_editor.dart';
+import 'library_engagement_preview.dart';
 
 enum _CommentAction { report, edit, delete }
 
@@ -34,6 +35,7 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
   String? _owner, _error, _actingOn;
   String _nonce = const Uuid().v4();
   int _revision = -1;
+  int? _hidingExample;
   bool _sending = false;
 
   String _draftKey(String owner) => 'comment.v1.$owner.${widget.clip.source}';
@@ -56,6 +58,7 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
       _revision = -1;
       _error = _actingOn = null;
       _sending = false;
+      _hidingExample = null;
       _nonce = const Uuid().v4();
       _message.clear();
       if (owner != null) {
@@ -212,6 +215,46 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
     }
   }
 
+  Future<void> _hideExample(LibraryEngagementPreview preview, int index) async {
+    final app = VimiScope.of(context);
+    final owner = _owner;
+    final thread = _thread;
+    if (_hidingExample != null ||
+        owner == null ||
+        thread == null ||
+        !_isCurrent(app, thread, owner)) {
+      return;
+    }
+    setState(() => _hidingExample = index);
+    try {
+      final confirmed = await confirmAction(
+        context,
+        title: 'Hide this preview comment?',
+        body: 'This only hides the example on this device.',
+        action: 'Hide example',
+      );
+      if (!confirmed || !_isCurrent(app, thread, owner)) return;
+      await preview.hideComment(app.studio.preferences, owner, index);
+      if (app.signedIn && app.account == owner) {
+        app.changed();
+        if (_isCurrent(app, thread, owner)) {
+          _revision = app.revision;
+          if (ModalRoute.isCurrentOf(context) != false) {
+            feedback(context, 'Preview comment hidden.');
+          }
+        }
+      }
+    } catch (error) {
+      if (_isCurrent(app, thread, owner)) {
+        feedback(context, readableError(error));
+      }
+    } finally {
+      if (_isCurrent(app, thread, owner)) {
+        setState(() => _hidingExample = null);
+      }
+    }
+  }
+
   @override
   void dispose() {
     _thread?.dispose();
@@ -248,7 +291,7 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
                 child: LayoutBuilder(
                   builder: (context, bounds) => Column(
                     children: [
-                      Expanded(child: _buildThread(thread, app.account)),
+                      Expanded(child: _buildThread(thread, app)),
                       ConstrainedBox(
                         constraints: BoxConstraints(
                           maxHeight: bounds.maxHeight * .6,
@@ -263,11 +306,16 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
     );
   }
 
-  Widget _buildThread(CursorPager<Json> thread, String owner) =>
+  Widget _buildThread(CursorPager<Json> thread, AppController app) =>
       AnimatedBuilder(
         animation: thread,
         builder: (context, _) {
+          final owner = app.account;
           final rows = thread.items;
+          final preview = LibraryEngagementPreview.forClip(widget.clip.id);
+          final examples =
+              preview?.visibleComments(app.studio.preferences, owner) ?? [];
+          final previewStart = rows.length + 2;
           return RefreshIndicator(
             color: VimiColors.cyan,
             backgroundColor: VimiColors.surface,
@@ -276,13 +324,19 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
               physics: const AlwaysScrollableScrollPhysics(),
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              itemCount: rows.length + 2,
+              itemCount:
+                  previewStart + (examples.isEmpty ? 0 : examples.length + 1),
               itemBuilder: (context, index) {
                 if (index == 0) return _ClipHeader(clip: widget.clip);
                 if (index == 1) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      if (examples.isNotEmpty)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4),
+                          child: _CommentSectionTitle('Community comments'),
+                        ),
                       PageFooter(
                         pager: thread,
                         moreLabel: 'Earlier comments',
@@ -294,9 +348,26 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
                           rows.isEmpty)
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Text('No comments yet.'),
+                          child: Text('No community comments yet.'),
                         ),
                     ],
+                  );
+                }
+                if (index == previewStart) {
+                  return const Padding(
+                    padding: EdgeInsets.only(top: 16, bottom: 4),
+                    child: _CommentSectionTitle('Preview examples'),
+                  );
+                }
+                if (index > previewStart) {
+                  final example = examples[index - previewStart - 1];
+                  return _PreviewComment(
+                    key: ValueKey(('preview', example.index)),
+                    body: example.body,
+                    busy: _hidingExample == example.index,
+                    onHide: _hidingExample == null
+                        ? () => _hideExample(preview!, example.index)
+                        : null,
                   );
                 }
                 final row = rows[rows.length - index + 1];
@@ -366,6 +437,67 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
         ),
       ],
     ),
+  );
+}
+
+class _CommentSectionTitle extends StatelessWidget {
+  const _CommentSectionTitle(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    child: Text(label, style: Theme.of(context).textTheme.titleSmall),
+  );
+}
+
+class _PreviewComment extends StatelessWidget {
+  const _PreviewComment({
+    super.key,
+    required this.body,
+    required this.busy,
+    required this.onHide,
+  });
+
+  final String body;
+  final bool busy;
+  final VoidCallback? onHide;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Preview example',
+                    style: TextStyle(color: VimiColors.violet, fontSize: 12),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(body),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            VIconButton(
+              Glyph.report,
+              label: 'Flag preview comment',
+              color: VimiColors.violet,
+              busy: busy,
+              onPressed: onHide,
+            ),
+          ],
+        ),
+      ),
+      const Divider(height: 1, color: VimiColors.tonal),
+    ],
   );
 }
 

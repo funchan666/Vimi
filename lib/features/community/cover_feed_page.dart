@@ -17,6 +17,7 @@ import '../studio/studio_pages.dart';
 import 'community_pages.dart';
 import 'cover_video_canvas.dart';
 import 'library_comments_page.dart';
+import 'library_engagement_preview.dart';
 import 'publish_page.dart';
 
 class CoverFeedPage extends StatefulWidget {
@@ -677,13 +678,24 @@ class _CoverSlide extends StatelessWidget {
     final stats = libraryStats;
     final liked = stats?.liked == true;
     final author = stats?.author;
+    final preview = LibraryEngagementPreview.forClip(clip.id);
+    final previewLabel = preview == null ? '' : ' · Preview data';
+    final likes = preview == null
+        ? stats?.likes
+        : preview.likes + (stats?.likes ?? 0);
+    final comments = preview == null
+        ? stats?.comments
+        : preview
+                  .visibleComments(account.studio.preferences, account.account)
+                  .length +
+              (stats?.comments ?? 0);
     return _CoverFooter(
       author: author != null
-          ? _dancerCredit(context, author, 'Creator')
+          ? _dancerCredit(context, author, 'Creator$previewLabel')
           : _CoverAuthor(
               avatar: StudioPublisherAvatar(clip: clip, size: 38),
               name: StudioPublisher.name,
-              detail: 'Official publisher',
+              detail: 'Official publisher$previewLabel',
               label: 'Open ${StudioPublisher.name} publisher profile',
               onPressed: () => openPage(
                 context,
@@ -698,8 +710,8 @@ class _CoverSlide extends StatelessWidget {
       actions: [
         _CoverCountAction(
           glyph: liked ? Glyph.heartFull : Glyph.heart,
-          label: liked ? 'Remove like' : 'Like video',
-          count: stats?.likes,
+          label: '${liked ? 'Remove like' : 'Like video'}$previewLabel',
+          count: likes,
           unit: 'like',
           color: liked ? VimiColors.accent : VimiColors.ink,
           busy: likingLibrary,
@@ -707,8 +719,8 @@ class _CoverSlide extends StatelessWidget {
         ),
         _CoverCountAction(
           glyph: Glyph.comment,
-          label: 'Read comments',
-          count: stats?.comments,
+          label: 'Read comments$previewLabel',
+          count: comments,
           unit: 'comment',
           onPressed: () => onLibraryComments(clip),
         ),

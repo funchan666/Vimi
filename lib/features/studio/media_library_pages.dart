@@ -46,6 +46,26 @@ const _libraryMetadata = TextStyle(fontSize: 12, color: VimiColors.muted);
 
 abstract final class StudioPublisher {
   static const name = 'Studio';
+
+  static LibraryPortrait? _portraitFor(MediaLibrary? library, String clipId) {
+    final portraitId = _portraitIds[clipId];
+    return library?.portraits
+        .where((photo) => photo.id == portraitId)
+        .firstOrNull;
+  }
+
+  static const _portraitIds = <String, String>{
+    'open-air-group': 'portrait-022',
+    'street-style-group': 'portrait-001',
+    'night-plaza-solo': 'portrait-051',
+    'studio-mirror': 'portrait-047',
+    'holiday-duet': 'portrait-039',
+    'room-formation': 'portrait-030',
+    'evening-plaza-duet': 'portrait-018',
+    'studio-partner': 'portrait-033',
+    'group-studio': 'portrait-014',
+    'hallway-take': 'portrait-024',
+  };
 }
 
 class StudioPublisherAvatar extends StatelessWidget {
@@ -59,29 +79,16 @@ class StudioPublisherAvatar extends StatelessWidget {
   final double size;
 
   @override
-  Widget build(BuildContext context) {
-    final placeholder = ColoredBox(
-      color: VimiColors.tonal,
-      child: Center(
-        child: VIcon(Glyph.studio, size: size * .52, color: VimiColors.cyan),
-      ),
-    );
-    return SizedBox.square(
-      dimension: size,
-      child: ClipOval(
-        child: Image.network(
-          clip.thumbnail,
-          fit: BoxFit.cover,
-          cacheWidth: 576,
-          alignment: const Alignment(0, -.42),
-          excludeFromSemantics: true,
-          frameBuilder: (context, child, frame, synchronous) =>
-              frame != null || synchronous ? child : placeholder,
-          errorBuilder: (context, error, stackTrace) => placeholder,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => FutureBuilder<MediaLibrary>(
+    future: VimiScope.of(context).avatarLibrary,
+    builder: (_, snapshot) => Avatar(
+      name: StudioPublisher.name,
+      label: 'Studio photo',
+      url: StudioPublisher._portraitFor(snapshot.data, clip.id)?.thumbnail,
+      alignment: const Alignment(0, -.42),
+      size: size,
+    ),
+  );
 }
 
 class RehearsalShelf extends StatelessWidget {

@@ -40,9 +40,12 @@ class LibraryEngagementPreview {
     if (index < 0 || index >= _comments.length) return;
     final key = _hiddenKey(owner, index);
     if (prefs.get(key) == true) return;
-    if (!await prefs.setBool(key, true)) {
-      throw const FileSystemException('Could not hide this preview comment.');
-    }
+    try {
+      if (await prefs.setBool(key, true)) return;
+    } catch (_) {}
+    // SharedPreferences can change its local cache before the write succeeds.
+    await prefs.remove(key);
+    throw const FileSystemException('Could not hide this preview comment.');
   }
 
   // Keep comment positions stable because the indexes are stored on the device.
