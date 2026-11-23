@@ -11,7 +11,7 @@
 - Account-unavailable screens retain deletion and support routes. Account deletion also scrubs account UUIDs from pack-ledger references; restricted transaction/safety records are not inaccurately described as fully anonymous.
 - Storage read rules now require an active account even for an object's owner. Previously issued short-lived signed links retain their original expiry; suspended/deleting owners cannot use RLS to obtain new access. A hosted rollback test verifies the active/suspended distinction.
 - Privacy, terms, guidelines, child-safety and deletion text now describe the actual cloud/device boundary, messages, media, provider processing, IP/request logs and permitted record retention. Upload visibility is explained in the profile and publisher.
-- Standard HTML policies are generated from those same bundled text files under `policy-site/dist`. The deletion page opens an email request without requiring app reinstallation. Publication and an unauthenticated public HTTP check are still required before entering a URL into Play Console.
+- Standard HTML policies are generated from those same bundled text files under `policy-site/dist`. The [public site](https://vimi-dance.pages.dev/) and all five policy pages were verified without a login on November 23, 2026. The [deletion page](https://vimi-dance.pages.dev/deletion) opens an email request.
 - `validatePlayRelease` blocks release variants with missing policy URLs, contact addresses, backend configuration, upload signing, server-only client secrets. Profile/debug previews remain available. This gate validates configuration, not Google approval or legal compliance.
 
 ## Evidence and boundaries
@@ -24,7 +24,7 @@
 | 16 KB pages | Current ARM64 preview ELF load segments and APK zip alignment pass static 16 KB checks | A final AAB and actual 16 KB device/runtime run are separate checks |
 | Child safety / moderation | SQL rollback and actual harmless-fixture API removal/role checks are recorded under verification/2026-11-19 | A trained, available human operator and legally appropriate escalation/reporting procedure; code cannot replace this |
 | Account deletion | Genuine deletion was previously verified; a suspended actor also completed real native deletion in this pass | Support must verify and fulfill emailed deletion requests without requiring reinstallation |
-| Policy URLs | Source and standard HTML pages are complete | Public hosting without login/geofencing/download behavior, then match app and Console URLs |
+| Policy URLs | Published on Cloudflare Pages and set in the Android build configuration. All five pages returned the generated HTML without authentication. | Enter the corresponding links in Play Console. |
 | Store access | An ordinary reusable account is provisioned in private config/play-review-access.json; provide it in App access | Never provide the content-moderator password as the ordinary member login |
 | Supplied reference media | All 55 photos/ten complete videos are compressed, bundled and covered by native checks; publisher confirmed commercial/likeness/audio rights | Keep underlying rights and required attribution records; confirmation is not independent legal clearance. See media/SUPPLIED_MEDIA.md |
 | Data safety | Source-based mapping in GOOGLE_PLAY_DATA_SAFETY.md | Confirm against final SDKs, provider logs, support practices and direct-call infrastructure |
@@ -32,7 +32,7 @@
 
 ## Before submitting
 
-1. Publish the policy pages as real public HTML and verify every URL without a browser login. Use the same privacy and child-safety text as the app. Confirm the publisher/contact details against the actual store identity.
+1. Use [Privacy Policy](https://vimi-dance.pages.dev/privacy), [Child Safety Standards](https://vimi-dance.pages.dev/child-safety) and [Account Deletion](https://vimi-dance.pages.dev/deletion) in the corresponding Play Console fields. Confirm publisher and contact details against the store identity.
 2. Run `python3 tool/play_release_check.py --check-public-urls`. Resolve all reported blockers. This cannot verify Console declarations or guarantee that a page is reachable in every country.
 3. Complete developer verification using genuine details, and register `com.vimistudio.vimi`. Use Social as the category only if it accurately describes the final product. Do not reclassify merely to avoid child-safety requirements.
 4. Declare the target audience as adults 18+ and answer IARC honestly about member posts, photos/videos and 1:1 messages. An adult audience does not exempt social apps from child-safety standards. The current date-of-birth check is not identity verification.

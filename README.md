@@ -34,7 +34,7 @@ Release signing requires `android/key.properties` based on `android/key.properti
 
 Android debug builds, analyzer, focused storage/widget tests and live Android/Supabase journeys were executed for the user's requested runnable verification. See `docs/VERIFICATION.md` for evidence and the exact remaining boundaries. Generated design concepts remain separate from actual emulator screenshots.
 
-Release signing, production recovery email and publication of the legal pages require publisher configuration. The [website and public policies](policy-site/dist/index.html) are ready for static hosting. Run `python3 tool/build_policy_site.py` to regenerate them from the policy text bundled in the app.
+The [Vimi website and public policies](https://vimi-dance.pages.dev/) are live on Cloudflare Pages. Run `python3 tool/build_policy_site.py` to regenerate the site from the policy text bundled in the app, then redeploy `policy-site/dist` to the `vimi-dance` Pages project. Release signing and production recovery email still require publisher configuration.
 
 The support email is `funchan7777777@gmail.com`; the separate content-review login is kept in private `config/reviewer-access.json`. Ordinary signup no longer waits for email confirmation; existing passwords are verified. No commercial music is bundled and no automatic follows or fictional engagement is generated.
 

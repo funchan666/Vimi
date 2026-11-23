@@ -2,12 +2,12 @@
   "SUPABASE_URL": "",
   "SUPABASE_PUBLISHABLE_KEY": "",
   "SUPPORT_URL": "",
-  "PRIVACY_URL": "",
-  "TERMS_URL": "",
+  "PRIVACY_URL": "https://vimi-dance.pages.dev/privacy",
+  "TERMS_URL": "https://vimi-dance.pages.dev/terms",
   "VIMI_PREVIEW_ENGAGEMENT": false,
   "SUPPORT_EMAIL": "funchan7777777@gmail.com",
-  "COMMUNITY_URL": "",
-  "CHILD_SAFETY_URL": "",
-  "DELETE_ACCOUNT_URL": "",
+  "COMMUNITY_URL": "https://vimi-dance.pages.dev/community",
+  "CHILD_SAFETY_URL": "https://vimi-dance.pages.dev/child-safety",
+  "DELETE_ACCOUNT_URL": "https://vimi-dance.pages.dev/deletion",
   "CHILD_SAFETY_EMAIL": "funchan7777777@gmail.com"
 }

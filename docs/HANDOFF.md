@@ -19,7 +19,7 @@ The November 20 welcome redesign replaces the generated welcome people with actu
 | App pricing | Free, including all three practice plans |
 | Moderation | Independent fixed operator created and native sign-in verified. Child-safety filtering and actual content/media removal are verified. Credentials: private config/reviewer-access.json. |
 | App access | Ordinary reusable review login prepared in private config/play-review-access.json; no moderator role. See GOOGLE_PLAY_APP_ACCESS.md. |
-| Support/legal | Support and child-safety contact: funchan7777777@gmail.com. English bundled policies and matching standard HTML pages are ready. Publisher identity, jurisdiction and public URL publication remain required before release. |
+| Support/legal | The English policies are live at [Vimi](https://vimi-dance.pages.dev/) and match the bundled text. Support and child-safety contact: funchan7777777@gmail.com. Complete the publisher identity and named child-safety contact fields in Play Console. |
 | Android upload signing | Supply your upload keystore and local key.properties |
 | Runtime and store acceptance | Prior Android and live-service checks are in VERIFICATION.md. The free revision requires its own build and install. |
 
@@ -43,6 +43,6 @@ Ordinary users create their own account and enter immediately without email veri
 
 After acceptance the hosted project has one fixed content operator and one ordinary reusable Play App access account, no temporary QA accounts/content/media/follows, and no test coin credits. No paid Play transaction or production release was performed.
 
-Read `GOOGLE_PLAY_READINESS.md`, `GOOGLE_PLAY_DATA_SAFETY.md` and `CHILD_SAFETY_OPERATIONS.md` before submission. Release builds now reject missing public policy URLs or signing/backend/contact configuration. This is a configuration guard, not a Google approval promise. The local HTML policies are in `policy-site/dist`; no public Site or policy URL is claimed until publication and an unauthenticated HTTP check complete.
+Read `GOOGLE_PLAY_READINESS.md`, `GOOGLE_PLAY_DATA_SAFETY.md` and `CHILD_SAFETY_OPERATIONS.md` before submission. Release builds require public policy URLs, backend and contact configuration, and upload signing. The local HTML in `policy-site/dist` matches the pages verified without a login on the production host.
 
 The media-migration evidence is `verification/2026-11-19/cloud-library/`: all 128 downloads hash-verified, all 55 full portraits decoded and ten clips streamed on Android, legacy notes retained, real library-to-profile save and temporary account deletion passed. The import write policy is closed. Original and optimized project media backups were subsequently deleted at the publisher’s explicit request. Library viewing needs internet.
