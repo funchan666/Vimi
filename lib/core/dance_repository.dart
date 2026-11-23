@@ -239,35 +239,6 @@ class DanceRepository {
       );
   Future<void> markRead(String peer) async =>
       client.rpc('mark_read', params: {'p_peer': peer});
-  Future<int> reversalDebt() async {
-    final row = await client
-        .from('wallets')
-        .select('reversal_debt')
-        .eq('user_id', account)
-        .single();
-    return (row['reversal_debt'] as num).toInt();
-  }
-
-  Future<int> balance() async {
-    final row = await client
-        .from('wallets')
-        .select('balance')
-        .eq('user_id', account)
-        .single();
-    return (row['balance'] as num).toInt();
-  }
-
-  Future<List<Json>> ledger() async => jsonRows(
-    await client
-        .from('wallet_ledger')
-        .select()
-        .eq('user_id', account)
-        .order('created_at', ascending: false)
-        .limit(100),
-  );
-  Future<Set<String>> unlocks() async => jsonRows(
-    await client.from('pack_unlocks').select('pack_id').eq('user_id', account),
-  ).map((r) => r['pack_id'] as String).toSet();
 
   Future<CursorPage<DancePost>> feedPage({
     String? style,
@@ -434,20 +405,6 @@ class DanceRepository {
     );
   }
 
-  Future<CursorPage<Json>> ledgerPage({TimelineCursor? cursor}) async {
-    var request = client.from('wallet_ledger').select().eq('user_id', account);
-    if (cursor != null) request = request.or(cursor.filter());
-    return CursorPage.rows(
-      jsonRows(
-        await request
-            .order('created_at', ascending: false)
-            .order('id', ascending: false)
-            .limit(26),
-      ),
-      (row) => row,
-    );
-  }
-
   Future<CursorPage<Json>> inboxPage({TimelineCursor? cursor}) async =>
       CursorPage.rows(
         jsonRows(
@@ -495,8 +452,6 @@ class DanceRepository {
     );
   }
 
-  Future<void> unlock(String pack) async =>
-      client.rpc('unlock_studio_pack', params: {'p_pack': pack});
 }
 
 String readableError(Object error) {

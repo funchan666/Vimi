@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
+import '../../core/local_studio.dart';
 import '../../core/media_library.dart';
 import '../../core/models.dart';
 import '../../core/pagination.dart';
@@ -13,6 +14,7 @@ import '../auth/auth_pages.dart';
 import '../profile/help_pages.dart';
 import '../profile/profile_pages.dart';
 import '../studio/media_library_pages.dart';
+import '../studio/studio_clip_credit.dart';
 import '../studio/studio_pages.dart';
 import 'community_pages.dart';
 import 'cover_video_canvas.dart';
@@ -37,6 +39,7 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
   CursorPager<DancePost>? members;
   List<LibraryClip> clips = [];
   List<_CoverEntry> entries = [];
+  AppController? _controller;
   String? account;
   int revision = -1;
   int page = 0;
@@ -59,6 +62,7 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final app = VimiScope.of(context);
+    _controller = app;
     if (account != app.account) {
       members?.dispose();
       account = app.account;
@@ -80,6 +84,7 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
     }
     if (revision != app.revision) {
       revision = app.revision;
+      rebuildEntries();
       final feed = members;
       if (feed != null) unawaited(feed.refresh());
       unawaited(refreshLibraryStats(app));
@@ -183,8 +188,9 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
     final next = [
       for (final post in posts)
         if (!following || post.author.isFollowing) _CoverEntry.member(post),
-      if (!following && !waitingForMembers)
-        for (final clip in clips) _CoverEntry.library(clip),
+      if (following || !waitingForMembers)
+        for (final clip in clips)
+          if (includesLibraryClip(clip)) _CoverEntry.library(clip),
     ];
     final index = next.indexWhere((entry) => entry.id == current);
     final newMember = previousIds == null
@@ -218,6 +224,15 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
     }
   }
 
+  bool includesLibraryClip(LibraryClip clip) {
+    final app = _controller;
+    final preference = app != null && app.signedIn
+        ? app.studio.studioCreatorPreference(app.account, clip.id)
+        : StudioCreatorPreference.none;
+    return preference != StudioCreatorPreference.hidden &&
+        (!following || preference == StudioCreatorPreference.following);
+  }
+
   void selectFeed(bool value) {
     if (following == value) return;
     following = value;
@@ -232,7 +247,7 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
     if (!following ||
         feed == null ||
         scanningMode == mode ||
-        VimiScope.of(context).profile?.following == 0 ||
+        _controller?.profile?.following == 0 ||
         entries.isNotEmpty) {
       return;
     }
@@ -261,7 +276,7 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
   void discoverDancers() => openPage(context, const DancerDirectory());
 
   Widget followingEmpty(CursorPager<DancePost>? feed, bool hasNoFollows) {
-    final looking = !hasNoFollows && feed?.loading == true;
+    final looking = loadingClips || (!hasNoFollows && feed?.loading == true);
     final error = hasNoFollows ? null : feed?.error;
     final canContinue = feed != null && feed.hasMore && !hasNoFollows;
     return Center(
@@ -275,10 +290,12 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
               const VIcon(Glyph.person, size: 30, color: VimiColors.cyan),
               const SizedBox(height: 10),
               Text(
-                hasNoFollows
+                looking
+                    ? 'Looking for followed covers…'
+                    : failedClips
+                    ? 'Couldn’t load Studio covers'
+                    : hasNoFollows
                     ? 'No followed covers yet'
-                    : looking
-                    ? 'Looking for followed dancers’ videos…'
                     : error != null
                     ? 'Couldn’t load followed covers'
                     : canContinue
@@ -287,11 +304,11 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              if (hasNoFollows)
+              if (hasNoFollows && !looking && !failedClips)
                 const Padding(
                   padding: EdgeInsets.only(top: 4),
                   child: Text(
-                    'Follow dancers to see their videos here.',
+                    'Follow dancers or Studio creators to see their videos here.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: VimiColors.muted, fontSize: 13),
                   ),
@@ -302,6 +319,12 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
                   child: Center(
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
+                )
+              else if (failedClips)
+                VActionRow(
+                  'Retry covers',
+                  glyph: Glyph.refresh,
+                  onPressed: retry,
                 )
               else if (error != null)
                 VActionRow(
@@ -439,6 +462,7 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
   }
 
   bool get canLoadMore {
+    if (following && _controller?.profile?.following == 0) return false;
     final feed = members;
     return feed != null && (feed.hasMore || feed.loading || feed.error != null);
   }
@@ -528,7 +552,8 @@ class _CoverFeedPageState extends State<CoverFeedPage> {
                         onPageChanged: (index) {
                           if (changingPages || mode != modeVersion) return;
                           setState(() => page = index);
-                          if (feed != null &&
+                          if (hasMore &&
+                              feed != null &&
                               feed.loaded &&
                               feed.hasMore &&
                               feed.error == null &&
@@ -678,8 +703,8 @@ class _CoverSlide extends StatelessWidget {
     final stats = libraryStats;
     final liked = stats?.liked == true;
     final author = stats?.author;
+    final credit = StudioClipCredit.forClip(clip);
     final preview = LibraryEngagementPreview.forClip(clip.id);
-    final previewLabel = preview == null ? '' : ' · Preview data';
     final likes = preview == null
         ? stats?.likes
         : preview.likes + (stats?.likes ?? 0);
@@ -691,26 +716,27 @@ class _CoverSlide extends StatelessWidget {
               (stats?.comments ?? 0);
     return _CoverFooter(
       author: author != null
-          ? _dancerCredit(context, author, 'Creator$previewLabel')
+          ? _dancerCredit(context, author, 'Creator')
           : _CoverAuthor(
-              avatar: StudioPublisherAvatar(clip: clip, size: 38),
-              name: StudioPublisher.name,
-              detail: 'Official publisher$previewLabel',
-              label: 'Open ${StudioPublisher.name} publisher profile',
+              avatar: StudioClipAvatar(clip: clip, size: 38),
+              name: credit.name,
+              detail: credit.handle,
+              label: 'Open ${credit.name}’s profile',
               onPressed: () => openPage(
                 context,
-                MediaLibraryPage.publisher(
+                StudioCreatorProfilePage(
                   clip: clip,
                   practiceBuilder: (value) =>
                       PracticeEditor(initialClip: value),
                 ),
               ),
             ),
-      caption: '${clip.title} · ${clip.durationLabel}',
+      caption: credit.caption,
+      captionAboveActions: true,
       actions: [
         _CoverCountAction(
           glyph: liked ? Glyph.heartFull : Glyph.heart,
-          label: '${liked ? 'Remove like' : 'Like video'}$previewLabel',
+          label: liked ? 'Remove like' : 'Like video',
           count: likes,
           unit: 'like',
           color: liked ? VimiColors.accent : VimiColors.ink,
@@ -719,7 +745,7 @@ class _CoverSlide extends StatelessWidget {
         ),
         _CoverCountAction(
           glyph: Glyph.comment,
-          label: 'Read comments$previewLabel',
+          label: 'Read comments',
           count: comments,
           unit: 'comment',
           onPressed: () => onLibraryComments(clip),
@@ -864,16 +890,19 @@ class _CoverFooter extends StatelessWidget {
     required this.author,
     required this.caption,
     required this.actions,
+    this.captionAboveActions = false,
   });
 
   final Widget author;
   final String caption;
   final List<Widget> actions;
+  final bool captionAboveActions;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, bounds) {
       final combineCaptionAndActions =
+          !captionAboveActions &&
           bounds.maxWidth >= 340 &&
           MediaQuery.textScalerOf(context).scale(13) <= 18;
       final captionText = caption.trim().isEmpty
@@ -901,7 +930,12 @@ class _CoverFooter extends StatelessWidget {
             )
           else ...[
             if (captionText != null) captionText,
-            Wrap(alignment: WrapAlignment.end, children: actions),
+            Wrap(
+              alignment: captionAboveActions
+                  ? WrapAlignment.spaceBetween
+                  : WrapAlignment.end,
+              children: actions,
+            ),
           ],
         ],
       );

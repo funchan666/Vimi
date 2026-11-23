@@ -19,9 +19,17 @@ class PersonalActivity extends StatefulWidget {
 }
 
 class _PersonalActivityState extends State<PersonalActivity> {
+  static const _filters = {
+    'All': null,
+    'Published': 'approved',
+    'In review': 'pending',
+    'Not approved': 'rejected',
+  };
+
   CursorPager<DancePost>? archive;
   String? owner;
   int revision = -1;
+  String filter = 'All';
 
   @override
   void didChangeDependencies() {
@@ -33,6 +41,7 @@ class _PersonalActivityState extends State<PersonalActivity> {
       archive?.dispose();
       owner = account;
       revision = -1;
+      filter = 'All';
       archive = account == null || repo == null
           ? null
           : CursorPager(
@@ -66,6 +75,10 @@ class _PersonalActivityState extends State<PersonalActivity> {
         final posts = current.items
             .where((post) => post.author.id == owner)
             .toList();
+        final status = _filters[filter];
+        final visible = status == null
+            ? posts
+            : posts.where((post) => post.status == status).toList();
         final empty = current.loaded && current.error == null && posts.isEmpty;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -102,8 +115,26 @@ class _PersonalActivityState extends State<PersonalActivity> {
                   onPressed: _publish,
                 ),
               ),
-            ] else if (posts.isNotEmpty)
-              _CoverRail(key: ValueKey(owner), posts: posts),
+            ] else if (posts.isNotEmpty) ...[
+              ChoiceStrip(
+                options: _filters.keys.toList(),
+                value: filter,
+                onChanged: (value) => setState(() => filter = value),
+              ),
+              const SizedBox(height: 10),
+              if (visible.isNotEmpty)
+                _CoverRail(key: ValueKey((owner, filter)), posts: visible)
+              else
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  child: Text(
+                    current.hasMore
+                        ? 'No matching covers in this batch. Check earlier covers below.'
+                        : 'No covers with this status.',
+                    style: const TextStyle(color: VimiColors.muted),
+                  ),
+                ),
+            ],
             PageFooter(
               pager: current,
               moreLabel: 'Earlier covers',

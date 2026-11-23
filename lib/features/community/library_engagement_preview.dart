@@ -45,7 +45,9 @@ class LibraryEngagementPreview {
     } catch (_) {}
     // SharedPreferences can change its local cache before the write succeeds.
     await prefs.remove(key);
-    throw const FileSystemException('Could not hide this preview comment.');
+    throw const FileSystemException(
+      'Could not hide this Studio note. Try again.',
+    );
   }
 
   // Keep comment positions stable because the indexes are stored on the device.

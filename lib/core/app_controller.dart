@@ -16,11 +16,8 @@ class AppController extends ChangeNotifier {
   List<ChoreographyPrompt> challenges = [];
   List<PracticeSession> practices = [];
   Dancer? profile;
-  int coins = 0;
-  int reversalDebt = 0;
   String accountStatus = 'active';
   bool recoveringPassword = false;
-  Set<String> unlocked = {};
   bool resumingGuestAction = false;
   String? journalError;
   String? cloudError;
@@ -73,10 +70,7 @@ class AppController extends ChangeNotifier {
     final generation = ++_generation;
     final owner = account;
     profile = null;
-    coins = 0;
-    reversalDebt = 0;
     accountStatus = 'active';
-    unlocked = {};
     practices = [];
     revision++;
     messageRevision++;
@@ -105,17 +99,9 @@ class AppController extends ChangeNotifier {
           _emit();
           return;
         }
-        final values = await Future.wait<dynamic>([
-          repository.dancer(owner),
-          repository.balance(),
-          repository.unlocks(),
-          repository.reversalDebt(),
-        ]);
+        final refreshedProfile = await repository.dancer(owner);
         if (generation != _generation || owner != account) return;
-        profile = values[0] as Dancer?;
-        coins = values[1] as int;
-        unlocked = values[2] as Set<String>;
-        reversalDebt = values[3] as int;
+        profile = refreshedProfile;
         _channel = repository.client
             .channel('vimi-inbox-$owner')
             .onPostgresChanges(
@@ -167,21 +153,6 @@ class AppController extends ChangeNotifier {
       messageRevision++;
       _emit();
     });
-  }
-
-  Future<void> refreshWallet() async {
-    if (!signedIn) return;
-    final owner = account;
-    final values = await Future.wait<dynamic>([
-      repo!.balance(),
-      repo!.unlocks(),
-      repo!.reversalDebt(),
-    ]);
-    if (owner != account) return;
-    coins = values[0] as int;
-    unlocked = values[1] as Set<String>;
-    reversalDebt = values[2] as int;
-    _emit();
   }
 
   Future<void> savePractice(PracticeSession session) async {

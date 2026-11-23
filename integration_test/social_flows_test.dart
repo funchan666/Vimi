@@ -16,7 +16,6 @@ import 'package:vimi/features/profile/profile_pages.dart';
 import 'package:vimi/features/profile/help_pages.dart';
 import 'package:vimi/features/profile/moderation_pages.dart';
 import 'package:vimi/features/studio/studio_pages.dart';
-import 'package:vimi/features/wallet/wallet_page.dart';
 import 'support.dart';
 
 void main() {
@@ -267,10 +266,6 @@ void main() {
       );
       expect((await app.studio.load(ownId)).single.minutes, 35);
       results['native_practice_save_reopen_edit'] = 'passed';
-      await openTestPage(tester, const WalletPage());
-      await waitFor(tester, () => find.text('0').evaluate().isNotEmpty);
-      await capture(binding, tester, 'native-wallet-unconfigured-store');
-      await goBack(tester);
       await openTestPage(tester, DancerPage(id: peerId));
       await waitFor(tester, () => action('Block dancer').evaluate().isNotEmpty);
       await press(tester, 'Block dancer');

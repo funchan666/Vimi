@@ -21,12 +21,11 @@ for key,phrase in [('PRIVACY_URL','privacy'),('TERMS_URL','terms'),('CHILD_SAFET
         except (urllib.error.URLError,ValueError):blockers.append(key+' could not be read without authentication')
 for key in ['SUPPORT_EMAIL','CHILD_SAFETY_EMAIL']:
     if '@' not in c.get(key,''):blockers.append(key+' is missing')
-if not c.get('PLAY_BILLING_ENABLED',False):blockers.append('Coin-product billing is not configured and enabled for release')
 if not (root/'android/key.properties').is_file():blockers.append('Publisher upload signing is not configured')
 if any('SERVICE_ROLE' in key or 'SERVICE_ACCOUNT' in key for key in c) or any(isinstance(value,str) and value.startswith('sb_secret_') for value in c.values()):
     blockers.append('Server-only secrets were found in client configuration')
 report={'automated_configuration_ready':not blockers,'blockers':blockers,'public_urls':urls,
-        'manual_release_requirements':['Real developer identity and package registration','Data safety and IARC declarations match the submitted build','Named child-safety contact and actual response/reporting process','Ordinary reusable Play review login and full access instructions','Production recovery email delivery','Play-track billing acceptance if billing is enabled','Release AAB and final Play pre-launch report'],
-        'billing_enabled':c.get('PLAY_BILLING_ENABLED',False),'google_approval_guaranteed':False}
+        'manual_release_requirements':['Real developer identity and package registration','Data safety and IARC declarations match the submitted build','Named child-safety contact and actual response/reporting process','Ordinary reusable Play review login and full access instructions','Production recovery email delivery','Release AAB and final Play pre-launch report'],
+        'google_approval_guaranteed':False}
 (root/'docs/verification/2026-11-19/play-release-readiness.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))

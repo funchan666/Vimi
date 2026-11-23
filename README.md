@@ -17,7 +17,7 @@ Current [neon visual reference](docs/design-preview/vimi-neon-floor-v3-concept.p
 
 The local ignored `config/app.json` contains the new project's URL and **publishable** key. The app uses `--dart-define-from-file=config/app.json`. No service key or Play private key belongs in that file or the APK.
 
-Set `VIMI_PREVIEW_ENGAGEMENT` to `true` for a debug or profile build to show labeled sample counts and comments on the publisher clips. Release builds always use actual activity. Reporting a sample hides it on the current device. Member comments, likes and reports use the signed-in Supabase account.
+Set `VIMI_PREVIEW_ENGAGEMENT` to `true` for a debug or profile build to add sample counts and Studio practice notes to the publisher clips. Release builds always use actual activity. Hiding a practice note takes effect on the current device. Member comments, likes and reports use the signed-in Supabase account.
 
 Only Android was generated. Installed toolchain inspected: Flutter 3.44.0 / Dart 3.12.0, Java 17 source target, compile/target Android SDK 36, minimum SDK 24. Dependencies are pinned in `pubspec.yaml` and resolved in `pubspec.lock`. Supabase Flutter remains on the inspected v2 API, not the newly incompatible v3.
 

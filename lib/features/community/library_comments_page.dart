@@ -229,9 +229,9 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
     try {
       final confirmed = await confirmAction(
         context,
-        title: 'Hide this preview comment?',
-        body: 'This only hides the example on this device.',
-        action: 'Hide example',
+        title: 'Hide this Studio note?',
+        body: 'The note will be hidden on this device.',
+        action: 'Hide Studio note',
       );
       if (!confirmed || !_isCurrent(app, thread, owner)) return;
       await preview.hideComment(app.studio.preferences, owner, index);
@@ -240,7 +240,7 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
         if (_isCurrent(app, thread, owner)) {
           _revision = app.revision;
           if (ModalRoute.isCurrentOf(context) != false) {
-            feedback(context, 'Preview comment hidden.');
+            feedback(context, 'Studio note hidden.');
           }
         }
       }
@@ -356,7 +356,7 @@ class _LibraryCommentsPageState extends State<LibraryCommentsPage> {
                 if (index == previewStart) {
                   return const Padding(
                     padding: EdgeInsets.only(top: 16, bottom: 4),
-                    child: _CommentSectionTitle('Preview examples'),
+                    child: _CommentSectionTitle('Studio practice notes'),
                   );
                 }
                 if (index > previewStart) {
@@ -477,7 +477,7 @@ class _PreviewComment extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Preview example',
+                    'Studio note',
                     style: TextStyle(color: VimiColors.violet, fontSize: 12),
                   ),
                   const SizedBox(height: 4),
@@ -487,8 +487,8 @@ class _PreviewComment extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             VIconButton(
-              Glyph.report,
-              label: 'Flag preview comment',
+              Glyph.close,
+              label: 'Hide Studio note',
               color: VimiColors.violet,
               busy: busy,
               onPressed: onHide,

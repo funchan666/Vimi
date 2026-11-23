@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../core/app_controller.dart';
+import '../../core/local_studio.dart';
 import '../../core/media_library.dart';
 import '../../core/dance_repository.dart';
+import '../../core/models.dart';
 import '../../design/vimi_ui.dart';
 import '../../design/library_image.dart';
+import '../messages/inbox_pages.dart' show ChatPage, startMemberCall;
 import '../profile/help_pages.dart';
 import 'rehearsal_player.dart';
+import 'studio_clip_credit.dart';
 
 class _Catalog extends StatefulWidget {
   const _Catalog({required this.builder});
@@ -43,53 +47,6 @@ class _CatalogState extends State<_Catalog> {
 }
 
 const _libraryMetadata = TextStyle(fontSize: 12, color: VimiColors.muted);
-
-abstract final class StudioPublisher {
-  static const name = 'Studio';
-
-  static LibraryPortrait? _portraitFor(MediaLibrary? library, String clipId) {
-    final portraitId = _portraitIds[clipId];
-    return library?.portraits
-        .where((photo) => photo.id == portraitId)
-        .firstOrNull;
-  }
-
-  static const _portraitIds = <String, String>{
-    'open-air-group': 'portrait-022',
-    'street-style-group': 'portrait-001',
-    'night-plaza-solo': 'portrait-051',
-    'studio-mirror': 'portrait-047',
-    'holiday-duet': 'portrait-039',
-    'room-formation': 'portrait-030',
-    'evening-plaza-duet': 'portrait-018',
-    'studio-partner': 'portrait-033',
-    'group-studio': 'portrait-014',
-    'hallway-take': 'portrait-024',
-  };
-}
-
-class StudioPublisherAvatar extends StatelessWidget {
-  const StudioPublisherAvatar({
-    super.key,
-    required this.clip,
-    required this.size,
-  });
-
-  final LibraryClip clip;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) => FutureBuilder<MediaLibrary>(
-    future: VimiScope.of(context).avatarLibrary,
-    builder: (_, snapshot) => Avatar(
-      name: StudioPublisher.name,
-      label: 'Studio photo',
-      url: StudioPublisher._portraitFor(snapshot.data, clip.id)?.thumbnail,
-      alignment: const Alignment(0, -.42),
-      size: size,
-    ),
-  );
-}
 
 class RehearsalShelf extends StatelessWidget {
   const RehearsalShelf({super.key, required this.practiceBuilder});
@@ -169,18 +126,10 @@ class MediaLibraryPage extends StatefulWidget {
     super.key,
     required this.practiceBuilder,
     this.showSaved = false,
-  }) : _publisherClip = null;
-
-  const MediaLibraryPage.publisher({
-    super.key,
-    required LibraryClip clip,
-    required this.practiceBuilder,
-  }) : showSaved = false,
-       _publisherClip = clip;
+  });
 
   final Widget Function(LibraryClip) practiceBuilder;
   final bool showSaved;
-  final LibraryClip? _publisherClip;
   @override
   State<MediaLibraryPage> createState() => _MediaLibraryPageState();
 }
@@ -192,9 +141,7 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
     final app = VimiScope.of(context);
     final saved = app.studio.savedLibraryClips(app.account);
     return VPage(
-      title: widget._publisherClip == null
-          ? 'Dance video library'
-          : 'Publisher profile',
+      title: 'Dance video library',
       child: _Catalog(
         builder: (context, library) {
           final clips = library.clips
@@ -208,13 +155,6 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
               .toList();
           return CustomScrollView(
             slivers: [
-              if (widget._publisherClip case final clip?)
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
-                  sliver: SliverToBoxAdapter(
-                    child: _PublisherIdentity(clip: clip),
-                  ),
-                ),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                 sliver: SliverToBoxAdapter(
@@ -324,37 +264,348 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
   }
 }
 
-class _PublisherIdentity extends StatelessWidget {
-  const _PublisherIdentity({required this.clip});
+class StudioCreatorProfilePage extends StatefulWidget {
+  const StudioCreatorProfilePage({
+    super.key,
+    required this.clip,
+    required this.practiceBuilder,
+  });
+
+  final LibraryClip clip;
+  final Widget Function(LibraryClip) practiceBuilder;
+
+  @override
+  State<StudioCreatorProfilePage> createState() =>
+      _StudioCreatorProfilePageState();
+}
+
+class _StudioCreatorProfilePageState extends State<StudioCreatorProfilePage> {
+  bool _updating = false;
+  bool _checkingCall = false;
+
+  Future<void> _openClip() async {
+    await openPage(
+      context,
+      ClipLibraryDetail(
+        clip: widget.clip,
+        practiceBuilder: widget.practiceBuilder,
+      ),
+    );
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _openChat() async {
+    if (ModalRoute.isCurrentOf(context) != true) return;
+    await openPage(context, _StudioCreatorChatPage(clip: widget.clip));
+  }
+
+  Future<void> _callCreator({required bool video}) async {
+    final app = VimiScope.of(context);
+    if (!app.signedIn || _checkingCall || _updating) return;
+    final owner = app.account;
+    bool canContinue() =>
+        mounted &&
+        app.signedIn &&
+        app.account == owner &&
+        ModalRoute.isCurrentOf(context) == true;
+    setState(() => _checkingCall = true);
+    try {
+      final member = await _studioMember(app, widget.clip);
+      if (!canContinue()) return;
+      if (member == null) {
+        feedback(
+          context,
+          'Calls require mutual follows between members. This Studio profile has no available member account.',
+        );
+        return;
+      }
+      await startMemberCall(context, member, video: video);
+    } catch (error) {
+      if (canContinue()) feedback(context, readableError(error));
+    } finally {
+      if (mounted) setState(() => _checkingCall = false);
+    }
+  }
+
+  Future<void> _setPreference(StudioCreatorPreference preference) async {
+    final app = VimiScope.of(context);
+    if (_updating || _checkingCall || !app.signedIn) return;
+    final owner = app.account;
+    final clip = widget.clip;
+    final hiding = preference == StudioCreatorPreference.hidden;
+    setState(() => _updating = true);
+    try {
+      if (hiding &&
+          !await confirmAction(
+            context,
+            title: 'Hide ${StudioClipCredit.forClip(clip).name}?',
+            body:
+                'Their covers and profile will be hidden from Floor and Dancers on this device. This also removes the follow. You can show them again in Settings.',
+            action: 'Hide creator',
+          )) {
+        return;
+      }
+      if (!mounted || !app.signedIn || app.account != owner) return;
+      await app.studio.setStudioCreatorPreference(owner, clip.id, preference);
+      if (!mounted || !app.signedIn || app.account != owner) return;
+      app.changed();
+      if (hiding) {
+        feedback(context, 'Creator hidden on this device.');
+        if (ModalRoute.isCurrentOf(context) == true) {
+          await Navigator.maybePop(context);
+        }
+      } else if (preference == StudioCreatorPreference.following) {
+        feedback(context, 'Added to Following on this device.');
+      }
+    } catch (error) {
+      if (mounted && app.account == owner) {
+        feedback(context, readableError(error));
+      }
+    } finally {
+      if (mounted) setState(() => _updating = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final app = VimiScope.of(context);
+    final clip = widget.clip;
+    final credit = StudioClipCredit.forClip(clip);
+    final preference = app.studio.studioCreatorPreference(app.account, clip.id);
+    final following = preference == StudioCreatorPreference.following;
+    final hidden = preference == StudioCreatorPreference.hidden;
+    return VPage(
+      title: 'Creator profile',
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 620),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            children: [
+              SurfacePanel(
+                illuminated: true,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        StudioClipAvatar(clip: clip, size: 72),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Semantics(
+                                header: true,
+                                child: Text(
+                                  credit.name,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.headlineSmall,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                credit.handle,
+                                style: const TextStyle(color: VimiColors.cyan),
+                              ),
+                              const SizedBox(height: 6),
+                              const Text(
+                                'Studio editorial profile',
+                                style: _libraryMetadata,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    Text(credit.bio),
+                    if (app.signedIn) ...[
+                      const SizedBox(height: 14),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          if (!hidden)
+                            VButton(
+                              following ? 'Following' : 'Follow',
+                              glyph: following ? Glyph.check : Glyph.add,
+                              tonal: following,
+                              onPressed: _updating || _checkingCall
+                                  ? null
+                                  : () => _setPreference(
+                                      following
+                                          ? StudioCreatorPreference.none
+                                          : StudioCreatorPreference.following,
+                                    ),
+                            ),
+                          VButton(
+                            hidden ? 'Show creator' : 'Hide creator',
+                            glyph: hidden ? Glyph.check : Glyph.block,
+                            quiet: true,
+                            onPressed: _updating || _checkingCall
+                                ? null
+                                : () => _setPreference(
+                                    hidden
+                                        ? StudioCreatorPreference.none
+                                        : StudioCreatorPreference.hidden,
+                                  ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      const Divider(height: 12, color: VimiColors.tonal),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _contactButton('Chat', Glyph.inbox, _openChat),
+                          _contactButton(
+                            'Voice call',
+                            Glyph.phone,
+                            () => _callCreator(video: false),
+                          ),
+                          _contactButton(
+                            'Video call',
+                            Glyph.video,
+                            () => _callCreator(video: true),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(4, 22, 4, 8),
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    'Cover',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+              ),
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: 224,
+                  maxHeight: 360,
+                ),
+                child: AspectRatio(
+                  aspectRatio: 1.25,
+                  child: LibraryClipTile(
+                    clip: clip,
+                    saved: app.studio
+                        .savedLibraryClips(app.account)
+                        .contains(clip.id),
+                    onTap: _openClip,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _contactButton(String label, Glyph glyph, VoidCallback onPressed) =>
+      Expanded(
+        child: TextButton(
+          onPressed: _updating || _checkingCall ? null : onPressed,
+          style: TextButton.styleFrom(
+            foregroundColor: VimiColors.ink,
+            minimumSize: const Size(48, 56),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            textStyle: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              VIcon(glyph, size: 22, color: VimiColors.cyan),
+              const SizedBox(height: 4),
+              Text(label, textAlign: TextAlign.center),
+            ],
+          ),
+        ),
+      );
+}
+
+Future<Dancer?> _studioMember(AppController app, LibraryClip clip) async {
+  final repo = app.repo;
+  if (!app.signedIn || repo == null) return null;
+  final stats = await repo.libraryClipStats().timeout(
+    const Duration(seconds: 10),
+  );
+  return stats[clip.id]?.author;
+}
+
+class _StudioCreatorChatPage extends StatefulWidget {
+  const _StudioCreatorChatPage({required this.clip});
 
   final LibraryClip clip;
 
   @override
-  Widget build(BuildContext context) => SurfacePanel(
-    illuminated: true,
-    padding: const EdgeInsets.all(16),
-    child: Row(
-      children: [
-        StudioPublisherAvatar(clip: clip, size: 64),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Semantics(
-                header: true,
-                child: Text(
-                  StudioPublisher.name,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+  State<_StudioCreatorChatPage> createState() => _StudioCreatorChatPageState();
+}
+
+class _StudioCreatorChatPageState extends State<_StudioCreatorChatPage> {
+  Future<Dancer?>? _member;
+  String? _owner;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final app = VimiScope.of(context);
+    final owner = app.signedIn ? app.account : null;
+    if (_owner != owner) {
+      _owner = owner;
+      _member = owner == null ? null : _studioMember(app, widget.clip);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<Dancer?>(
+    key: ValueKey(_owner),
+    future: _member,
+    builder: (context, snapshot) {
+      if (snapshot.data case final member?) return ChatPage(peer: member);
+      final credit = StudioClipCredit.forClip(widget.clip);
+      return VPage(
+        title: credit.name,
+        child: ListView(
+          padding: const EdgeInsets.all(24),
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: StudioClipAvatar(clip: widget.clip, size: 56),
+            ),
+            const SizedBox(height: 12),
+            if (snapshot.connectionState == ConnectionState.waiting)
+              const Text('Opening chat…', style: _libraryMetadata)
+            else if (snapshot.hasError)
+              ErrorNote(
+                readableError(snapshot.error!),
+                onRetry: () {
+                  final app = VimiScope.of(context);
+                  setState(() => _member = _studioMember(app, widget.clip));
+                },
+              )
+            else
+              const EmptyNote(
+                'Messaging unavailable',
+                'This Studio profile has no member account available for messages.',
               ),
-              const SizedBox(height: 4),
-              const Text('Official dance library', style: _libraryMetadata),
-            ],
-          ),
+          ],
         ),
-      ],
-    ),
+      );
+    },
   );
 }
 

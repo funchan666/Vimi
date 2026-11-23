@@ -100,7 +100,8 @@ class _InboxPageState extends State<InboxPage> {
     if (!mounted ||
         peer == null ||
         !app.signedIn ||
-        app.account != currentOwner) {
+        app.account != currentOwner ||
+        ModalRoute.of(context)?.isCurrent == false) {
       return;
     }
     await openPage(context, ChatPage(peer: peer));
@@ -109,30 +110,15 @@ class _InboxPageState extends State<InboxPage> {
   Future<void> quickChat(Dancer peer) async {
     if (openingContact != null) return;
     final app = VimiScope.of(context);
-    final currentOwner = app.account;
-    if (!app.signedIn) return;
+    if (!app.signedIn ||
+        !widget.active ||
+        ModalRoute.isCurrentOf(context) == false) {
+      return;
+    }
     searchFocus.unfocus();
     setState(() => openingContact = peer.id);
     try {
-      final allowed = await app.repo!.canMessage(peer.id);
-      if (!mounted ||
-          !widget.active ||
-          !app.signedIn ||
-          app.account != currentOwner ||
-          ModalRoute.isCurrentOf(context) == false) {
-        return;
-      }
-      if (allowed) {
-        await openPage(context, ChatPage(peer: peer));
-      } else {
-        feedback(context, 'Messaging is no longer available with this dancer.');
-        final contacts = mutuals;
-        if (contacts != null) unawaited(contacts.refresh());
-      }
-    } catch (error) {
-      if (mounted && widget.active && app.account == currentOwner) {
-        feedback(context, readableError(error));
-      }
+      await openPage(context, ChatPage(peer: peer));
     } finally {
       if (mounted) setState(() => openingContact = null);
     }
@@ -739,6 +725,48 @@ class _ConversationRow extends StatelessWidget {
   );
 }
 
+Future<void> startMemberCall(
+  BuildContext context,
+  Dancer peer, {
+  required bool video,
+}) async {
+  final app = VimiScope.of(context);
+  final repo = app.repo;
+  final owner = app.account;
+  final sourceRoute = ModalRoute.of(context);
+  if (!app.signedIn ||
+      repo == null ||
+      peer.id == owner ||
+      sourceRoute?.isCurrent == false) {
+    return;
+  }
+  final calls = DirectCallScope.maybeOf(context);
+  if (calls == null) {
+    feedback(context, 'Calling is currently unavailable.');
+    return;
+  }
+  bool isCurrent() =>
+      context.mounted &&
+      app.signedIn &&
+      app.account == owner &&
+      sourceRoute?.isCurrent != false;
+
+  FocusScope.of(context).unfocus();
+  try {
+    final allowed = await repo
+        .canMessage(peer.id)
+        .timeout(const Duration(seconds: 10));
+    if (!isCurrent()) return;
+    if (!allowed) {
+      feedback(context, 'Follow each other to start a call.');
+    } else if (!calls.start(peer, video: video)) {
+      feedback(context, 'Calling is currently unavailable.');
+    }
+  } catch (error) {
+    if (isCurrent()) feedback(context, readableError(error));
+  }
+}
+
 class _NewConversationPage extends StatefulWidget {
   const _NewConversationPage({required this.owner, required this.contacts});
   final String owner;
@@ -749,37 +777,27 @@ class _NewConversationPage extends StatefulWidget {
 }
 
 class _NewConversationPageState extends State<_NewConversationPage> {
-  String? checking;
-
-  Future<void> choose(Dancer dancer) async {
-    if (checking != null) return;
+  Future<void> discoverMembers() async {
     final app = VimiScope.of(context);
-    if (!app.signedIn || app.account != widget.owner) return;
-    setState(() => checking = dancer.id);
-    try {
-      final allowed = await app.repo!.canMessage(dancer.id);
-      if (!mounted ||
-          !app.signedIn ||
-          app.account != widget.owner ||
-          ModalRoute.of(context)?.isCurrent != true) {
-        return;
-      }
-      if (allowed) {
-        Navigator.of(context).pop(dancer);
-      } else {
-        feedback(context, 'Messaging is no longer available with this dancer.');
-        unawaited(widget.contacts.refresh());
-      }
-    } catch (error) {
-      if (mounted &&
-          app.signedIn &&
-          app.account == widget.owner &&
-          ModalRoute.of(context)?.isCurrent == true) {
-        feedback(context, readableError(error));
-      }
-    } finally {
-      if (mounted) setState(() => checking = null);
+    if (!app.signedIn ||
+        app.account != widget.owner ||
+        ModalRoute.of(context)?.isCurrent != true) {
+      return;
     }
+    await openPage(context, const DancerDirectory());
+    if (mounted && app.signedIn && app.account == widget.owner) {
+      await widget.contacts.refresh();
+    }
+  }
+
+  void choose(Dancer dancer) {
+    final app = VimiScope.of(context);
+    if (!app.signedIn ||
+        app.account != widget.owner ||
+        ModalRoute.of(context)?.isCurrent != true) {
+      return;
+    }
+    Navigator.of(context).pop(dancer);
   }
 
   @override
@@ -792,9 +810,7 @@ class _NewConversationPageState extends State<_NewConversationPage> {
         VIconButton(
           Glyph.search,
           label: 'Discover dancers',
-          onPressed: checking == null
-              ? () => openPage(context, const DancerDirectory())
-              : null,
+          onPressed: discoverMembers,
         ),
       ],
       child: !app.signedIn || app.account != widget.owner
@@ -826,17 +842,12 @@ class _NewConversationPageState extends State<_NewConversationPage> {
                       key: ValueKey(dancer.id),
                       peer: dancer,
                       detail: dancer.styles.join(' · '),
-                      trailing: checking == dancer.id
-                          ? const SizedBox.square(
-                              dimension: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const VIcon(
-                              Glyph.next,
-                              size: 18,
-                              color: VimiColors.muted,
-                            ),
-                      onTap: checking == null ? () => choose(dancer) : null,
+                      trailing: const VIcon(
+                        Glyph.next,
+                        size: 18,
+                        color: VimiColors.muted,
+                      ),
+                      onTap: () => choose(dancer),
                     ),
                   if (current.loading)
                     const Padding(
@@ -922,8 +933,9 @@ class _ChatPageState extends State<ChatPage> {
   final input = TextEditingController();
   final scroll = ScrollController();
   late CursorPager<Json> history;
-  bool allowed = false, busy = false, loading = true, started = false;
+  bool busy = false, started = false;
   bool planning = false;
+  bool? checkingVideoCall;
   int revision = -1, generation = 0;
   String? error;
   String? draftError, owner;
@@ -972,16 +984,9 @@ class _ChatPageState extends State<ChatPage> {
     final offset = scroll.hasClients ? scroll.offset : 0.0;
     final extent = scroll.hasClients ? scroll.position.maxScrollExtent : 0.0;
     try {
-      final values = await Future.wait<dynamic>([
-        history.refresh(),
-        repo.canMessage(widget.peer.id),
-      ]);
+      await history.refresh();
       if (!mounted || request != generation || owner != app.account) return;
-      setState(() {
-        allowed = values[1] as bool;
-        loading = false;
-        error = null;
-      });
+      if (error != null) setState(() => error = null);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || request != generation || !scroll.hasClients) return;
         if (offset < 72) {
@@ -1000,38 +1005,82 @@ class _ChatPageState extends State<ChatPage> {
       }
     } catch (e) {
       if (mounted && request == generation && owner == app.account) {
-        setState(() {
-          error = readableError(e);
-          loading = false;
-          allowed = false;
-        });
+        setState(() => error = readableError(e));
       }
     }
   }
 
   Future<void> send() async {
-    if (!allowed || busy || planning || input.text.trim().isEmpty) return;
     final app = VimiScope.of(context);
-    final text = input.text.trim();
+    final repo = app.repo;
+    final route = ModalRoute.of(context);
+    final account = owner;
+    final peer = widget.peer.id;
+    final raw = input.text;
+    final text = raw.trim();
+    final clientId = nonce;
+    bool sameAccount() => app.signedIn && app.account == account;
+    bool canSend() =>
+        mounted &&
+        sameAccount() &&
+        route?.isCurrent != false &&
+        widget.peer.id == peer;
+    if (busy || planning || text.isEmpty || repo == null || !canSend()) {
+      return;
+    }
+    if (text.runes.length > _messageLimit) {
+      feedback(context, 'Keep messages to 2,000 characters.');
+      return;
+    }
     setState(() => busy = true);
     try {
-      await app.repo!.send(widget.peer.id, text, nonce);
-      await draftStore.removeDraft(storedDraftKey);
-      await draftStore.preferences.remove(
-        'message.v1.$owner.${widget.peer.id}',
-      );
-      if (owner != app.account) return;
-      app.messagesChanged();
-      if (mounted) {
-        input.clear();
-        nonce = const Uuid().v4();
-        await load();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && scroll.hasClients) scroll.jumpTo(0);
-        });
+      final allowed = await repo
+          .canMessage(peer)
+          .timeout(const Duration(seconds: 10));
+      if (!canSend()) return;
+      if (!allowed) {
+        feedback(context, 'Follow each other to send messages.');
+        return;
       }
+      await draftStore.writeDraft(storedDraftKey, {
+        'body': raw,
+        'client_id': clientId,
+      });
+      if (!canSend()) return;
+      await repo
+          .send(peer, text, clientId)
+          .timeout(const Duration(seconds: 15));
+      if (!sameAccount()) return;
+      app.messagesChanged();
+      if (!mounted) return;
+      input.clear();
+      nonce = const Uuid().v4();
+      try {
+        await draftStore.removeDraft(storedDraftKey);
+        await draftStore.preferences.remove('message.v1.$account.$peer');
+      } catch (_) {
+        if (mounted && sameAccount()) {
+          setState(
+            () => draftError =
+                'Message sent. The saved draft could not be cleared.',
+          );
+        }
+      }
+      if (!mounted || !sameAccount()) return;
+      await load();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && sameAccount() && scroll.hasClients) scroll.jumpTo(0);
+      });
     } catch (e) {
-      if (mounted) setState(() => error = readableError(e));
+      if (canSend()) {
+        final message = readableError(e);
+        feedback(
+          context,
+          message == 'Messages require mutual follows and no blocks.'
+              ? 'Follow each other to send messages.'
+              : message,
+        );
+      }
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -1051,7 +1100,6 @@ class _ChatPageState extends State<ChatPage> {
 
     if (planning ||
         busy ||
-        !allowed ||
         repo == null ||
         !isSameThread() ||
         route?.isCurrent != true) {
@@ -1069,19 +1117,9 @@ class _ChatPageState extends State<ChatPage> {
         backgroundColor: Colors.transparent,
         builder: (_) => _RehearsalInviteSheet(
           charactersLeft: _messageLimit - draft.runes.length - separator.length,
-          checkPermission: () async {
-            final canMessage = await repo.canMessage(peer);
-            if (!isSameThread()) return false;
-            if (allowed != canMessage) setState(() => allowed = canMessage);
-            return canMessage;
-          },
         ),
       );
       if (invitation == null || !isSameThread() || route?.isCurrent != true) {
-        return;
-      }
-      if (!allowed) {
-        feedback(context, 'Messaging is currently unavailable in this chat.');
         return;
       }
       if (input.text != draft) {
@@ -1103,11 +1141,19 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void startCall(DirectCalls calls, {required bool video}) {
-    if (!allowed) return;
-    FocusScope.of(context).unfocus();
-    if (!calls.start(widget.peer, video: video)) {
-      feedback(context, 'Calling is currently unavailable.');
+  Future<void> startCall({required bool video}) async {
+    final app = VimiScope.of(context);
+    if (!app.signedIn ||
+        app.account != owner ||
+        planning ||
+        checkingVideoCall != null) {
+      return;
+    }
+    setState(() => checkingVideoCall = video);
+    try {
+      await startMemberCall(context, widget.peer, video: video);
+    } finally {
+      if (mounted) setState(() => checkingVideoCall = null);
     }
   }
 
@@ -1123,12 +1169,11 @@ class _ChatPageState extends State<ChatPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (allowed)
-                VActionRow(
-                  'Invite to practice',
-                  glyph: Glyph.clock,
-                  onPressed: () => Navigator.pop(sheetContext, 'practice'),
-                ),
+              VActionRow(
+                'Invite to practice',
+                glyph: Glyph.clock,
+                onPressed: () => Navigator.pop(sheetContext, 'practice'),
+              ),
               VActionRow(
                 'Refresh conversation',
                 glyph: Glyph.refresh,
@@ -1234,16 +1279,18 @@ class _ChatPageState extends State<ChatPage> {
                             Glyph.phone,
                             label: 'Voice call',
                             color: VimiColors.cyan,
-                            onPressed: allowed && !planning
-                                ? () => startCall(calls, video: false)
+                            busy: checkingVideoCall == false,
+                            onPressed: checkingVideoCall == null && !planning
+                                ? () => startCall(video: false)
                                 : null,
                           ),
                           VIconButton(
                             Glyph.video,
                             label: 'Video call',
                             color: VimiColors.cyan,
-                            onPressed: allowed && !planning
-                                ? () => startCall(calls, video: true)
+                            busy: checkingVideoCall == true,
+                            onPressed: checkingVideoCall == null && !planning
+                                ? () => startCall(video: true)
                                 : null,
                           ),
                         ],
@@ -1271,18 +1318,10 @@ class _ChatPageState extends State<ChatPage> {
                           children: [
                             if (error != null) ErrorNote(error!, onRetry: load),
                             if (draftError != null) ErrorNote(draftError!),
-                            if (!allowed && !loading && error == null)
-                              const Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Text(
-                                  'Messages and calls are available between mutual follows without a block.',
-                                  style: _chatMeta,
-                                ),
-                              ),
                             if (history.loaded &&
                                 history.items.isEmpty &&
                                 history.error == null &&
-                                allowed)
+                                !history.loading)
                               const Padding(
                                 padding: EdgeInsets.all(14),
                                 child: Text(
@@ -1506,7 +1545,7 @@ class _ChatPageState extends State<ChatPage> {
             valueListenable: input,
             builder: (_, value, child) {
               final canSend =
-                  allowed && !busy && !planning && value.text.trim().isNotEmpty;
+                  !busy && !planning && value.text.trim().isNotEmpty;
               return VIconButton(
                 Glyph.send,
                 label: busy ? 'Sending message' : 'Send message',
@@ -1525,13 +1564,9 @@ class _ChatPageState extends State<ChatPage> {
 }
 
 class _RehearsalInviteSheet extends StatefulWidget {
-  const _RehearsalInviteSheet({
-    required this.charactersLeft,
-    required this.checkPermission,
-  });
+  const _RehearsalInviteSheet({required this.charactersLeft});
 
   final int charactersLeft;
-  final Future<bool> Function() checkPermission;
 
   @override
   State<_RehearsalInviteSheet> createState() => _RehearsalInviteSheetState();
@@ -1540,7 +1575,6 @@ class _RehearsalInviteSheet extends StatefulWidget {
 class _RehearsalInviteSheetState extends State<_RehearsalInviteSheet> {
   final routine = TextEditingController();
   final plan = TextEditingController();
-  bool checking = false;
   String? error;
 
   @override
@@ -1550,8 +1584,8 @@ class _RehearsalInviteSheetState extends State<_RehearsalInviteSheet> {
     super.dispose();
   }
 
-  Future<void> addToDraft() async {
-    if (checking) return;
+  void addToDraft() {
+    if (ModalRoute.isCurrentOf(context) != true) return;
     final title = routine.text.trim();
     final detail = plan.text.trim();
     if (title.isEmpty || detail.isEmpty) {
@@ -1567,25 +1601,7 @@ class _RehearsalInviteSheetState extends State<_RehearsalInviteSheet> {
       return;
     }
     FocusScope.of(context).unfocus();
-    setState(() {
-      checking = true;
-      error = null;
-    });
-    try {
-      final allowed = await widget.checkPermission();
-      if (!mounted || ModalRoute.of(context)?.isCurrent != true) return;
-      if (allowed) {
-        Navigator.pop(context, invitation);
-      } else {
-        setState(
-          () => error = 'Messaging is currently unavailable in this chat.',
-        );
-      }
-    } catch (e) {
-      if (mounted) setState(() => error = readableError(e));
-    } finally {
-      if (mounted) setState(() => checking = false);
-    }
+    Navigator.pop(context, invitation);
   }
 
   @override
@@ -1618,24 +1634,18 @@ class _RehearsalInviteSheetState extends State<_RehearsalInviteSheet> {
                   ),
                 ],
               ),
-              VField(
-                'Routine or song',
-                controller: routine,
-                maxLength: 80,
-                enabled: !checking,
-              ),
+              VField('Routine or song', controller: routine, maxLength: 80),
               VField(
                 'Proposed time or practice note',
                 controller: plan,
                 lines: 2,
                 maxLength: 240,
-                enabled: !checking,
               ),
               if (error != null) ...[
                 ErrorNote(error!),
                 const SizedBox(height: 8),
               ],
-              VButton('Add to draft', busy: checking, onPressed: addToDraft),
+              VButton('Add to draft', onPressed: addToDraft),
             ],
           ),
         ),

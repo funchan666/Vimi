@@ -69,4 +69,4 @@ Flutter uses WebRTC with STUN for direct connections. The optional `VIMI_CALL_IC
 
 The ten publisher clip IDs match `assets/data/media_library.json`. Likes and approved comment counts are calculated per clip. Library comments share the existing comment review queue, reporting, block visibility, and author deletion. Public comment lists show approved comments, with pending and rejected comments visible to their author.
 
-The app displays Studio as the publishing source unless a verified creator is associated with the clip. The publisher may set `private.library_clips.author_profile_id` to a consenting creator’s existing profile UUID after verifying the credit. The catalog starts with no creator associations or seeded interactions.
+Studio’s editorial bylines link to individual editorial profiles for the supplied clips. A verified creator link takes precedence and opens that member’s profile. The publisher may set `private.library_clips.author_profile_id` to a consenting creator’s existing profile UUID after verifying the credit. The catalog starts with no creator associations or seeded interactions.

@@ -759,6 +759,9 @@ Future<void> reportContent(BuildContext context, String type, String id) async {
 
 Future<void> blockDancer(BuildContext context, Dancer dancer) async {
   final app = VimiScope.of(context);
+  final owner = app.account;
+  bool sameAccount() => context.mounted && app.signedIn && app.account == owner;
+  if (!sameAccount()) return;
   if (!await confirmAction(
         context,
         title: 'Block ${dancer.name}?',
@@ -766,17 +769,20 @@ Future<void> blockDancer(BuildContext context, Dancer dancer) async {
             'Your follows will be removed and you will no longer see each other’s content or messages.',
         action: 'Block dancer',
       ) ||
-      !context.mounted)
+      !sameAccount())
     return;
   try {
     await app.repo!.block(dancer.id, true);
+    if (!sameAccount()) return;
     await app.refreshAccount();
-    if (context.mounted) {
-      Navigator.maybePop(context);
+    if (sameAccount()) {
       feedback(context, 'Dancer blocked.');
+      if (ModalRoute.isCurrentOf(context) == true) {
+        await Navigator.maybePop(context);
+      }
     }
   } catch (e) {
-    if (context.mounted) feedback(context, readableError(e));
+    if (sameAccount()) feedback(context, readableError(e));
   }
 }
 

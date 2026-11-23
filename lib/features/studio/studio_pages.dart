@@ -11,8 +11,6 @@ import '../../core/models.dart';
 import '../../core/local_studio.dart';
 import '../../core/media_library.dart';
 import '../../design/vimi_ui.dart';
-import '../auth/auth_pages.dart';
-import '../wallet/wallet_page.dart';
 import 'rehearsal_player.dart';
 import 'journal_recovery_page.dart';
 import 'media_library_pages.dart';
@@ -24,105 +22,125 @@ class StudioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
-    final cutoff = DateTime.now().subtract(const Duration(days: 7));
-    final minutes = app.practices
-        .where((practice) => !practice.createdAt.isBefore(cutoff))
-        .fold(0, (total, practice) => total + practice.minutes);
+    final type = Theme.of(context).textTheme;
+    final noteCount = app.practices.length;
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        RehearsalShelf(
-          practiceBuilder: (clip) => PracticeEditor(initialClip: clip),
-        ),
-        const SizedBox(height: 12),
-        const WeeklyPracticeGoal(),
-        const SizedBox(height: 20),
         SurfacePanel(
-          padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+          illuminated: true,
+          padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
           child: Row(
             children: [
-              const VIcon(Glyph.studio, size: 20, color: VimiColors.cyan),
-              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Practice journal',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    Text('Practice journal', style: type.titleLarge),
+                    const SizedBox(height: 4),
                     if (app.journalError == null)
                       Text(
-                        app.practices.isEmpty
+                        noteCount == 0
                             ? 'No practice notes yet'
-                            : '$minutes min · Last 7 days',
-                        style: const TextStyle(
-                          fontSize: 12,
+                            : '$noteCount saved ${noteCount == 1 ? 'note' : 'notes'}',
+                        style: type.bodyMedium?.copyWith(
                           color: VimiColors.muted,
                         ),
                       ),
                   ],
                 ),
               ),
+              const SizedBox(width: 8),
               VIconButton(
-                Glyph.more,
-                label: 'Journal recovery',
-                color: VimiColors.muted,
-                onPressed: () => openPage(context, const JournalRecoveryPage()),
+                Glyph.clock,
+                label: 'Open practice history',
+                color: VimiColors.violet,
+                onPressed: () => openPage(context, const PracticeHistoryPage()),
               ),
+              const SizedBox(width: 8),
               VIconButton(
                 Glyph.add,
                 label: 'Start a practice note',
-                color: VimiColors.cyan,
-                onPressed: () => openPage(context, const PracticeEditor()),
+                primary: true,
+                onPressed: app.journalError == null
+                    ? () => openPage(context, const PracticeEditor())
+                    : null,
               ),
             ],
           ),
         ),
-        if (app.journalError case final error?)
+        if (app.journalError case final error?) ...[
+          const SizedBox(height: 8),
           ErrorNote(error, onRetry: () => unawaited(app.refreshAccount())),
-        for (final practice in app.practices)
-          Tooltip(
-            message: 'Open practice',
-            child: _PracticeNoteRow(practice: practice),
+        ],
+        const SizedBox(height: 16),
+        RehearsalShelf(
+          practiceBuilder: (clip) => PracticeEditor(initialClip: clip),
+        ),
+        const SizedBox(height: 16),
+        const WeeklyPracticeGoal(),
+        if (app.journalError == null && noteCount > 0) ...[
+          const SizedBox(height: 22),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 6),
+            child: Text('Recent notes', style: type.titleMedium),
           ),
-        const SizedBox(height: 18),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(4, 0, 4, 6),
+          for (final practice in app.practices.take(3))
+            _PracticeNoteRow(practice: practice),
+        ],
+        const SizedBox(height: 22),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 4, 6),
           child: Text(
-            'Practice packs',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            'Practice plans',
+            style: type.titleMedium,
           ),
         ),
-        for (final pack in StudioPack.all)
-          Tooltip(
-            message: app.unlocked.contains(pack.id)
-                ? 'Open your pack'
-                : 'See pack · ${pack.cost} coins',
-            child: _StudioRow(
-              name: pack.title,
-              metadata: app.unlocked.contains(pack.id)
-                  ? 'Unlocked'
-                  : '${pack.cost} coins',
-              glyph: app.unlocked.contains(pack.id) ? Glyph.check : Glyph.coin,
-              onPressed: () => openPage(context, StudioPackPage(pack: pack)),
-            ),
-          ),
+        for (final plan in StudioPack.all)
+          _PracticePlanRow(plan: plan),
       ],
     );
   }
 }
 
-class PracticeHistoryPage extends StatelessWidget {
+class PracticeHistoryPage extends StatefulWidget {
   const PracticeHistoryPage({super.key});
+
+  @override
+  State<PracticeHistoryPage> createState() => _PracticeHistoryPageState();
+}
+
+class _PracticeHistoryPageState extends State<PracticeHistoryPage> {
+  final _search = TextEditingController();
+  String _filter = 'All';
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
     final error = app.journalError;
+    final query = _search.text.trim().toLowerCase();
+    final now = DateTime.now();
+    final week = practiceWeek(now);
+    final visibleNotes = app.practices.where((note) {
+      final matchesFilter = switch (_filter) {
+        'This week' =>
+          !note.createdAt.isBefore(week.start) &&
+              !note.createdAt.isAfter(now),
+        'With video' => note.videoPath?.isNotEmpty == true,
+        _ => true,
+      };
+      return matchesFilter &&
+          (query.isEmpty ||
+              note.routine.toLowerCase().contains(query) ||
+              note.style.toLowerCase().contains(query) ||
+              note.notes.toLowerCase().contains(query));
+    }).toList();
     void startNote() => openPage(context, const PracticeEditor());
 
     return VPage(
@@ -141,13 +159,17 @@ class PracticeHistoryPage extends StatelessWidget {
             onPressed: startNote,
           ),
       ],
-      child: ListView(
+      child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        children: [
-          if (error != null)
-            ErrorNote(error, onRetry: () => unawaited(app.refreshAccount()))
-          else if (app.practices.isEmpty)
-            SurfacePanel(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        itemCount: 1 + (error == null ? visibleNotes.length : 0),
+        itemBuilder: (context, index) {
+          if (index > 0) return _PracticeNoteRow(practice: visibleNotes[index - 1]);
+          if (error != null) {
+            return ErrorNote(error, onRetry: () => unawaited(app.refreshAccount()));
+          }
+          if (app.practices.isEmpty) {
+            return SurfacePanel(
               padding: const EdgeInsets.all(6),
               child: VActionRow(
                 'Start a practice note',
@@ -155,13 +177,34 @@ class PracticeHistoryPage extends StatelessWidget {
                 glyph: Glyph.studio,
                 onPressed: startNote,
               ),
-            ),
-          for (final practice in app.practices)
-            Tooltip(
-              message: 'Open practice',
-              child: _PracticeNoteRow(practice: practice),
-            ),
-        ],
+            );
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              VField(
+                'Search your journal',
+                controller: _search,
+                onChanged: (_) => setState(() {}),
+              ),
+              ChoiceStrip(
+                options: const ['All', 'This week', 'With video'],
+                value: _filter,
+                onChanged: (value) => setState(() => _filter = value),
+              ),
+              const SizedBox(height: 16),
+              if (visibleNotes.isEmpty)
+                const EmptyNote('No matching notes', 'Try a different search or filter.')
+              else
+                Text(
+                  '${visibleNotes.length} ${visibleNotes.length == 1 ? 'note' : 'notes'}',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: VimiColors.muted,
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -172,12 +215,14 @@ class _PracticeNoteRow extends StatelessWidget {
   final PracticeSession practice;
 
   @override
-  Widget build(BuildContext context) => _StudioRow(
-    name: practice.routine,
-    metadata:
-        '${practice.minutes} min · ${practice.counts} eights · ${displayDate(practice.createdAt)}',
-    glyph: practice.videoPath == null ? Glyph.studio : Glyph.video,
-    onPressed: () => openPage(context, PracticeEditor(session: practice)),
+  Widget build(BuildContext context) => Tooltip(
+    message: 'Open practice',
+    child: _StudioRow(
+      name: practice.routine,
+      metadata: '${practice.style} · ${practice.minutes} min · ${displayDate(practice.createdAt)}',
+      glyph: practice.videoPath == null ? Glyph.studio : Glyph.video,
+      onPressed: () => openPage(context, PracticeEditor(session: practice)),
+    ),
   );
 }
 

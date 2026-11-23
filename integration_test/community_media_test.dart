@@ -13,7 +13,6 @@ import 'package:vimi/features/profile/profile_pages.dart';
 import 'package:vimi/features/shell.dart';
 import 'package:vimi/features/studio/media_library_pages.dart';
 import 'package:vimi/features/studio/studio_pages.dart';
-import 'package:vimi/features/wallet/wallet_page.dart';
 import 'package:vimi/main.dart' as vimi;
 import 'support.dart';
 
@@ -276,9 +275,6 @@ void main() {
       expect(find.byType(SignedAvatar), findsWidgets);
       expect(find.text('Photo library'), findsNothing);
       await capture(binding, tester, 'me');
-      await press(tester, 'Open coin wallet');
-      expect(find.byType(WalletPage), findsOneWidget);
-      await returnTo(tester, find.byType(MePage));
       await press(tester, 'Practice history');
       expect(find.byType(PracticeHistoryPage), findsOneWidget);
       await returnTo(tester, find.byType(MePage));
@@ -293,7 +289,7 @@ void main() {
       await returnTo(tester, find.byType(EditProfilePage));
       await returnTo(tester, find.byType(MePage));
       report['profile'] =
-          'profile avatar, coin wallet, practice history and photo picker opened';
+          'profile avatar, practice history and photo picker opened';
       expect(tester.takeException(), isNull);
     },
     timeout: const Timeout(Duration(minutes: 4)),

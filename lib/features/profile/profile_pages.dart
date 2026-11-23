@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/app_controller.dart';
 import '../../core/dance_repository.dart';
+import '../../core/local_studio.dart';
 import '../../core/models.dart';
 import '../../core/pagination.dart';
 import '../../core/media_library.dart';
@@ -14,14 +15,14 @@ import '../../design/vimi_ui.dart';
 import '../../design/library_image.dart';
 import '../auth/auth_pages.dart';
 import '../community/community_pages.dart';
+import '../messages/direct_calls.dart';
 import '../messages/inbox_pages.dart';
-import '../wallet/play_coins.dart';
-import '../wallet/wallet_page.dart';
 import 'license_page.dart';
 import 'help_pages.dart';
 import 'moderation_pages.dart';
 import '../auth/account_security_pages.dart';
 import '../studio/media_library_pages.dart';
+import '../studio/studio_clip_credit.dart';
 import '../studio/studio_pages.dart';
 import 'personal_activity.dart';
 
@@ -59,7 +60,8 @@ class MePage extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
             SurfacePanel(
-              padding: const EdgeInsets.fromLTRB(14, 14, 8, 3),
+              illuminated: true,
+              padding: const EdgeInsets.fromLTRB(14, 16, 8, 3),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -88,25 +90,35 @@ class MePage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
-            _CoinWalletTile(coins: app.coins),
-            const SizedBox(height: 12),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _PersonalShortcut(
-                    glyph: Glyph.save,
-                    label: 'Saved covers',
-                    color: VimiColors.violet,
-                    onPressed: () => openPage(context, const SavedPostsPage()),
-                  ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 8),
+              child: Semantics(
+                header: true,
+                child: Text(
+                  'Your library',
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
-                Expanded(
-                  child: _PersonalShortcut(
+              ),
+            ),
+            SurfacePanel(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              child: Column(
+                children: [
+                  VActionRow(
+                    'Practice history',
+                    glyph: Glyph.studio,
+                    detail: app.journalError != null
+                        ? 'Open your private journal'
+                        : '${app.practices.length} saved notes',
+                    onPressed: () =>
+                        openPage(context, const PracticeHistoryPage()),
+                  ),
+                  const Divider(height: 1, color: VimiColors.tonal, indent: 52),
+                  VActionRow(
+                    'Saved clips',
                     glyph: Glyph.video,
-                    label: 'Saved clips',
-                    color: VimiColors.cyan,
+                    detail: 'Rewatch your rehearsal references',
                     onPressed: () => openPage(
                       context,
                       MediaLibraryPage(
@@ -116,132 +128,23 @@ class MePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: _PersonalShortcut(
-                    glyph: Glyph.studio,
-                    label: 'Practice history',
-                    color: VimiColors.accent,
-                    onPressed: () =>
-                        openPage(context, const PracticeHistoryPage()),
+                  const Divider(height: 1, color: VimiColors.tonal, indent: 52),
+                  VActionRow(
+                    'Saved covers',
+                    glyph: Glyph.save,
+                    detail: 'Revisit posts you bookmarked',
+                    onPressed: () => openPage(context, const SavedPostsPage()),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const Divider(height: 18, color: VimiColors.tonal),
+            const SizedBox(height: 20),
             PersonalActivity(key: ValueKey('mine-${app.account}')),
           ],
         ),
       ),
     );
   }
-}
-
-class _CoinWalletTile extends StatelessWidget {
-  const _CoinWalletTile({required this.coins});
-
-  final int coins;
-
-  @override
-  Widget build(BuildContext context) => Tooltip(
-    message: 'Open coin wallet',
-    excludeFromSemantics: true,
-    child: Material(
-      color: VimiColors.surface,
-      clipBehavior: Clip.antiAlias,
-      borderRadius: BorderRadius.circular(16),
-      child: Ink(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/ui/neon-spectrum.webp'),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(Color(0xD91B122B), BlendMode.srcATop),
-          ),
-        ),
-        child: InkWell(
-          onTap: () => openPage(context, const WalletPage()),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-            child: Row(
-              children: [
-                const VIcon(Glyph.coin, size: 30, color: VimiColors.cyan),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Coin wallet',
-                        style: TextStyle(fontSize: 13, color: VimiColors.muted),
-                      ),
-                      Text(
-                        '$coins coins',
-                        style: const TextStyle(
-                          fontSize: 21,
-                          height: 1.15,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    PlayCoins.enabled ? 'Get coins' : 'View coin packs',
-                    textAlign: TextAlign.end,
-                    style: const TextStyle(
-                      color: VimiColors.cyan,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                const VIcon(Glyph.next, size: 17, color: VimiColors.cyan),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-class _PersonalShortcut extends StatelessWidget {
-  const _PersonalShortcut({
-    required this.glyph,
-    required this.label,
-    required this.color,
-    required this.onPressed,
-  });
-
-  final Glyph glyph;
-  final String label;
-  final Color color;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) => TextButton(
-    style: TextButton.styleFrom(
-      foregroundColor: VimiColors.ink,
-      minimumSize: const Size(48, 64),
-      padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-    ),
-    onPressed: onPressed,
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        VIcon(glyph, size: 23, color: color),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-        ),
-      ],
-    ),
-  );
 }
 
 const _profileSection = TextStyle(fontSize: 17, fontWeight: FontWeight.w700);
@@ -331,9 +234,8 @@ class _ProfileIdentity extends StatelessWidget {
 }
 
 class _ProfileRelations extends StatelessWidget {
-  const _ProfileRelations({required this.profile, this.actions = const []});
+  const _ProfileRelations({required this.profile});
   final Dancer profile;
-  final List<Widget> actions;
 
   @override
   Widget build(BuildContext context) => Row(
@@ -344,7 +246,6 @@ class _ProfileRelations extends StatelessWidget {
       Expanded(
         child: _relation(context, followers: false, count: profile.following),
       ),
-      ...actions,
     ],
   );
 
@@ -426,6 +327,11 @@ class _DancerDirectoryState extends State<DancerDirectory> {
     search();
   }
 
+  void clearSearch() {
+    query.clear();
+    submitSearch();
+  }
+
   @override
   void dispose() {
     query.dispose();
@@ -447,6 +353,7 @@ class _DancerDirectoryState extends State<DancerDirectory> {
             onSubmitted: (_) => submitSearch(),
             decoration: InputDecoration(
               labelText: 'Search dancer names',
+              hintText: 'Name or @handle',
               suffixIcon: VIconButton(
                 Glyph.search,
                 label: 'Find dancers',
@@ -461,30 +368,57 @@ class _DancerDirectoryState extends State<DancerDirectory> {
               'Sign in to meet the community',
               onPressed: () => openPage(context, const AuthPage(signUp: false)),
             )
-          else if (pager != null)
-            AnimatedBuilder(
-              animation: pager!,
-              builder: (context, _) => Column(
+          else if (pager case final directory?)
+            _results(app, directory),
+        ],
+      ),
+    );
+  }
+
+  Widget _results(AppController app, CursorPager<Dancer> directory) =>
+      FutureBuilder<MediaLibrary>(
+        future: app.avatarLibrary,
+        builder: (context, studio) {
+          final library = studio.data;
+          final covers = library == null
+              ? const <LibraryClip>[]
+              : StudioClipCredit.findClips(library, submittedQuery)
+                    .where(
+                      (clip) =>
+                          app.studio.studioCreatorPreference(
+                            app.account,
+                            clip.id,
+                          ) !=
+                          StudioCreatorPreference.hidden,
+                    )
+                    .toList();
+          return AnimatedBuilder(
+            animation: directory,
+            builder: (context, _) {
+              final emptyCommunity =
+                  directory.loaded &&
+                  !directory.loading &&
+                  directory.items.isEmpty &&
+                  directory.error == null;
+              final emptyDirectory =
+                  emptyCommunity && library != null && covers.isEmpty;
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (pager!.loaded &&
-                      !pager!.loading &&
-                      pager!.items.isEmpty &&
-                      pager!.error == null)
+                  if (covers.isNotEmpty) ...[
+                    _sectionTitle('Studio editorial profiles'),
+                    for (final clip in covers) _studioResult(clip),
+                    const Divider(height: 20, color: VimiColors.tonal),
+                    _sectionTitle('Community dancers'),
+                  ],
+                  if (emptyDirectory)
                     Row(
                       children: [
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: Semantics(
-                              liveRegion: true,
-                              child: Text(
-                                submittedQuery.isEmpty
-                                    ? 'No dancers to browse yet.'
-                                    : 'No dancers match this search.',
-                                style: _profileMeta,
-                              ),
-                            ),
+                          child: _directoryStatus(
+                            submittedQuery.isEmpty
+                                ? 'No dancers to browse yet.'
+                                : 'No dancers match this search.',
                           ),
                         ),
                         if (submittedQuery.isNotEmpty)
@@ -492,56 +426,121 @@ class _DancerDirectoryState extends State<DancerDirectory> {
                             Glyph.close,
                             label: 'Clear dancer search',
                             color: VimiColors.violet,
-                            onPressed: () {
-                              query.clear();
-                              submitSearch();
-                            },
+                            onPressed: clearSearch,
                           ),
                       ],
+                    )
+                  else if (emptyCommunity)
+                    _directoryStatus(
+                      submittedQuery.isEmpty
+                          ? 'No community dancers to browse yet.'
+                          : 'No community dancers match this search.',
                     ),
-                  for (final dancer in pager!.items)
+                  for (final dancer in directory.items)
                     DancerRow(dancer, key: ValueKey(dancer.id)),
                   PageFooter(
-                    pager: pager!,
+                    pager: directory,
                     moreLabel: 'More dancers',
                     loadingLabel: 'Finding dancers…',
                   ),
+                  if (studio.hasError)
+                    _directoryStatus('Studio profiles are unavailable.')
+                  else if (library == null)
+                    _directoryStatus('Opening Studio profiles…'),
                 ],
-              ),
-            ),
-        ],
-      ),
+              );
+            },
+          );
+        },
+      );
+
+  Widget _studioResult(LibraryClip clip) {
+    final credit = StudioClipCredit.forClip(clip);
+    return _DirectoryProfileRow(
+      key: ValueKey(clip.source),
+      name: credit.name,
+      detail: credit.handle,
+      avatar: StudioClipAvatar(clip: clip, size: 42),
+      onPressed: () {
+        FocusScope.of(context).unfocus();
+        openPage(
+          context,
+          StudioCreatorProfilePage(
+            clip: clip,
+            practiceBuilder: (clip) => PracticeEditor(initialClip: clip),
+          ),
+        );
+      },
     );
   }
+
+  Widget _sectionTitle(String label) => Padding(
+    padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+    child: Semantics(
+      header: true,
+      child: Text(label, style: Theme.of(context).textTheme.titleSmall),
+    ),
+  );
+
+  Widget _directoryStatus(String message) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    child: Semantics(
+      liveRegion: true,
+      child: Text(message, style: _profileMeta),
+    ),
+  );
 }
 
 class DancerRow extends StatelessWidget {
   const DancerRow(this.dancer, {super.key});
   final Dancer dancer;
   @override
+  Widget build(BuildContext context) => _DirectoryProfileRow(
+    name: dancer.name,
+    detail: dancer.styles.isEmpty ? null : dancer.styles.join(' · '),
+    avatar: SignedAvatar(dancer, size: 42),
+    onPressed: () => openPage(context, DancerPage(id: dancer.id)),
+  );
+}
+
+class _DirectoryProfileRow extends StatelessWidget {
+  const _DirectoryProfileRow({
+    super.key,
+    required this.name,
+    required this.detail,
+    required this.avatar,
+    required this.onPressed,
+  });
+
+  final String name;
+  final String? detail;
+  final Widget avatar;
+  final VoidCallback onPressed;
+
+  @override
   Widget build(BuildContext context) => TextButton(
     style: TextButton.styleFrom(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       foregroundColor: VimiColors.ink,
     ),
-    onPressed: () => openPage(context, DancerPage(id: dancer.id)),
+    onPressed: onPressed,
     child: Row(
       children: [
-        SignedAvatar(dancer, size: 42),
+        avatar,
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                dancer.name,
+                name,
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              if (dancer.styles.isNotEmpty)
-                Text(dancer.styles.join(' · '), style: _profileMeta),
+              if (detail case final subtitle?)
+                Text(subtitle, style: _profileMeta),
             ],
           ),
         ),
@@ -641,26 +640,86 @@ class DancerPage extends StatefulWidget {
 
 class _DancerPageState extends State<DancerPage> {
   Future<Dancer?>? future;
+  String? owner;
   int revision = -1;
   bool busy = false;
+  bool? checkingVideoCall;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final app = VimiScope.of(context);
+    final nextOwner = app.signedIn ? app.account : null;
+    if (owner != nextOwner) {
+      owner = nextOwner;
+      revision = -1;
+      busy = false;
+      checkingVideoCall = null;
+    }
     if (revision != app.revision) {
       revision = app.revision;
-      future = app.repo!.dancer(widget.id);
+      future = nextOwner == null ? null : app.repo!.dancer(widget.id);
+    }
+  }
+
+  bool _sameAccount(AppController app, String account) =>
+      mounted && app.signedIn && app.account == account;
+
+  Future<void> _follow(Dancer profile) async {
+    final app = VimiScope.of(context);
+    final account = app.account;
+    if (!app.signedIn ||
+        profile.id == account ||
+        busy ||
+        checkingVideoCall != null) {
+      return;
+    }
+    setState(() => busy = true);
+    try {
+      await app.repo!.follow(profile.id, followed: !profile.isFollowing);
+      if (_sameAccount(app, account)) await app.refreshAccount();
+    } catch (error) {
+      if (_sameAccount(app, account)) feedback(context, readableError(error));
+    } finally {
+      if (_sameAccount(app, account)) setState(() => busy = false);
+    }
+  }
+
+  Future<void> _startCall(Dancer profile, {required bool video}) async {
+    final app = VimiScope.of(context);
+    final account = app.account;
+    if (!app.signedIn ||
+        profile.id == account ||
+        busy ||
+        checkingVideoCall != null) {
+      return;
+    }
+    setState(() => checkingVideoCall = video);
+    try {
+      await startMemberCall(context, profile, video: video);
+    } finally {
+      if (_sameAccount(app, account)) {
+        setState(() => checkingVideoCall = null);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
+    final calls = DirectCallScope.maybeOf(context);
     return VPage(
       title: '',
       child: FutureBuilder<Dancer?>(
+        key: ValueKey(owner),
         future: future,
         builder: (context, snapshot) {
+          if (!app.signedIn) {
+            return const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('Sign in to view this dancer.', style: _profileMeta),
+            );
+          }
           if (snapshot.hasError)
             return Padding(
               padding: const EdgeInsets.all(24),
@@ -678,13 +737,16 @@ class _DancerPageState extends State<DancerPage> {
               padding: EdgeInsets.all(16),
               child: Text('This profile is unavailable.', style: _profileMeta),
             );
+          final canInteract = app.signedIn && profile.id != app.account;
+          final mutual = profile.isFollowing && profile.followsYou;
+          final checkingCall = checkingVideoCall != null;
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
             children: [
               _ProfileIdentity(
                 profile: profile,
                 actions: [
-                  if (profile.id != app.account) ...[
+                  if (canInteract) ...[
                     VIconButton(
                       Glyph.report,
                       label: 'Report dancer',
@@ -699,45 +761,61 @@ class _DancerPageState extends State<DancerPage> {
                   ],
                 ],
               ),
-              _ProfileRelations(
-                profile: profile,
-                actions: [
-                  if (profile.id != app.account) ...[
-                    VIconButton(
-                      profile.isFollowing ? Glyph.check : Glyph.add,
-                      label: profile.isFollowing
-                          ? 'Following'
-                          : 'Follow dancer',
-                      selected: profile.isFollowing,
-                      color: VimiColors.accent,
+              _ProfileRelations(profile: profile),
+              if (canInteract) ...[
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    VButton(
+                      profile.isFollowing ? 'Following' : 'Follow dancer',
+                      glyph: profile.isFollowing ? Glyph.check : Glyph.add,
+                      tonal: profile.isFollowing,
                       busy: busy,
-                      onPressed: () async {
-                        if (busy) return;
-                        setState(() => busy = true);
-                        try {
-                          await app.repo!.follow(
-                            profile.id,
-                            followed: !profile.isFollowing,
-                          );
-                          await app.refreshAccount();
-                        } catch (e) {
-                          if (context.mounted)
-                            feedback(context, readableError(e));
-                        } finally {
-                          if (mounted) setState(() => busy = false);
-                        }
-                      },
+                      onPressed: checkingCall ? null : () => _follow(profile),
                     ),
                     VIconButton(
                       Glyph.inbox,
                       label: 'Message',
                       color: VimiColors.cyan,
-                      onPressed: () =>
-                          openPage(context, ChatPage(peer: profile)),
+                      filled: true,
+                      onPressed: checkingCall
+                          ? null
+                          : () => openPage(context, ChatPage(peer: profile)),
+                    ),
+                    VIconButton(
+                      Glyph.phone,
+                      label: 'Voice call',
+                      color: VimiColors.cyan,
+                      filled: true,
+                      busy: checkingVideoCall == false,
+                      onPressed: calls == null || busy || checkingCall
+                          ? null
+                          : () => _startCall(profile, video: false),
+                    ),
+                    VIconButton(
+                      Glyph.video,
+                      label: 'Video call',
+                      color: VimiColors.cyan,
+                      filled: true,
+                      busy: checkingVideoCall == true,
+                      onPressed: calls == null || busy || checkingCall
+                          ? null
+                          : () => _startCall(profile, video: true),
                     ),
                   ],
-                ],
-              ),
+                ),
+                if (!mutual)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Text(
+                      'Follow each other to message or call.',
+                      style: _profileMeta,
+                    ),
+                  ),
+              ],
               const Divider(height: 16, color: VimiColors.tonal),
               const Text('Covers', style: _profileSection),
               PostCollection(
@@ -1150,6 +1228,7 @@ class BlockedDancersPage extends StatefulWidget {
 
 class _BlockedDancersPageState extends State<BlockedDancersPage> {
   Future<List<Dancer>>? future;
+  final restoring = <String>{};
   bool started = false;
   @override
   void didChangeDependencies() {
@@ -1162,60 +1241,127 @@ class _BlockedDancersPageState extends State<BlockedDancersPage> {
 
   void reload() =>
       setState(() => future = VimiScope.of(context).repo!.blocked());
-  @override
-  Widget build(BuildContext context) => VPage(
-    title: 'Blocked dancers',
-    child: FutureBuilder<List<Dancer>>(
-      future: future,
-      builder: (context, snapshot) => ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          if (snapshot.hasError)
-            ErrorNote(readableError(snapshot.error!), onRetry: reload)
-          else if (!snapshot.hasData)
-            const Text('Opening your list…')
-          else if (snapshot.data!.isEmpty)
-            const EmptyNote(
-              'Your list is clear.',
-              'Dancers you block will appear here.',
-            )
-          else
-            for (final dancer in snapshot.data!)
-              SurfacePanel(
+
+  Future<void> restoreCreator(AppController app, LibraryClip clip) async {
+    if (!app.signedIn || !restoring.add(clip.id)) return;
+    final owner = app.account;
+    setState(() {});
+    try {
+      await app.studio.setStudioCreatorPreference(
+        owner,
+        clip.id,
+        StudioCreatorPreference.none,
+      );
+      if (!mounted || app.account != owner) return;
+      app.changed();
+      feedback(context, 'Creator is visible again.');
+    } catch (error) {
+      if (mounted && app.account == owner) {
+        feedback(context, readableError(error));
+      }
+    } finally {
+      restoring.remove(clip.id);
+      if (mounted) setState(() {});
+    }
+  }
+
+  Widget hiddenCreators(AppController app) => FutureBuilder<MediaLibrary>(
+    future: app.avatarLibrary,
+    builder: (context, snapshot) {
+      final hidden = snapshot.data?.clips.where(
+        (clip) =>
+            app.studio.studioCreatorPreference(app.account, clip.id) ==
+            StudioCreatorPreference.hidden,
+      );
+      if (hidden == null || hidden.isEmpty) return const SizedBox.shrink();
+      return Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text('Hidden Studio creators', style: _profileSection),
+            for (final clip in hidden)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
                 child: Row(
                   children: [
-                    Expanded(child: Text(dancer.name)),
+                    StudioClipAvatar(clip: clip, size: 36),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text(StudioClipCredit.forClip(clip).name)),
+                    const SizedBox(width: 8),
                     VButton(
-                      'Unblock',
+                      'Show',
                       quiet: true,
-                      onPressed: () async {
-                        if (!await confirmAction(
-                              context,
-                              title: 'Unblock ${dancer.name}?',
-                              body:
-                                  'You can see each other again. Follows will not be restored automatically.',
-                              action: 'Unblock',
-                            ) ||
-                            !context.mounted)
-                          return;
-                        try {
-                          final app = VimiScope.of(context);
-                          await app.repo!.block(dancer.id, false);
-                          app.changed();
-                          reload();
-                        } catch (e) {
-                          if (context.mounted)
-                            feedback(context, readableError(e));
-                        }
-                      },
+                      busy: restoring.contains(clip.id),
+                      onPressed: () => restoreCreator(app, clip),
                     ),
                   ],
                 ),
               ),
-        ],
-      ),
-    ),
+          ],
+        ),
+      );
+    },
   );
+
+  @override
+  Widget build(BuildContext context) {
+    final app = VimiScope.of(context);
+    return VPage(
+      title: 'Blocked dancers',
+      child: FutureBuilder<List<Dancer>>(
+        future: future,
+        builder: (context, snapshot) => ListView(
+          padding: const EdgeInsets.all(24),
+          children: [
+            if (snapshot.hasError)
+              ErrorNote(readableError(snapshot.error!), onRetry: reload)
+            else if (!snapshot.hasData)
+              const Text('Opening your list…')
+            else if (snapshot.data!.isEmpty)
+              const EmptyNote(
+                'No blocked dancers.',
+                'Dancers you block will appear here.',
+              )
+            else
+              for (final dancer in snapshot.data!)
+                SurfacePanel(
+                  child: Row(
+                    children: [
+                      Expanded(child: Text(dancer.name)),
+                      VButton(
+                        'Unblock',
+                        quiet: true,
+                        onPressed: () async {
+                          if (!await confirmAction(
+                                context,
+                                title: 'Unblock ${dancer.name}?',
+                                body:
+                                    'You can see each other again. Follows will not be restored automatically.',
+                                action: 'Unblock',
+                              ) ||
+                              !context.mounted)
+                            return;
+                          try {
+                            final app = VimiScope.of(context);
+                            await app.repo!.block(dancer.id, false);
+                            app.changed();
+                            reload();
+                          } catch (e) {
+                            if (context.mounted)
+                              feedback(context, readableError(e));
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+            if (app.signedIn) hiddenCreators(app),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class DeleteAccountPage extends StatefulWidget {

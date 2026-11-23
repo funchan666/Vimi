@@ -15,7 +15,7 @@ The welcome uses the publisher's group and duet covers, with Sign in under Join 
 - Floor: browse approved dance photos/videos, switch the short-video feed to covers from followed dancers, filter by style, discover dancers, join original eight-count challenges, publish with gallery/camera, comment, save, report and block.
 - Studio: keep practice sessions with routine, style, tempo, eight counts and notes. Set a weekly minute goal and track it against saved notes on this device. Replay a personal video with speed, mirror and loop controls. Optional coin-unlocked practice packs provide concrete reusable drills and planning prompts.
 - The free streaming video library includes all ten publisher-supplied clips, with Solo/Duets/Groups filters, account-scoped local saves, native rehearsal controls and reusable stable clip references in practice notes. All 55 supplied photos are available online in the profile image library with full preview and avatar-crop preview before an explicit profile save. Library bookmarks are local references, not offline video downloads.
-- Inbox: real Supabase direct messages between mutually following adults. A rehearsal invitation combines the routine and a time or note in an editable chat draft for the user to send. New conversations and every send check the relationship on the server.
+- Inbox: open a dancer’s conversation and draft a message from their profile. Every send checks mutual follows on the server. A rehearsal invitation combines the routine and a time or note in an editable draft.
 - Me: dance identity, own posts including review states, relationships, saved posts, practice history, wallet ledger and settings.
 
 ## Contracts

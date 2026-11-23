@@ -64,7 +64,6 @@ val validatePlayRelease = tasks.register("validatePlayRelease") {
             }
         }
         if (definitions["SUPABASE_PUBLISHABLE_KEY"].isNullOrBlank()) missing.add("SUPABASE_PUBLISHABLE_KEY is required")
-        if (definitions["PLAY_BILLING_ENABLED"] != "true") missing.add("Complete Google Play product/payment acceptance before releasing this coin-enabled product")
         if (definitions.keys.any { it.contains("SERVICE_ROLE") || it.contains("SERVICE_ACCOUNT") } || definitions.values.any { it.startsWith("sb_secret_") }) {
             missing.add("Privileged server credentials must never be supplied as Dart defines")
         }

@@ -27,6 +27,8 @@ int practiceMinutesThisWeek(Iterable<PracticeSession> sessions, DateTime time) {
       .fold(0, (total, session) => total + session.minutes);
 }
 
+enum StudioCreatorPreference { none, following, hidden }
+
 class LocalStudio {
   LocalStudio(this.preferences);
   static const maxWeeklyPracticeGoal = 7 * 24 * 60;
@@ -35,6 +37,7 @@ class LocalStudio {
   Future<void> _draftWork = Future.value();
   Future<void> _libraryClipWork = Future.value();
   final _unconfirmedLibraryClips = <String, Set<String>>{};
+  final _unconfirmedStudioCreator = <String, StudioCreatorPreference>{};
   final _unconfirmedGoals = <String, int?>{};
 
   Future<T> _journal<T>(Future<T> Function() action) {
@@ -101,6 +104,47 @@ class LocalStudio {
       onError: (Object _, StackTrace __) {},
     );
     return next;
+  }
+
+  String _studioCreatorPrefix(String account) =>
+      'studio-creator.v1/${Uri.encodeComponent(account)}/';
+
+  StudioCreatorPreference _readStudioCreatorPreference(String key) =>
+      _unconfirmedStudioCreator[key] ??
+      switch (preferences.get(key)) {
+        'following' => StudioCreatorPreference.following,
+        'hidden' => StudioCreatorPreference.hidden,
+        _ => StudioCreatorPreference.none,
+      };
+
+  StudioCreatorPreference studioCreatorPreference(String account, String id) =>
+      _readStudioCreatorPreference('${_studioCreatorPrefix(account)}$id');
+
+  Future<void> setStudioCreatorPreference(
+    String account,
+    String id,
+    StudioCreatorPreference preference,
+  ) => _journal(
+    () => _writeStudioCreatorPreference(
+      '${_studioCreatorPrefix(account)}$id',
+      preference,
+    ),
+  );
+
+  Future<void> _writeStudioCreatorPreference(
+    String key,
+    StudioCreatorPreference preference,
+  ) async {
+    _unconfirmedStudioCreator[key] = _readStudioCreatorPreference(key);
+    final saved = preference == StudioCreatorPreference.none
+        ? await preferences.remove(key)
+        : await preferences.setString(key, preference.name);
+    if (!saved) {
+      throw const FileSystemException(
+        'Your Studio preference could not be saved. Try again.',
+      );
+    }
+    _unconfirmedStudioCreator.remove(key);
   }
 
   int? weeklyPracticeGoal(String account) {
@@ -237,6 +281,16 @@ class LocalStudio {
     _unconfirmedGoals.remove(account);
     await preferences.remove('practice-goal.v1.$account');
     await preferences.remove('practice.v1.$account');
+    final creatorPrefix = _studioCreatorPrefix(account);
+    final creatorKeys = {
+      ...preferences.getKeys(),
+      ..._unconfirmedStudioCreator.keys,
+    };
+    await Future.wait([
+      for (final key in creatorKeys)
+        if (key.startsWith(creatorPrefix))
+          _writeStudioCreatorPreference(key, StudioCreatorPreference.none),
+    ]);
     final root = await getApplicationSupportDirectory();
     final directory = Directory('${root.path}/practice/$account');
     if (await directory.exists()) await directory.delete(recursive: true);

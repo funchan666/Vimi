@@ -15,7 +15,6 @@ import 'features/messages/direct_calls.dart';
 import 'features/shell.dart';
 import 'features/profile/profile_pages.dart';
 import 'features/studio/rehearsal_player.dart';
-import 'features/wallet/play_coins.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -189,7 +188,6 @@ class VimiApp extends StatefulWidget {
 class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
   final navigator = GlobalKey<NavigatorState>();
   String account = 'guest';
-  late final PlayCoins billing;
   late final PlaybackRouteObserver routes;
   late final DirectCalls calls;
   bool showingCall = false;
@@ -198,7 +196,6 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     account = widget.controller.account;
-    billing = PlayCoins(widget.controller);
     calls = DirectCalls(widget.controller)..addListener(openCall);
     calls.syncAccount();
     routes = PlaybackRouteObserver(
@@ -274,7 +271,6 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
     if (state != AppLifecycleState.resumed) {
       PlaybackCoordinator.pauseAll();
     } else {
-      unawaited(billing.retryPending());
       unawaited(widget.controller.refreshAccount());
     }
   }
@@ -284,7 +280,6 @@ class _VimiAppState extends State<VimiApp> with WidgetsBindingObserver {
     widget.controller.removeListener(changed);
     calls.removeListener(openCall);
     calls.dispose();
-    billing.dispose();
     WidgetsBinding.instance.removeObserver(this);
     widget.controller.dispose();
     super.dispose();

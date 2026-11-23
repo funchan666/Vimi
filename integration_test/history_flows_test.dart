@@ -14,7 +14,6 @@ import 'package:vimi/features/messages/inbox_pages.dart';
 import 'package:vimi/features/profile/profile_pages.dart';
 import 'package:vimi/features/profile/help_pages.dart';
 import 'package:vimi/features/profile/moderation_pages.dart';
-import 'package:vimi/features/wallet/wallet_page.dart';
 import 'support.dart';
 
 Finder mainScroll() {
@@ -218,13 +217,6 @@ void main() {
       await more(tester, 'Earlier reports');
       await loaded<Json>(tester, 31);
       binding.reportData!['private_report_history'] = 'passed';
-      await goBack(tester);
-      await openTestPage(tester, const WalletPage());
-      await loaded<Json>(tester, 25);
-      await more(tester, 'Earlier transactions');
-      await loaded<Json>(tester, 31);
-      expect(app.coins, 0);
-      binding.reportData!['ledger_history_balance_unchanged'] = 'passed';
       await goBack(tester);
       var forbidden = false;
       try {
