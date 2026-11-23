@@ -21,7 +21,7 @@ The November 20 welcome redesign replaces the generated welcome people with actu
 | Moderation | Independent fixed operator created and native sign-in verified. Child-safety filtering and actual content/media removal are verified. Credentials: private config/reviewer-access.json. |
 | App access | Ordinary reusable review login prepared in private config/play-review-access.json; no moderator role. See GOOGLE_PLAY_APP_ACCESS.md. |
 | Support/legal | The English policies are live at [Vimi](https://vimi-dance.pages.dev/) and match the bundled text. Support and child-safety email: funchan7777777@gmail.com. The designated child-safety contact name is pending before submission. |
-| Play Console | See [the submission guide](GOOGLE_PLAY_FORM_GUIDE.md) for account eligibility, the 12-person closed test requirement and approved launch region selections. |
+| Play Console | Start with the [internal test](GOOGLE_PLAY_FORM_GUIDE.md#0-先做内部测试). Then complete the app setup and run the 12-person closed test before applying for production access. |
 | Android upload signing | Supply your upload keystore and local key.properties |
 | Runtime and store acceptance | Prior Android and live-service checks are in VERIFICATION.md. The free revision requires its own build and install. |
 

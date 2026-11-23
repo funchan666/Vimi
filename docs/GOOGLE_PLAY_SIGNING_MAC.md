@@ -72,7 +72,7 @@ storeFile=/Users/你的Mac用户名/.android/keystores/vimi-upload.jks
 flutter build appbundle --release --dart-define-from-file=config/app.json
 ```
 
-输出文件为 `build/app/outputs/bundle/release/app-release.aab`。把它上传到 Play Console 的封闭式测试轨道。 [Flutter 安卓发布](https://docs.flutter.dev/deployment/android)
+输出文件为 `build/app/outputs/bundle/release/app-release.aab`。首包上传到 Play Console 的 **内部测试**轨道，安装通过后再用于封闭测试。步骤见 [Google Play 填报单](GOOGLE_PLAY_FORM_GUIDE.md#0-先做内部测试)。 [Flutter 安卓发布](https://docs.flutter.dev/deployment/android)
 
 ## 5. 上传前核对
 

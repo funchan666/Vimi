@@ -1,12 +1,25 @@
 # Vimi · Google Play 填报单
 
-核对日期为 2026 年 11 月 23 日。适用于 Vimi 的免费安卓首发版，包名为 `com.vimistudio.covercrew`。在确认发布资格后，打开 **Play Console → 选择 Vimi → Policy and programs → App content**，按下列项目逐项填写。表单显示的选项和补充问题取决于实际发行地区及版本。
+核对日期为 2026 年 11 月 23 日。适用于 Vimi 的免费安卓首发版，包名为 `com.vimistudio.covercrew`。先完成内部测试，再补齐商店资料和应用内容声明、做封闭测试，最后申请正式发布权限。表单选项和补充问题以实际发行地区、版本和控制台提示为准。
 
 ## 送审前待确认
 
 - **发布资格**。如旧账号终止决定涉及同一发布主体，先按 Google 原通知申诉或确认发布资格。 [Google Play 违规处置](https://support.google.com/googleplay/android-developer/answer/9899234?hl=zh-Hans)
 - **儿童安全负责人姓名**。暂空，提交儿童安全声明前补填有能力处理相关事件的真实联系人姓名。邮箱已确认。
 - **封闭测试人员**。当前尚未凑齐 12 位测试者。积累实际反馈并达到连续加入天数后，才可申请正式发布权限。
+
+## 0. 先做内部测试
+
+1. 在 Play Console 首页处理账号验证提示。如果显示设备验证任务，账号所有者在未 Root、运行 Android 10 或以上的安卓实体手机上，用 Play Console 手机应用完成验证。 [设备验证](https://support.google.com/googleplay/android-developer/answer/14316361?hl=zh-Hans)
+2. 在 **所有应用 → 创建应用** 填写应用名 `Vimi Dance Covers`、默认语言 `English (United States)`，选择 **应用**、**免费**。如果页面询问包名，填 `com.vimistudio.covercrew`。联系邮箱填 `funchan7777777@gmail.com`。核对并处理创建页要求的声明。 [创建应用](https://support.google.com/googleplay/android-developer/answer/9859152?hl=zh-Hans)
+3. 在 Mac 上按 [签名打包步骤](GOOGLE_PLAY_SIGNING_MAC.md) 生成上传签名的 `build/app/outputs/bundle/release/app-release.aab`。如果本包名还没上传过，首包可用 `1.0.0`、版本代码 `1`。首次上传后，这个应用的包名固定。
+4. 打开 **测试和发布 → 测试 → 内部测试 → 测试人员**。创建邮箱名单，先加你自己手机上 Play 商店正在登录的 Google 账号，有其他可信测试者也可加。勾选名单并保存。反馈邮箱填 `funchan7777777@gmail.com`。Google 账号用于加入 Play 测试，Vimi 登录使用应用内账号。
+5. 切到 **版本 → 创建新版本**，按提示设置 Play App Signing，上传 AAB，核对包名和版本。检查预览后，在**内部测试轨道**发布。如果 **发布概览** 显示有变更等待提交审核，按控制台提示提交，等轨道显示可用。首次发布可能需要审核，具体看控制台状态。 [内部测试设置](https://support.google.com/googleplay/android-developer/answer/9845334?hl=zh-Hans) · [审核与发布状态](https://support.google.com/googleplay/android-developer/answer/9859654?hl=zh-Hans)
+6. 在 **测试人员** 页复制加入链接。在安卓手机上用刚才加入名单的 Google 账号打开链接，加入测试，然后从 Google Play 安装 Vimi。当前阶段可以从一位测试者开始。
+
+安装后优先验证注册、登录与密码找回，短视频播放、发帖、评论、举报、拉黑、账号删除和政策链接。双人测试时，用两个 Vimi 账号互关，验证消息、语音和视频通话。记录设备型号、Android 版本、应用版本和复现步骤。有修复时，提高 `versionCode` 后把新 AAB 发到内部测试轨道复测。
+
+内部测试的参与人数和天数不计入后续封测要求。内部测试通过后，在 Console 的 **应用内容（App content）** 按下面的表格填报，补齐商店文案和图，再发布封测。儿童安全负责人姓名在此时补填。 [新个人账号测试要求](https://support.google.com/googleplay/android-developer/answer/14151465?hl=zh-Hans)
 
 ## 1. Privacy policy
 
@@ -103,8 +116,8 @@ Open Vimi and tap Sign in below Join the crew. Enter the supplied email and pass
 ## 9. 封测与正式发布
 
 1. **测试和发布 → 测试 → 封闭式测试 → 管理轨道 → 测试人员**。添加参与者的 Google 账号邮箱，并配置反馈邮箱。
-2. 在该轨道创建版本，上传正式签名的 AAB，保存版本。若 **发布概览** 显示有待提交更改，点 **送审**。
-3. 封测版本可用后复制加入链接，发给名单里的真实测试者。让他们用名单中的 Google 账号主动加入，通过 Google Play 安装并实际使用。
+2. 在该轨道创建版本，从制品库选用通过内部测试的 AAB。代码有改动时，上传版本代码更高且已复测的签名 AAB。若 **发布概览** 显示有待提交更改，点 **送审**。
+3. 封测版本可用后复制加入链接，发给名单里的真实测试者。让他们用名单中的 Google 账号主动加入，通过 Google Play 安装并实际使用。参加过内部测试的人先通过原链接退出内部测试，再通过封测链接加入。
 4. 至少 12 位测试者保持连续加入 14 天。申请时也要保持达标。把测试期间真实发现的问题、修复内容和复测结果留作答卷材料。
 5. 在应用 **信息中心 → 申请正式发布权限**，填写 Google 问卷。
 
