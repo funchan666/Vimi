@@ -21,6 +21,8 @@ Vimi uses your microphone when you start or answer a call, and uses your camera 
 
 Supabase processes participant account IDs, call type, status, timestamps and temporary WebRTC connection details such as IP addresses. This information is used to connect calls, enforce account safety rules and avoid overlapping calls. Connection details in the call database are cleared after calls end or expire. Call metadata is scheduled for deletion about one day after a call ends. Provider logs and backups follow the schedules described below.
 
+Calls use Google’s STUN service by default to check how the devices can reach each other. The service can see network information such as IP addresses. If a relay is configured, it helps carry encrypted call traffic between participants.
+
 Local practice and drafts
 
 Private practice notes, rehearsal-video copies, drill progress and unsent drafts remain on the device in the account where you made them. They are not automatically uploaded or synced to other devices. Sharing a practice video as a social post is a separate action. Local practice drafts and recovery copies use device storage; they are not represented as encrypted cloud backups.

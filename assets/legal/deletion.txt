@@ -1,4 +1,4 @@
-Vimi Account Deletion and Data Requests
+Vimi Account Deletion
 Updated November 23, 2026
 
 Delete in the app

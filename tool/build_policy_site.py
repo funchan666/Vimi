@@ -22,7 +22,11 @@ PAGES = {
     "community": ("Community Guidelines", "The rules for sharing covers and connecting with dancers on Vimi."),
     "terms": ("Terms of Use", "The terms for using the Vimi dance community."),
 }
-TOP_NAV = ("privacy", "child-safety", "deletion")
+TOP_NAV = (
+    ("privacy", "Privacy Policy"),
+    ("child-safety", "Child safety"),
+    ("deletion", "Account deletion"),
+)
 
 
 def nav_link(slug, label, current=None):
@@ -31,7 +35,7 @@ def nav_link(slug, label, current=None):
 
 
 def shell(title, description, body, current="index"):
-    navigation = "".join(nav_link(slug, PAGES[slug][0], current) for slug in TOP_NAV)
+    navigation = "".join(nav_link(slug, label, current) for slug, label in TOP_NAV)
     footer_links = "".join(nav_link(slug, label, current) for slug, (label, _) in PAGES.items())
     home_active = ' aria-current="page"' if current == "index" else ""
     return f"""<!doctype html>
@@ -94,7 +98,7 @@ def home(catalog):
     <section class="wrap hero" aria-labelledby="hero-title">
       <div class="hero-copy">
         <h1 id="hero-title">Find your dance crew.</h1>
-        <p>Share a K-pop cover, find dancers who move to the same beat and keep track of your practice. Free on Android for adults 18+.</p>
+        <p>Share a K-pop cover, meet other dancers and keep track of your practice. A free Android community for adults 18+.</p>
         <a class="button" href="#on-the-floor">Explore Vimi</a>
       </div>
       <figure class="hero-photo">
