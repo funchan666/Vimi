@@ -6,12 +6,12 @@ English Flutter/Dart Android dance community. Project package: `com.vimistudio.v
 
 - Neon-gradient Vimi icon and controls, dark violet surfaces, two original neon-lit photographic dance assets, 32 original raster utility glyphs and locally bundled DM Sans.
 - Floor: approved photo/video posts, style filters, dancer discovery, three original choreography challenges, publishing from the gallery/camera, comments, edits, likes, saves, reports and blocks.
-- Studio: a persistent private rehearsal journal, retained personal videos, playback speed/mirror/loop/seek, and three concrete coin-unlocked planning packs.
-- Inbox: real Supabase messages after mutual following, unread/read states, draft persistence and reports. No fabricated conversations or followers.
-- Me: profile editing and avatar capture, relationship lists, own posts/review states, saved work, coin wallet, policies, sign-out and account deletion.
-- Supabase schema, private Storage and four deployed Edge Functions for purchase verification, account deletion, moderation and refund reconciliation.
+- Studio: a searchable private rehearsal journal, retained personal videos, playback speed/mirror/loop/seek, and three free practice plans with saved checklists.
+- Inbox: Supabase messaging, voice calls and video calls with mutual follows, unread/read states, draft persistence and reports.
+- Me: profile editing and avatar capture, relationships, cover review filters, saved work, policies, sign-out and account deletion.
+- Supabase account, community, moderation and private media storage.
 
-Current [neon visual reference](docs/design-preview/vimi-neon-floor-v3-concept.png) is generated with illustrative member data, not an app screenshot. See [the handoff](docs/HANDOFF.md), [Google Play products](docs/GOOGLE_PLAY_PRODUCTS.md), [backend operations](docs/BACKEND.md) and [runtime verification](docs/VERIFICATION.md).
+The [neon design concept](docs/design-preview/vimi-neon-floor-v3-concept.png) uses illustrative member data. See [the handoff](docs/HANDOFF.md), [backend operations](docs/BACKEND.md) and [runtime verification](docs/VERIFICATION.md).
 
 ## Configuration
 
@@ -34,7 +34,7 @@ Release signing requires `android/key.properties` based on `android/key.properti
 
 Android debug builds, analyzer, focused storage/widget tests and live Android/Supabase journeys were executed for the user's requested runnable verification. See `docs/VERIFICATION.md` for evidence and the exact remaining boundaries. Generated design concepts remain separate from actual emulator screenshots.
 
-Production release signing, Google Play products/service credentials and real Play license-test purchases remain publisher setup. Billing stays visibly unavailable until they are configured. Production recovery-email delivery and public legal/operator details also require publisher configuration. No store upload or production release was made.
+Release signing, production recovery email and publication of the legal pages require publisher configuration. The [website and public policies](policy-site/dist/index.html) are ready for static hosting. Run `python3 tool/build_policy_site.py` to regenerate them from the policy text bundled in the app.
 
 The support email is `funchan7777777@gmail.com`; the separate content-review login is kept in private `config/reviewer-access.json`. Ordinary signup no longer waits for email confirmation; existing passwords are verified. No commercial music is bundled and no automatic follows or fictional engagement is generated.
 

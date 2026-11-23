@@ -451,7 +451,6 @@ class DanceRepository {
       (row) => row,
     );
   }
-
 }
 
 String readableError(Object error) {

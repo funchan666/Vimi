@@ -1,17 +1,17 @@
 Vimi Privacy Policy
-Effective November 18, 2026; updated November 23, 2026
+Updated November 23, 2026
 
-Vimi is an adult dance community. For privacy requests or questions, contact funchan7777777@gmail.com. This policy applies to the Vimi Android application and its account, social, practice and coin features.
+Vimi is a free Android dance community for adults aged 18 and over. This policy covers the app and this website. For privacy requests or questions, contact Vimi at funchan7777777@gmail.com.
 
 Accounts and public profiles
 
-Vimi processes your email, password authentication, account ID, display name and date of birth to create and secure an account and apply the 18-and-over rule. Supabase Auth handles password authentication; Vimi does not display passwords to members. The date of birth is private and is not identity verification. Session and pending purchase credentials are stored in encrypted device storage.
+Vimi processes your email, account ID, display name and date of birth to create and secure an account and apply the 18-and-over rule. Supabase Auth handles password authentication. Your date of birth stays private and is used to check your age eligibility. Sign-in sessions are stored in encrypted device storage.
 
 Your saved display name, dance styles, bio and avatar are visible to signed-in members. Approved dance photos, videos, captions and comments are community content. Likes and follows enable social features. Saved posts, blocks, reports and unpublished posts are not public community lists. Do not add personal information to a public post or profile unless you want other members to see it.
 
 Messages, media and safety
 
-Direct messages and participant identifiers are stored for conversations between mutual follows. They are not end-to-end encrypted. Participants and authorized support or moderation processing may access them. Reports, review decisions and account restrictions are processed to respond to abuse, copyright concerns and child-safety incidents.
+Direct messages and participant identifiers are stored for conversations between mutual follows. Messages are protected in transit. Participants can read the messages and authorized staff can access them when needed for support or moderation. Reports, review decisions and account restrictions help us respond to abuse, copyright concerns and child-safety incidents.
 
 Only media you choose for an avatar or social post is uploaded when you save or submit it. A submitted upload can remain as a private draft if publication is interrupted, until you discard it or delete the account. An external system camera or photo picker handles profile and post capture and selection. Vimi does not request broad photo-library access, precise location, an address book, or access to unrelated files. Selected videos can contain audio.
 
@@ -25,15 +25,15 @@ Local practice and drafts
 
 Private practice notes, rehearsal-video copies, drill progress and unsent drafts remain on the device in the account where you made them. They are not automatically uploaded or synced to other devices. Sharing a practice video as a social post is a separate action. Local practice drafts and recovery copies use device storage; they are not represented as encrypted cloud backups.
 
-Publisher-provided reference videos and profile-library images load from public Supabase Storage URLs and require an internet connection. Anyone with a library media URL can retrieve that publisher content; this does not make member uploads public. Requests expose network information such as an IP address to the provider for delivery and security, as described below. Saved library bookmarks and practice-note references stay on the current device/account and do not download videos for offline use. Choosing a library profile image downloads its bytes; it is copied into your account media only when you save the profile. That saved image then follows the same profile and account-media rules as a photo you select yourself.
+Publisher-provided reference videos and profile-library images load from public Supabase Storage URLs. Anyone with a library media URL can retrieve that publisher content. Member uploads use private storage. Requests for those public library assets, including artwork on this website, expose network information such as an IP address to the provider for delivery and security. Saved library bookmarks and practice-note references stay on the current device and account. A library image becomes part of your account media when you choose it and save your profile.
 
-Purchases
+Website
 
-When purchasing is available, Google Play processes payment. Vimi processes product IDs, purchase tokens, order identifiers, an obfuscated account identifier, coin balances, unlocks and ledger entries for verification, fulfillment, refunds and fraud prevention. Vimi does not receive payment-card numbers. Coins have no cash-out or member-to-member transfer. If purchases are unavailable, the app says so and does not provide an alternative payment method.
+You can read this website without signing in. The site uses no advertising trackers or analytics scripts. The website host and the media provider can receive standard network and request information to serve pages and assets securely. A support or deletion link opens your email app so you can choose what to send.
 
 Providers and security
 
-Supabase hosts Vimi authentication, database, private uploaded media and Realtime messaging. The current project is hosted in the United States; service processing may occur in other jurisdictions used by the providers. Google processes Play purchases and related store services and hosts Vimi's support mailbox. Support messages you choose to send are processed to handle your request. Provider request logs include IP-derived approximate city and country, request times, user-agent and session information, and TLS/client fingerprints for operation, security and abuse prevention. Search terms and filter parameters sent to the database can also appear in request URLs retained in these logs. Vimi does not request GPS or precise-device-location permission. Vimi does not use an advertising SDK, sell user data or use a separate behavioral analytics SDK in this version.
+Supabase hosts Vimi authentication, database, private uploaded media and Realtime messaging. The Supabase project is hosted in the United States. Providers may process data in other jurisdictions where they operate. Google distributes the app through Google Play and hosts Vimi’s support mailbox. We use the support messages you send to handle your request. Provider request logs can include an IP address, approximate city and country derived from it, request times, browser or app information, session information and technical connection details. Database requests can include search terms and filters in the request URL. Vimi does not request precise location permission or use advertising or separate behavioral analytics SDKs. Vimi does not sell personal data.
 
 Cloud communication uses HTTPS or secure Realtime connections. Account access rules restrict private data and media; authorized administrators can process it for the purposes above. Temporary media links expire, but an already issued link may remain usable until expiry. No security system can prevent every misuse, and members may independently copy content they can view.
 
@@ -41,9 +41,9 @@ Retention and deletion
 
 Profile and social data remain while an account is used, until you remove the content, request deletion or moderation requires action. You can edit your profile, delete posts and comments, block users and delete your account in Settings. You may also request account or specific-data deletion without reinstalling the app by emailing funchan7777777@gmail.com with the subject Vimi account deletion request. Support verifies ownership before acting; never send your password.
 
-Deletion removes the account and its profile, posts, comments, messages, relationships and uploaded account media. The app clears the deleted account's local practice data on the device completing deletion. Uninstalling removes local data but does not delete the cloud account. Other device copies and independently saved member copies are outside Vimi's remote control.
+Deletion removes the account and its profile, posts, comments, messages, relationships, call records and uploaded account media. The app clears the deleted account’s local practice data on the device completing deletion. To clear copies on another device, remove those copies or clear the app data there. Independently saved copies are outside Vimi’s remote control. Use the account deletion flow or email us to remove the cloud account.
 
-Limited transaction and safety audit records may remain for refunds, fraud prevention, security investigations or legal obligations, with direct profile links removed where possible. Remaining order identifiers and restricted safety metadata are not described as fully anonymous. Provider backups and operational logs follow their applicable retention schedules. Retention must remain limited to the stated purpose and applicable obligations; ask support about your specific request.
+Limited safety and security records may remain for abuse prevention, investigations or legal obligations. These records have restricted access. Provider backups and operational logs expire under their applicable retention schedules. Contact support about retention for a specific request.
 
 Children and updates
 

@@ -12,7 +12,7 @@
 - Storage read rules now require an active account even for an object's owner. Previously issued short-lived signed links retain their original expiry; suspended/deleting owners cannot use RLS to obtain new access. A hosted rollback test verifies the active/suspended distinction.
 - Privacy, terms, guidelines, child-safety and deletion text now describe the actual cloud/device boundary, messages, media, provider processing, IP/request logs and permitted record retention. Upload visibility is explained in the profile and publisher.
 - Standard HTML policies are generated from those same bundled text files under `policy-site/dist`. The deletion page opens an email request without requiring app reinstallation. Publication and an unauthenticated public HTTP check are still required before entering a URL into Play Console.
-- `validatePlayRelease` blocks release variants with missing policy URLs, contact addresses, backend configuration, upload signing, server-only client secrets or disabled billing. Profile/debug previews remain available. This gate validates configuration, not Google approval or legal compliance.
+- `validatePlayRelease` blocks release variants with missing policy URLs, contact addresses, backend configuration, upload signing, server-only client secrets. Profile/debug previews remain available. This gate validates configuration, not Google approval or legal compliance.
 
 ## Evidence and boundaries
 
@@ -20,14 +20,14 @@
 | --- | --- | --- |
 | Target API | Current 36,909,069-byte preview targets API 36; source pins 36 | Check the final submitted AAB again |
 | Permissions | Current preview has Internet, Billing, network state, wake lock and an app-private receiver permission; no broad gallery, contacts, location, all-files or advertising-ID permission | Reinspect every final merged release manifest after SDK changes |
-| Billing SDK | Existing preview and pinned plugin use Play Billing 8.0.0 | Real products, verifier credential, license testing and refund reconciliation; billing is disabled |
+| App pricing | Current source removes Google Play Billing and the wallet. The three practice plans are free. | Confirm the final AAB manifest and Play Console listing. |
 | 16 KB pages | Current ARM64 preview ELF load segments and APK zip alignment pass static 16 KB checks | A final AAB and actual 16 KB device/runtime run are separate checks |
 | Child safety / moderation | SQL rollback and actual harmless-fixture API removal/role checks are recorded under verification/2026-11-19 | A trained, available human operator and legally appropriate escalation/reporting procedure; code cannot replace this |
 | Account deletion | Genuine deletion was previously verified; a suspended actor also completed real native deletion in this pass | Support must verify and fulfill emailed deletion requests without requiring reinstallation |
 | Policy URLs | Source and standard HTML pages are complete | Public hosting without login/geofencing/download behavior, then match app and Console URLs |
 | Store access | An ordinary reusable account is provisioned in private config/play-review-access.json; provide it in App access | Never provide the content-moderator password as the ordinary member login |
 | Supplied reference media | All 55 photos/ten complete videos are compressed, bundled and covered by native checks; publisher confirmed commercial/likeness/audio rights | Keep underlying rights and required attribution records; confirmation is not independent legal clearance. See media/SUPPLIED_MEDIA.md |
-| Data safety | Source-based mapping in GOOGLE_PLAY_DATA_SAFETY.md | Confirm against final SDKs, provider logs, support practices and billing state |
+| Data safety | Source-based mapping in GOOGLE_PLAY_DATA_SAFETY.md | Confirm against final SDKs, provider logs, support practices and direct-call infrastructure |
 | Developer / store forms | No operator company or legal jurisdiction was invented; the publisher confirmed there is none to supply yet | Genuine developer identity/package registration, audience 18+, IARC, child-safety declaration and access instructions |
 
 ## Before submitting
@@ -38,9 +38,8 @@
 4. Declare the target audience as adults 18+ and answer IARC honestly about member posts, photos/videos and 1:1 messages. An adult audience does not exempt social apps from child-safety standards. The current date-of-birth check is not identity verification.
 5. App access must contain a maintained ordinary review account, English instructions and access to all restricted features. Normal review behavior must match the released product. Keep operator credentials separate; do not add reviewer/device/IP-based feature switching.
 6. Complete Data safety from the submitted build and actual service processing. Do not select “no data collected” for this Supabase social app, and do not claim end-to-end encryption or an independent security certification.
-7. Activate and validate the exact seven coin products and server verifier, then enable billing. Use a real Play testing-track install and tester purchases; inspect pending/cancel/refund/duplicate handling and operate refund reconciliation. Product IDs alone are not payment acceptance. Do not add external payment links or paid messaging.
-8. Prepare an upload-signed AAB. Check Play's pre-launch report, final manifest, target API, Billing version, 64-bit/page-size packaging and supported devices. Screenshots/descriptions must show actual working features and avoid unlicensed music, idol artwork, fake engagement or promises of professional/AI scoring.
-9. Operate moderation after release. Check child-safety reports promptly, act on confirmed violations and retain only legally necessary evidence with restricted access. Do not email or circulate suspected CSAM. Follow CHILD_SAFETY_OPERATIONS.md and applicable law.
+7. Prepare an upload-signed AAB. Check Play's pre-launch report, final manifest, target API, 64-bit/page-size packaging and supported devices. Screenshots/descriptions must show actual working features and avoid unlicensed music, idol artwork, fake engagement or promises of professional/AI scoring.
+8. Operate moderation after release. Check child-safety reports promptly, act on confirmed violations and retain only legally necessary evidence with restricted access. Do not email or circulate suspected CSAM. Follow CHILD_SAFETY_OPERATIONS.md and applicable law.
 
 ## Product and account-level risk
 
@@ -55,7 +54,6 @@ Vimi includes dance-specific eight-count prompts, rehearsal speed/mirror/loop co
 - [User data / privacy requirements](https://support.google.com/googleplay/android-developer/answer/18265346?hl=en)
 - [Data safety definitions and provider-processing distinctions](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en)
 - [Target API requirements](https://support.google.com/googleplay/android-developer/answer/11926878?hl=en)
-- [Billing support timeline](https://developer.android.com/google/play/billing/deprecation-faq)
 - [16 KB packaging and runtime verification](https://developer.android.com/guide/practices/page-sizes)
 - [Maintained review login requirements](https://support.google.com/googleplay/android-developer/answer/15748846?hl=en)
 - [Enforcement and related accounts](https://support.google.com/googleplay/android-developer/answer/9899234?hl=en)

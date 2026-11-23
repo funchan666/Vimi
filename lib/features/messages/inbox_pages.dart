@@ -160,18 +160,44 @@ class _InboxPageState extends State<InboxPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Row(
-                children: [
-                  Expanded(child: _searchField()),
-                  const SizedBox(width: 8),
-                  VIconButton(
-                    Glyph.edit,
-                    label: 'New conversation',
-                    primary: true,
-                    onPressed: openingContact == null ? compose : null,
-                  ),
-                ],
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+              child: SurfacePanel(
+                illuminated: true,
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 3),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: _searchField()),
+                        const SizedBox(width: 8),
+                        VIconButton(
+                          Glyph.edit,
+                          label: 'New conversation',
+                          primary: true,
+                          onPressed: openingContact == null ? compose : null,
+                        ),
+                      ],
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Wrap(
+                        spacing: 6,
+                        children: [
+                          _InboxFilter(
+                            label: 'All',
+                            selected: !unreadOnly,
+                            onPressed: () => setState(() => unreadOnly = false),
+                          ),
+                          _InboxFilter(
+                            label: 'Unread',
+                            selected: unreadOnly,
+                            onPressed: () => setState(() => unreadOnly = true),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -211,27 +237,6 @@ class _InboxPageState extends State<InboxPage> {
                           ScrollViewKeyboardDismissBehavior.onDrag,
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 3),
-                          child: Row(
-                            children: [
-                              _InboxFilter(
-                                label: 'All',
-                                selected: !unreadOnly,
-                                onPressed: () =>
-                                    setState(() => unreadOnly = false),
-                              ),
-                              const SizedBox(width: 6),
-                              _InboxFilter(
-                                label: 'Unread',
-                                selected: unreadOnly,
-                                onPressed: () =>
-                                    setState(() => unreadOnly = true),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Divider(height: 1, color: VimiColors.tonal),
                         if (!searching &&
                             !unreadOnly &&
                             contacts.items.isNotEmpty)
@@ -268,6 +273,17 @@ class _InboxPageState extends State<InboxPage> {
                           _FindDancersShelf(
                             onOpenAll: discoverDancers,
                             key: ValueKey(owner),
+                          ),
+                        if (rows.isNotEmpty && !searching)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
+                            child: Semantics(
+                              header: true,
+                              child: Text(
+                                unreadOnly ? 'Unread chats' : 'Conversations',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
                           ),
                         for (final row in rows)
                           _InboxConversation(

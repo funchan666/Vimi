@@ -91,13 +91,9 @@ class StudioPage extends StatelessWidget {
         const SizedBox(height: 22),
         Padding(
           padding: const EdgeInsets.fromLTRB(4, 0, 4, 6),
-          child: Text(
-            'Practice plans',
-            style: type.titleMedium,
-          ),
+          child: Text('Practice plans', style: type.titleMedium),
         ),
-        for (final plan in StudioPack.all)
-          _PracticePlanRow(plan: plan),
+        for (final plan in StudioPack.all) _PracticePlanRow(plan: plan),
       ],
     );
   }
@@ -130,8 +126,7 @@ class _PracticeHistoryPageState extends State<PracticeHistoryPage> {
     final visibleNotes = app.practices.where((note) {
       final matchesFilter = switch (_filter) {
         'This week' =>
-          !note.createdAt.isBefore(week.start) &&
-              !note.createdAt.isAfter(now),
+          !note.createdAt.isBefore(week.start) && !note.createdAt.isAfter(now),
         'With video' => note.videoPath?.isNotEmpty == true,
         _ => true,
       };
@@ -164,9 +159,13 @@ class _PracticeHistoryPageState extends State<PracticeHistoryPage> {
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         itemCount: 1 + (error == null ? visibleNotes.length : 0),
         itemBuilder: (context, index) {
-          if (index > 0) return _PracticeNoteRow(practice: visibleNotes[index - 1]);
+          if (index > 0)
+            return _PracticeNoteRow(practice: visibleNotes[index - 1]);
           if (error != null) {
-            return ErrorNote(error, onRetry: () => unawaited(app.refreshAccount()));
+            return ErrorNote(
+              error,
+              onRetry: () => unawaited(app.refreshAccount()),
+            );
           }
           if (app.practices.isEmpty) {
             return SurfacePanel(
@@ -194,13 +193,16 @@ class _PracticeHistoryPageState extends State<PracticeHistoryPage> {
               ),
               const SizedBox(height: 16),
               if (visibleNotes.isEmpty)
-                const EmptyNote('No matching notes', 'Try a different search or filter.')
+                const EmptyNote(
+                  'No matching notes',
+                  'Try a different search or filter.',
+                )
               else
                 Text(
                   '${visibleNotes.length} ${visibleNotes.length == 1 ? 'note' : 'notes'}',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: VimiColors.muted,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelMedium?.copyWith(color: VimiColors.muted),
                 ),
             ],
           );
@@ -219,7 +221,8 @@ class _PracticeNoteRow extends StatelessWidget {
     message: 'Open practice',
     child: _StudioRow(
       name: practice.routine,
-      metadata: '${practice.style} · ${practice.minutes} min · ${displayDate(practice.createdAt)}',
+      metadata:
+          '${practice.style} · ${practice.minutes} min · ${displayDate(practice.createdAt)}',
       glyph: practice.videoPath == null ? Glyph.studio : Glyph.video,
       onPressed: () => openPage(context, PracticeEditor(session: practice)),
     ),
@@ -568,159 +571,224 @@ class _PracticeEditorState extends State<PracticeEditor> {
   );
 }
 
-class StudioPackPage extends StatefulWidget {
-  const StudioPackPage({super.key, required this.pack});
-  final StudioPack pack;
-  @override
-  State<StudioPackPage> createState() => _StudioPackPageState();
+String _planProgressKey(String account, StudioPack plan) =>
+    'pack-progress.v1.$account.${plan.id}';
+
+Set<int> _checkedPlanSteps(
+  LocalStudio studio,
+  String account,
+  StudioPack plan,
+) {
+  final saved = studio.preferences.get(_planProgressKey(account, plan));
+  if (saved is! List) return {};
+  return saved
+      .whereType<String>()
+      .map(int.tryParse)
+      .whereType<int>()
+      .where((index) => index >= 0 && index < plan.drills.length)
+      .toSet();
 }
 
-class _StudioPackPageState extends State<StudioPackPage> {
+class _PracticePlanRow extends StatelessWidget {
+  const _PracticePlanRow({required this.plan});
+  final StudioPack plan;
+
+  @override
+  Widget build(BuildContext context) {
+    final app = VimiScope.of(context);
+    final checked = _checkedPlanSteps(app.studio, app.account, plan).length;
+    return _StudioRow(
+      name: plan.title,
+      metadata: checked == 0
+          ? '${plan.drills.length} steps'
+          : '$checked of ${plan.drills.length} steps complete',
+      glyph: checked == plan.drills.length ? Glyph.check : Glyph.loop,
+      onPressed: () => openPage(context, PracticePlanPage(plan: plan)),
+    );
+  }
+}
+
+class PracticePlanPage extends StatefulWidget {
+  const PracticePlanPage({super.key, required this.plan});
+  final StudioPack plan;
+
+  @override
+  State<PracticePlanPage> createState() => _PracticePlanPageState();
+}
+
+class _PracticePlanPageState extends State<PracticePlanPage> {
   bool busy = false;
   String? error;
   Set<int> checked = {};
   String? owner;
-  String keyFor(String account) =>
-      'pack-progress.v1.$account.${widget.pack.id}';
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final app = VimiScope.of(context);
     if (owner != app.account) {
       owner = app.account;
-      checked =
-          (app.studio.preferences.getStringList(keyFor(app.account)) ?? [])
-              .map(int.tryParse)
-              .whereType<int>()
-              .where((index) => index >= 0 && index < widget.pack.drills.length)
-              .toSet();
+      checked = _checkedPlanSteps(app.studio, app.account, widget.plan);
+      error = null;
     }
   }
 
-  Future<void> unlock() async {
-    if (busy || !await requireSignIn(context) || !mounted) return;
-    final app = VimiScope.of(context), pack = widget.pack;
-    if (app.coins < pack.cost) {
-      await openPage(context, const WalletPage());
-      return;
-    }
-    if (!await confirmAction(
-          context,
-          title: 'Unlock ${pack.title}?',
-          body:
-              'Spend ${pack.cost} coins once for this planning pack. It stays available in your account.',
-          action: 'Unlock · ${pack.cost} coins',
-        ) ||
-        !mounted)
-      return;
-    setState(() => busy = true);
+  Future<void> saveProgress(Set<int> next) async {
+    final app = VimiScope.of(context);
+    final account = app.account;
+    if (busy || owner != account) return;
+    final preferences = app.studio.preferences;
+    final key = _planProgressKey(account, widget.plan);
+    final previous = checked;
+    setState(() {
+      busy = true;
+      error = null;
+    });
     try {
-      await app.repo!.unlock(pack.id);
-      await app.refreshWallet();
+      final saved = await preferences.setStringList(
+        key,
+        next.map((index) => '$index').toList(),
+      );
+      if (!saved) {
+        throw const FileSystemException(
+          'Your progress could not be saved. Please try again.',
+        );
+      }
+      if (mounted && app.account == account) {
+        setState(() => checked = next);
+        app.changed();
+      }
     } catch (e) {
-      if (mounted) setState(() => error = readableError(e));
+      // SharedPreferences changes its cache before the platform confirms a write.
+      await preferences
+          .setStringList(key, previous.map((index) => '$index').toList())
+          .onError((_, _) => false);
+      if (mounted && app.account == account) {
+        setState(() => error = readableError(e));
+      }
     } finally {
       if (mounted) setState(() => busy = false);
+    }
+  }
+
+  Future<void> resetProgress() async {
+    final app = VimiScope.of(context);
+    final account = app.account;
+    if (busy || checked.isEmpty) return;
+    final confirmed = await confirmAction(
+      context,
+      title: 'Reset practice plan?',
+      body: 'Clear the checked steps to use this plan again.',
+      action: 'Reset progress',
+    );
+    if (confirmed && mounted && app.account == account) {
+      await saveProgress({});
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final app = VimiScope.of(context);
-    final pack = widget.pack;
-    final unlocked = app.unlocked.contains(pack.id);
-    return VPage(
-      title: pack.title,
-      child: ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          Text(
-            pack.description,
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            unlocked ? 'Your practice sequence' : 'What is inside',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 12),
-          for (var i = 0; i < pack.drills.length; i++)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    final plan = widget.plan;
+    final type = Theme.of(context).textTheme;
+    final total = plan.drills.length;
+    final progressLabel = '${checked.length} of $total steps complete';
+    return PopScope(
+      canPop: !busy,
+      child: VPage(
+        title: plan.title,
+        actions: [
+          if (checked.isNotEmpty)
+            VIconButton(
+              Glyph.refresh,
+              label: 'Reset plan progress',
+              color: VimiColors.cyan,
+              onPressed: busy ? null : resetProgress,
+            ),
+        ],
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          children: [
+            SurfacePanel(
+              illuminated: true,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (unlocked)
-                    VIconButton(
-                      checked.contains(i) ? Glyph.check : Glyph.add,
-                      label:
-                          '${checked.contains(i) ? 'Uncheck' : 'Complete'} step ${i + 1}',
-                      onPressed: busy
-                          ? null
-                          : () async {
-                              final account = app.account;
-                              final index = i;
-                              final next = {...checked};
-                              if (!next.add(index)) next.remove(index);
-                              setState(() => busy = true);
-                              try {
-                                final ok = await app.studio.preferences
-                                    .setStringList(
-                                      keyFor(account),
-                                      next.map((n) => '$n').toList(),
-                                    );
-                                if (!ok)
-                                  throw const FileSystemException(
-                                    'Your progress could not be saved. Please try again.',
-                                  );
-                                if (mounted && app.account == account)
-                                  setState(() => checked = next);
-                              } catch (e) {
-                                if (mounted)
-                                  setState(() => error = readableError(e));
-                              } finally {
-                                if (mounted) setState(() => busy = false);
-                              }
-                            },
-                    )
-                  else
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4, right: 12),
-                      child: Text('${i + 1}.'),
-                    ),
-                  Expanded(
-                    child: Text(
-                      pack.drills[i],
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
+                  Text(plan.description, style: type.titleMedium),
+                  const SizedBox(height: 16),
+                  Text(
+                    progressLabel,
+                    style: type.bodyMedium?.copyWith(color: VimiColors.muted),
+                  ),
+                  const SizedBox(height: 8),
+                  LinearProgressIndicator(
+                    value: checked.length / total,
+                    minHeight: 4,
+                    borderRadius: BorderRadius.circular(4),
+                    color: VimiColors.cyan,
+                    backgroundColor: VimiColors.tonal,
+                    semanticsLabel: 'Practice plan progress',
+                    semanticsValue: progressLabel,
                   ),
                 ],
               ),
             ),
-          const SizedBox(height: 24),
-          if (error != null) ErrorNote(error!),
-          if (unlocked)
-            VButton(
-              'Use in a practice note',
-
-              onPressed: () => openPage(context, PracticeEditor(pack: pack)),
-            )
-          else
-            VButton(
-              'Unlock · ${pack.cost} coins',
-              glyph: Glyph.coin,
-              busy: busy,
-              onPressed: unlock,
-            ),
-          VButton(
-            'Your coin wallet',
-            quiet: true,
-            onPressed: () async {
-              if (await requireSignIn(context) && context.mounted)
-                await openPage(context, const WalletPage());
-            },
-          ),
-        ],
+            const SizedBox(height: 16),
+            for (final (index, drill) in plan.drills.indexed)
+              Semantics(
+                checked: checked.contains(index),
+                child: TextButton(
+                  onPressed: busy
+                      ? null
+                      : () {
+                          final next = {...checked};
+                          if (!next.add(index)) next.remove(index);
+                          unawaited(saveProgress(next));
+                        },
+                  style: TextButton.styleFrom(
+                    foregroundColor: VimiColors.ink,
+                    minimumSize: const Size(48, 52),
+                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                  ),
+                  child: Row(
+                    children: [
+                      VIcon(
+                        checked.contains(index) ? Glyph.check : Glyph.add,
+                        size: 20,
+                        color: checked.contains(index)
+                            ? VimiColors.cyan
+                            : VimiColors.violet,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(child: Text(drill, style: type.bodyLarge)),
+                    ],
+                  ),
+                ),
+              ),
+            const SizedBox(height: 16),
+            if (error case final message?) ...[
+              ErrorNote(message),
+              const SizedBox(height: 12),
+            ],
+            if (app.journalError == null)
+              VButton(
+                'Use in a practice note',
+                glyph: Glyph.studio,
+                onPressed: busy
+                    ? null
+                    : () => openPage(context, PracticeEditor(pack: plan)),
+              )
+            else
+              VActionRow(
+                'Open journal recovery',
+                glyph: Glyph.studio,
+                onPressed: busy
+                    ? null
+                    : () => openPage(context, const JournalRecoveryPage()),
+              ),
+          ],
+        ),
       ),
     );
   }

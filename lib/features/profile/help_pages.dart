@@ -17,7 +17,7 @@ class HelpCenterPage extends StatelessWidget {
     const support = String.fromEnvironment('SUPPORT_URL');
     const email = String.fromEnvironment('SUPPORT_EMAIL');
     return VPage(
-      title: 'Help & safety',
+      title: '',
       child: ListView(
         padding: const EdgeInsets.all(24),
         children: [
@@ -27,12 +27,12 @@ class HelpCenterPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Keep the floor kind.',
-                  style: Theme.of(context).textTheme.headlineLarge,
+                  'Help & safety',
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  'Share your own work, respect other dancers and choose what you make public.',
+                  'Get help with your covers, conversations or account.',
                 ),
               ],
             ),
@@ -49,6 +49,11 @@ class HelpCenterPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
           ],
+          Text(
+            'Common questions',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
           for (final answer in const [
             (
               'Where is my post or comment?',
@@ -56,7 +61,7 @@ class HelpCenterPage extends StatelessWidget {
             ),
             (
               'How do messages work?',
-              'Follow each other to send a message. Messages and follows are free. Blocking removes both follows and hides your conversations from each other.',
+              'You can open a dancer’s conversation and write a draft. Sending messages and starting voice or video calls require mutual follows. Blocking removes both follows and hides your conversations from each other.',
             ),
             (
               'What happens to a report?',
@@ -67,19 +72,16 @@ class HelpCenterPage extends StatelessWidget {
               'Practice notes, drafts and personal rehearsal videos stay on this device in the account where you made them. They are not posted or synced to another device automatically.',
             ),
             (
-              'What do coins unlock?',
-              'Coins unlock the listed practice-planning packs. The everyday journal and social features remain free. Prices are supplied by Google Play when purchases are configured and available.',
+              'How do practice plans work?',
+              'Open a plan from Studio, check off drills as you go and start a practice note from the plan. Your checklist and notes stay on this device.',
             ),
             (
               'Can I use a commercial song?',
               'Only share media and audio you have permission to use, including permission from people shown. The included clip library is for viewing and private rehearsal; it does not grant permission to republish someone else’s performance or music.',
             ),
-          ]) ...[
-            Text(answer.$1, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 10),
-            Text(answer.$2),
-            const SizedBox(height: 24),
-          ],
+          ])
+            _HelpTopic(question: answer.$1, answer: answer.$2),
+          const SizedBox(height: 20),
           VActionRow(
             'Child safety standards',
             glyph: Glyph.report,
@@ -174,6 +176,57 @@ class HelpCenterPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class _HelpTopic extends StatefulWidget {
+  const _HelpTopic({required this.question, required this.answer});
+
+  final String question, answer;
+
+  @override
+  State<_HelpTopic> createState() => _HelpTopicState();
+}
+
+class _HelpTopicState extends State<_HelpTopic> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Semantics(
+        expanded: _expanded,
+        child: TextButton(
+          onPressed: () => setState(() => _expanded = !_expanded),
+          style: TextButton.styleFrom(
+            foregroundColor: VimiColors.ink,
+            minimumSize: const Size(48, 50),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          ),
+          child: Row(
+            children: [
+              Expanded(child: Text(widget.question)),
+              const SizedBox(width: 10),
+              VIcon(
+                _expanded ? Glyph.close : Glyph.add,
+                size: 18,
+                color: VimiColors.cyan,
+              ),
+            ],
+          ),
+        ),
+      ),
+      if (_expanded)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 2, 14, 14),
+          child: Text(
+            widget.answer,
+            style: const TextStyle(color: VimiColors.muted, height: 1.5),
+          ),
+        ),
+      const Divider(height: 1, color: VimiColors.tonal),
+    ],
+  );
 }
 
 class MyReportsPage extends StatefulWidget {

@@ -13,16 +13,16 @@ The welcome uses the publisher's group and duet covers, with Sign in under Join 
 ## Journeys
 
 - Floor: browse approved dance photos/videos, switch the short-video feed to covers from followed dancers, filter by style, discover dancers, join original eight-count challenges, publish with gallery/camera, comment, save, report and block.
-- Studio: keep practice sessions with routine, style, tempo, eight counts and notes. Set a weekly minute goal and track it against saved notes on this device. Replay a personal video with speed, mirror and loop controls. Optional coin-unlocked practice packs provide concrete reusable drills and planning prompts.
+- Studio: keep practice sessions with routine, style, tempo, eight counts and notes. Search the journal or filter by week and video. Set a weekly minute goal, replay a personal video with speed, mirror and loop controls, and use free practice plans with reusable checklists and prefilled note drafts.
 - The free streaming video library includes all ten publisher-supplied clips, with Solo/Duets/Groups filters, account-scoped local saves, native rehearsal controls and reusable stable clip references in practice notes. All 55 supplied photos are available online in the profile image library with full preview and avatar-crop preview before an explicit profile save. Library bookmarks are local references, not offline video downloads.
-- Inbox: open a dancer’s conversation and draft a message from their profile. Every send checks mutual follows on the server. A rehearsal invitation combines the routine and a time or note in an editable draft.
-- Me: dance identity, own posts including review states, relationships, saved posts, practice history, wallet ledger and settings.
+- Inbox: open a dancer’s conversation and draft a message from their profile. Sending and starting voice or video calls require mutual follows verified on the server. A rehearsal invitation combines the routine and a time or note in an editable draft.
+- Me: dance identity, own covers with review-status filters, relationships, saved posts and clips, practice history and settings.
 
 ## Contracts
 
 Email/password authentication and recovery use Supabase Auth. Sessions use encrypted device storage. Accounts are 18+; date of birth is checked during server provisioning, not advertised as identity verification. All uploads are private, posts/comments enter a moderator queue, reports hide reported content for the reporter, blocks take effect across queries and messaging. Account deletion removes owned Storage objects and Auth data. Limited financial and safety records may remain with direct profile links removed; transaction identifiers and restricted metadata are not described as fully anonymous.
 
-Coins have seven planned Google Play consumable IDs. Local prices come exclusively from Play. The backend verifies the purchase token and the obfuscated account ID, grants an idempotent credit in a locked database transaction, and consumes the token after crediting. No client balance writes. Basic social actions are free. Refunded purchase handling and Play service credentials are required release configuration.
+All app features, including the three practice plans, are free.
 
 The publisher supplied 55 photos and ten videos and confirmed commercial App distribution, likeness and existing soundtrack rights on November 19, 2026. All are compressed and delivered from a separate public Supabase publisher-library bucket; the rights confirmation and source/runtime inventory are in `docs/media/`. This is publisher confirmation, not independent rights clearance. Library performances and images do not create registered dancers, posts or engagement. The library is for viewing/private rehearsal and does not grant members a licence to republish another person's music or performance. Authored challenges and original brand photographs remain editorial app content. Members must have permission to upload media and audio.
 
@@ -36,7 +36,7 @@ The current journey-level acceptance record is in `docs/FUNCTIONAL_ACCEPTANCE.md
 
 ## Verification boundary
 
-The November 19 continuation explicitly requests complete working journeys. This task authorizes analysis, relevant tests, Android debug compilation and emulator flow verification, in addition to source/configuration/resource review and necessary backend fixes. Keep actual device, simulated widget, database transaction and live-service evidence separate. Real Google Play purchases require the publisher's remaining credentials/products; no public release or store upload is authorized.
+Record source, actual device, simulated widget, database transaction and live-service checks separately. Run Android builds, tests or emulator verification when explicitly requested for the task.
 
 ## Publisher media delivery update
 

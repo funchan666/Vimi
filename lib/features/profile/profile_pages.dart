@@ -1394,7 +1394,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
           context,
           title: 'Permanently delete your account?',
           body:
-              'Your profile, messages, posts and uploaded media will be deleted. Remaining coins cannot be transferred. Financial audit records may be retained without your account link.',
+              'Your profile, messages, posts and uploaded media will be deleted. Limited safety records may be retained as described in the Privacy Policy.',
           action: 'Delete my account',
         ) ||
         !mounted)

@@ -1,20 +1,20 @@
 Vimi Account Deletion and Data Requests
-Updated November 19, 2026
+Updated November 23, 2026
 
 Delete in the app
 
-Sign in and open Me, Settings, Delete account. Enter your current password and confirm Delete my account. An account restricted by moderation can also use Delete account from the account-unavailable screen. Suspension is separate from deletion.
+Sign in and open Me, Settings, then Delete account. Enter your current password, select Delete account permanently, and confirm Delete my account. If your account is restricted, choose Delete account from the account-unavailable screen.
 
-Deletion removes the Vimi profile, account credentials, dance posts, comments, messages, follows, blocks and uploaded account media. The app also clears practice notes, drafts and personal rehearsal files stored for that account on the device where deletion is completed. Google Play coin balances cannot be transferred to another account. Vimi offers consumable coin packs, not subscriptions.
+Deletion removes the Vimi profile, account credentials, dance posts, comments, messages, follows, blocks, call records and uploaded account media. The app also clears practice notes, drafts and personal rehearsal files stored for that account on the device where deletion is completed.
 
 Request deletion without installing Vimi
 
-Email funchan7777777@gmail.com with the subject Vimi account deletion request. Identify the Vimi account email and, if available, the display name or account ID. You do not need to reinstall the app to submit this request. Vimi support must verify account ownership before removing data to protect accounts from unauthorized deletion. Never send your password, a login code, full payment-card details, or illegal content by email.
+Email funchan7777777@gmail.com with the subject Vimi account deletion request. Include the email address used for your Vimi account and, if available, your display name or account ID. Vimi support will verify ownership before deleting the account. Never send your password, a login code or illegal content by email.
 
 This email route is also available for privacy questions and requests to remove specific personal data. Tell support which data or content the request concerns. Uninstalling the app alone removes its local device data but does not delete a cloud account.
 
 What may remain
 
-Limited purchase, refund and safety audit records may be retained for payment reconciliation, fraud prevention, security investigations or legal obligations. Direct profile links are removed where possible; transaction identifiers or restricted safety metadata may remain and are not described as fully anonymous. Such records are not available as community content. Provider backups and operational logs may remain under their applicable retention schedules until they expire. Contact support for the handling and retention applicable to your request.
+Limited safety and security records may be retained for abuse prevention, investigations or legal obligations. Access to these records is restricted. Provider backups and operational logs expire under their applicable retention schedules. Contact support about the handling and retention applicable to your request.
 
 Private practice copies on another device cannot be remotely erased by Vimi. Remove those copies or clear Vimi's app data on that device. Deleting a public post does not erase copies another member has already independently saved.

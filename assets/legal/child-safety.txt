@@ -1,5 +1,5 @@
 Vimi Child Safety Standards
-Effective November 19, 2026
+Updated November 23, 2026
 
 Vimi is a dance community for adults aged 18 and over. An age declaration is required to create an account; it is not identity verification. People under 18 must not register or use community messaging.
 
@@ -9,7 +9,7 @@ Report a concern
 
 Use Report on a dance post, comment, message or dancer profile, then choose Child safety or Underage user. Reports are private, enter the review queue and hide the reported item for you. You can also block a dancer from their profile. Blocking ends messaging eligibility and removes the relationship between the accounts.
 
-Vimi's designated child safety contact is funchan7777777@gmail.com. For a concern you cannot report through an item, contact Vimi support at funchan7777777@gmail.com. Include the account or content identifiers and a short description. Do not attach, download, forward or email suspected illegal images or videos. If someone faces immediate danger, contact local emergency services.
+If you cannot report a concern through an item, email Vimi’s designated child safety contact at funchan7777777@gmail.com. Include the account or content identifiers and a short description. Do not attach, download, forward or email suspected illegal images or videos. If someone faces immediate danger, contact local emergency services.
 
 Response and enforcement
 
@@ -17,4 +17,4 @@ Authorized reviewers assess reported content and accounts. Confirmed prohibited 
 
 When Vimi obtains actual knowledge of suspected CSAM or a child-exploitation offense, the operator must take the action required by applicable law, including reporting confirmed CSAM to the National Center for Missing and Exploited Children (NCMEC) or the relevant regional authority where required. Only legally necessary evidence may be preserved with restricted access. Public sharing, ordinary support email and personal devices must not be used to circulate illegal material.
 
-These standards apply to all Vimi users and all user content, including profiles and direct messages. Vimi does not offer a way to disable these protections, and virtual coins cannot buy an exemption.
+These standards apply to all Vimi users and all areas of the community, including profiles, direct messages and calls.

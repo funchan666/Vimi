@@ -950,52 +950,147 @@ class _LegalPageState extends State<LegalPage> {
     'deletion' => const String.fromEnvironment('DELETE_ACCOUNT_URL'),
     _ => '',
   };
-  @override
-  Widget build(BuildContext context) => VPage(
-    title: widget.title,
-    child: FutureBuilder<String>(
-      future: document,
-      builder: (context, snapshot) => ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          if (snapshot.hasError)
-            ErrorNote('This policy could not be opened.', onRetry: retry)
-          else if (!snapshot.hasData)
-            const Text('Opening policy…')
-          else
-            SelectableText(
-              snapshot.data!,
-              style: const TextStyle(fontSize: 16, height: 1.65),
-            ),
-          if (Uri.tryParse(webUrl)?.scheme == 'https') ...[
-            const SizedBox(height: 24),
-            VButton(
-              'Open public webpage',
-              quiet: true,
-              onPressed: () async {
-                try {
-                  if (!await launchUrl(
-                        Uri.parse(webUrl),
-                        mode: LaunchMode.externalApplication,
-                      ) &&
-                      context.mounted) {
-                    feedback(
-                      context,
-                      'The webpage could not be opened. You can read the policy here.',
+  final _headings = <int, GlobalKey>{};
+
+  Future<void> _openWeb(Uri uri) async {
+    try {
+      if (await launchUrl(uri, mode: LaunchMode.externalApplication)) return;
+    } catch (_) {
+      // The bundled text remains readable if the browser cannot open.
+    }
+    if (mounted) {
+      feedback(
+        context,
+        'The webpage could not be opened. You can read the policy here.',
+      );
+    }
+  }
+
+  Widget _reader(String text) {
+    final blocks = text.trim().split(RegExp(r'\r?\n[ \t]*\r?\n'));
+    final heading = blocks.first.split(RegExp(r'\r?\n'));
+    final body = blocks.skip(1).toList();
+    final sections = <int, String>{
+      for (final (index, value) in body.indexed)
+        if (value.length < 72 &&
+            !value.contains('\n') &&
+            !RegExp(r'[.?!]$').hasMatch(value))
+          index: value,
+    };
+    final theme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SurfacePanel(
+          illuminated: true,
+          padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Semantics(
+                header: true,
+                child: Text(widget.title, style: theme.headlineSmall),
+              ),
+              if (heading.length > 1) ...[
+                const SizedBox(height: 8),
+                Text(
+                  heading.skip(1).join(' '),
+                  style: theme.bodySmall?.copyWith(color: VimiColors.cyan),
+                ),
+              ],
+            ],
+          ),
+        ),
+        if (sections.length > 1) ...[
+          const SizedBox(height: 18),
+          Text('On this page', style: theme.titleSmall),
+          Wrap(
+            spacing: 6,
+            children: [
+              for (final section in sections.entries)
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: VimiColors.cyan,
+                    minimumSize: const Size(48, 48),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  onPressed: () {
+                    final anchor = _headings[section.key]?.currentContext;
+                    if (anchor == null) return;
+                    Scrollable.ensureVisible(
+                      anchor,
+                      alignment: .06,
+                      duration: MediaQuery.disableAnimationsOf(context)
+                          ? Duration.zero
+                          : const Duration(milliseconds: 220),
                     );
-                  }
-                } catch (_) {
-                  if (context.mounted)
-                    feedback(
-                      context,
-                      'The webpage could not be opened. You can read the policy here.',
-                    );
-                }
-              },
-            ),
-          ],
+                  },
+                  child: Text(section.value),
+                ),
+            ],
+          ),
+          const Divider(height: 20, color: VimiColors.tonal),
         ],
+        const SizedBox(height: 14),
+        SelectionArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final (index, value) in body.indexed)
+                if (sections.containsKey(index))
+                  Padding(
+                    key: _headings.putIfAbsent(index, GlobalKey.new),
+                    padding: const EdgeInsets.only(top: 12, bottom: 9),
+                    child: Semantics(
+                      header: true,
+                      child: Text(value, style: theme.titleMedium),
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Text(value, style: const TextStyle(height: 1.6)),
+                  ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final uri = Uri.tryParse(webUrl);
+    return VPage(
+      title: '',
+      actions: [
+        if (uri != null && uri.scheme == 'https' && uri.hasAuthority)
+          VIconButton(
+            Glyph.share,
+            label: 'Open public webpage',
+            onPressed: () => _openWeb(uri),
+          ),
+      ],
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 680),
+          child: FutureBuilder<String>(
+            future: document,
+            builder: (context, snapshot) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(18, 4, 18, 28),
+              child: snapshot.hasError
+                  ? ErrorNote(
+                      'This policy could not be opened.',
+                      onRetry: retry,
+                    )
+                  : snapshot.hasData
+                  ? _reader(snapshot.data!)
+                  : const Text('Opening policy…'),
+            ),
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
