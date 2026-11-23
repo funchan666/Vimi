@@ -1,6 +1,6 @@
 # Google Play virtual coins
 
-Android package: `com.vimistudio.vimi`. These are planned **one-time consumable products**, not subscriptions. Create the exact IDs in the Vimi app's Google Play Console. IDs are already present in the app and Supabase catalog; they have not been created in Play Console.
+Historical checkout specification for `com.vimistudio.vimi`. The current app is free and includes all three Studio practice plans.
 
 | Product ID | Coins | Suggested US price |
 | --- | ---: | ---: |

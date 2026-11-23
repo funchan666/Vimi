@@ -1,5 +1,7 @@
 # Vimi backend
 
+The current Android client uses free practice plans. The payment functions and database history documented here describe the earlier checkout implementation.
+
 Created with the user-selected Primary account and organization `vlktosuaxlyxcufhhfzx`. New project `Vimi`, ref `hgxbfgcdfsalavdfyvjr`, region `us-east-1`, project state `ACTIVE_HEALTHY`. Creation quote: $0/month; actual future usage remains subject to Supabase quotas and plan terms. No other project's data or configuration was changed.
 
 [Open Vimi dashboard](https://supabase.com/dashboard/project/hgxbfgcdfsalavdfyvjr).

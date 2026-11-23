@@ -38,4 +38,4 @@ Release signing, production recovery email and publication of the legal pages re
 
 The support email is `funchan7777777@gmail.com`; the separate content-review login is kept in private `config/reviewer-access.json`. Ordinary signup no longer waits for email confirmation; existing passwords are verified. No commercial music is bundled and no automatic follows or fictional engagement is generated.
 
-The installable ARM64 preview is `dist/Vimi-1.0.0-arm64-preview.apk` (36.6 MB, local test signature). The source-native suites and final profile startup have separate evidence in `docs/VERIFICATION.md`.
+The prior ARM64 preview is archived at `dist/Vimi-1.0.0-arm64-preview.apk` with its local test signature. See `docs/VERIFICATION.md` for dated runtime evidence.
