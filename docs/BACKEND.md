@@ -25,6 +25,8 @@ Gateway JWT verification is off because **each function independently validates 
 
 Primary's hosted Site URL and allowed Redirect URL are both `com.vimistudio.vimi://auth-callback/`. The values were saved through the authenticated dashboard and verified by a genuine signup email and Android PKCE callback.
 
+The Android application ID is `com.vimistudio.covercrew`. The Auth callback uses the separately configured URI above. To verify email recovery on a device with both preview generations installed, open the link with the new app.
+
 The user subsequently requested signup without email verification. Hosted **Confirm email is now disabled**, matching `supabase/config.toml`; ordinary new accounts receive a real session immediately. Existing accounts still require their actual password. The app retains adult date-of-birth and policy-consent validation. No client or arbitrary email gains moderator privileges.
 
 Password recovery continues to use the native callback. The built-in Supabase mail sender delivered to the provided organization-owner test email; production SMTP and delivery limits still require publisher configuration for general delivery.

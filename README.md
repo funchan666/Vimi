@@ -1,6 +1,6 @@
 # Vimi
 
-English Flutter/Dart Android dance community. Project package: `com.vimistudio.vimi`. Local branch: `codex/vimi-flutter-android`.
+English Flutter/Dart Android dance community. The Android application ID is `com.vimistudio.covercrew`.
 
 ## Included
 
@@ -38,4 +38,4 @@ The [Vimi website and public policies](https://vimi-dance.pages.dev/) are live o
 
 The support email is `funchan7777777@gmail.com`; the separate content-review login is kept in private `config/reviewer-access.json`. Ordinary signup no longer waits for email confirmation; existing passwords are verified. No commercial music is bundled and no automatic follows or fictional engagement is generated.
 
-The prior ARM64 preview is archived at `dist/Vimi-1.0.0-arm64-preview.apk` with its local test signature. See `docs/VERIFICATION.md` for dated runtime evidence.
+See [Google Play form guide](docs/GOOGLE_PLAY_FORM_GUIDE.md) for the launch checklist and [Mac signing guide](docs/GOOGLE_PLAY_SIGNING_MAC.md) for the publisher's local signing steps. [Runtime verification](docs/VERIFICATION.md) records which older Android builds were tested.

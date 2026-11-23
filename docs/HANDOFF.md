@@ -17,13 +17,15 @@ The November 20 welcome redesign replaces the generated welcome people with actu
 | Hosted database, private bucket, functions | Deployed; definition/configuration reads completed |
 | Auth | Native redirects saved; signup email confirmation disabled as requested. Production recovery SMTP remains publisher setup. |
 | App pricing | Free, including all three practice plans |
+| Release application ID | `com.vimistudio.covercrew`, selected before the first upload |
 | Moderation | Independent fixed operator created and native sign-in verified. Child-safety filtering and actual content/media removal are verified. Credentials: private config/reviewer-access.json. |
 | App access | Ordinary reusable review login prepared in private config/play-review-access.json; no moderator role. See GOOGLE_PLAY_APP_ACCESS.md. |
-| Support/legal | The English policies are live at [Vimi](https://vimi-dance.pages.dev/) and match the bundled text. Support and child-safety contact: funchan7777777@gmail.com. Complete the publisher identity and named child-safety contact fields in Play Console. |
+| Support/legal | The English policies are live at [Vimi](https://vimi-dance.pages.dev/) and match the bundled text. Support and child-safety email: funchan7777777@gmail.com. The designated child-safety contact name is pending before submission. |
+| Play Console | See [the submission guide](GOOGLE_PLAY_FORM_GUIDE.md) for account eligibility, the 12-person closed test requirement and approved launch region selections. |
 | Android upload signing | Supply your upload keystore and local key.properties |
 | Runtime and store acceptance | Prior Android and live-service checks are in VERIFICATION.md. The free revision requires its own build and install. |
 
-The build configuration lives in ignored `config/app.json`; copy `config/app.example.json` when moving to another machine and supply this project's publishable key. Do not put privileged keys in the client. The project identity `com.vimistudio.vimi` must stay the same in Gradle, Play and verification code.
+The build configuration lives in ignored `config/app.json`. Copy `config/app.example.json` when moving to another machine and supply this project's publishable key. Keep privileged keys outside client configuration. The package in Play must match Gradle's application ID. The separately configured Supabase Auth callback is documented in [BACKEND.md](BACKEND.md).
 
 Practice notes, retained videos, saved library selections and checklist progress stay on the current device and account. Reference videos use stable cloud references. Supabase stores the account and social data. A library profile image uploads after explicitly saving the profile. Voice and video calls use WebRTC between eligible mutual follows while the app is open.
 
@@ -33,9 +35,9 @@ Active-source analysis, Android debug/profile compilation/install/run and 26 foc
 
 Use the independent reviewer credentials from `config/reviewer-access.json` in the normal Sign in page, then Me → Settings → Content review. The file is ignored by Git and has mode 0600; its password is never part of the distributable app configuration. The support email is a separate contact, not a moderator login.
 
-## Installable preview
+## Previous Android preview
 
-The prior signed-in preview is in `dist/Vimi-1.0.0-arm64-preview.apk` (37.7 MB, profile mode, local test signature). Its screenshots and native route evidence are in `verification/2026-11-20/community-refresh/`. The APK is ignored by Git.
+The old locally signed preview APK was removed during release preparation. Its screenshots and native route evidence are in `verification/2026-11-20/community-refresh/`.
 
 November 19 supplied-media acceptance decoded all 55 full images on Android, streamed all ten videos, reopened saved filters/practice notes, matched actual avatar upload/download hashes and confirmed a rendered network avatar frame. Both temporary actors and their uploads were deleted. All 128 hosted publisher objects were hash-verified before their local package copies were removed. Optimized media totals 30.3 MB, compared with 54.0 MB before compression, with all source items retained online.
 

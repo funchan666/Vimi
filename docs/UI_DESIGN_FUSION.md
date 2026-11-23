@@ -10,6 +10,6 @@ The actual app remains English Flutter/Dart with its existing routes, repositori
 
 Luminous pink/violet/cyan accents lead against deep violet. Original stage photography carries movement and interaction; primary actions, filters and navigation carry the raster gradient. Message/profile panels are tinted enough to remain readable. Utility glyphs reuse the measured original project atlas. Platform security and purchase surfaces remain genuine.
 
-Exact prior source/art is recoverable in `docs/design-history/2026-11-19-monochrome-v2/`. New source/prompts/inventories are under `assets/brand/` and `garden-gpt-image-2/prompt/`; current implementation evidence and limits are in `VISUAL_REVISION_V3.md`. The concept's fictional member names/images/posts illustrate a populated state only and are never used as runtime member data.
+The source artwork, prompts and inventories are under `assets/brand/` and `garden-gpt-image-2/prompt/`. Implementation evidence and limits are in `VISUAL_REVISION_V3.md`. The concept uses illustrative member names, images and posts.
 
 The November 19 functional completion extends the shared neon system to verification, password change/recovery, help/support, reports, actual content review and journal recovery. No replacement raster art or stock icon set was introduced. Native flow and responsive evidence is recorded in VERIFICATION.md.

@@ -77,17 +77,17 @@ Native per-journey result JSON files provide the concrete evidence. Earlier runs
 - Directory, relationships, feed/archive/saved/challenge posts, comments, Inbox, chat, reports, ledger and reviewer queues now use stable cursor pages with load-more and retry. Pagination removes the previous 30/100-row client cutoffs and the feed offset cap; no unbounded single-request or production load benchmark is claimed.
 - No live calling, licensed K-pop catalog, AI dance scoring or cross-device private-practice synchronization is claimed.
 
-See `BACKEND.md`, `GOOGLE_PLAY_PRODUCTS.md` and `HANDOFF.md` for operation and publisher configuration.
+See `BACKEND.md`, `GOOGLE_PLAY_FORM_GUIDE.md` and `HANDOFF.md` for operations and publisher configuration.
 
 ## Deliverable and cleanup
 
-`dist/Vimi-1.0.0-arm64-preview.apk` is the recommended **36,720,586-byte** ARM64 profile preview with all 65 supplied source items served online and no bundled publisher media. It uses the local Android debug certificate for preview installation; it is not an upload-signed store release. Signature scheme v2 verifies. It was installed and cold-launched successfully on Android; the current screenshot and SHA-256 are in `verification/2026-11-20/welcome/`. The previous 36,909,069-byte cloud-library artifact remains recorded in `verification/2026-11-19/artifacts.json`; earlier measurements retain their original verification snapshots.
+The **36,720,586-byte** ARM64 profile preview served all 65 supplied items online. It used local Android debug signing and was installed and cold-launched on Android. The screenshot and SHA-256 are in `verification/2026-11-20/welcome/`. The previous cloud-library artifact remains recorded in `verification/2026-11-19/artifacts.json`. The generated preview APK was removed during release preparation for the new Android application ID.
 
 The native flows were verified with debug builds of their recorded source snapshots; the smaller profile preview has separate installation/startup evidence. A profile startup is not represented as repeating every interaction suite on an AOT binary.
 
 The current distributable APK was checked for both retained operator/App-access passwords, private configurations and native-test labels: none were found. The November 19 snapshot additionally checked its disposable QA password before that local credential was removed. Earlier media checks included two additional temporary credentials before deletion. The separate private operator and ordinary Play App-access credential files remain ignored and mode 0600. The last hosted acceptance recorded **zero temporary users, posts, messages, reports, uploaded media and follows**, with **one fixed content operator**, **one ordinary maintained Play review account** and zero wallet balance. The welcome revision did not write hosted data. The email-test account was deleted after recovery verification; the support/child-safety contact remains configured.
 
-`test/fixtures/rehearsal-sample.mp4` is a 12-second still-photo decoder fixture, not sample choreography and not an application asset. The historical email-confirmation test is retained as `.dart.txt`; current signup acceptance uses `direct_registration_test.dart`.
+`test/fixtures/rehearsal-sample.mp4` is a 12-second still-photo decoder fixture. Current signup acceptance uses `direct_registration_test.dart`.
 
 ## Additional comprehensive-history acceptance
 

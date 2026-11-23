@@ -142,7 +142,7 @@
   ],
   "visual_revision": "neon-social-v3",
   "request": "Replace rejected monochrome/gray photography treatment with a cool neon-gradient adult dance-social identity, retaining natural anatomy and avoiding comic illustration.",
-  "retired_assets": "Exact rejected UI/assets preserved under docs/design-history/2026-11-18-editorial-v1 and 2026-11-19-monochrome-v2; neither history directory is bundled.",
+  "retired_assets": "Rejected assets were removed from the active checkout. Current artwork and provenance are kept with the approved visual revision.",
   "concept": "docs/design-preview/vimi-neon-floor-v3-concept.png; illustrative member names/posts only; not a runtime screenshot or seeded account data",
   "secondary_flow_asset_mapping": {
     "screens": [

@@ -8,7 +8,7 @@
       "platforms": [
         "android"
       ],
-      "application_id": "com.vimistudio.vimi",
+      "application_id": "com.vimistudio.covercrew",
       "ui_stack": "Flutter widgets",
       "backend": "Supabase",
       "project_ref": "hgxbfgcdfsalavdfyvjr",
@@ -18,16 +18,7 @@
         "Inbox",
         "Me"
       ],
-      "media_delivery": "bundled original UI and all 65 publisher-supplied reference items; private Supabase member uploads",
-      "coin_products": [
-        "vimi_coins_100",
-        "vimi_coins_350",
-        "vimi_coins_600",
-        "vimi_coins_1300",
-        "vimi_coins_2800",
-        "vimi_coins_7500",
-        "vimi_coins_16000"
-      ],
+      "media_delivery": "bundled original UI, remote publisher library and private Supabase member uploads",
       "billing_enabled": false,
       "visual_revision": "neon-social-v3",
       "visual_style": "Midnight violet surfaces, luminous orchid-pink/violet/cyan raster gradients, natural neon-lit dance imagery, DM Sans and original utility glyphs",
@@ -43,7 +34,7 @@
   "user_overrides": [
     "Flutter / Android overrides RN / iOS",
     "Supabase real social overrides local-only default",
-    "Generate planned Google Play IDs; user will create them in Play Console",
+    "Free Android release with app pricing and all practice plans free of charge",
     "User rejected monochrome photography and explicitly requested a cool neon-gradient dance-social direction on November 19, 2026"
   ],
   "verification": "Journey-specific source, Android and hosted evidence is in docs/VERIFICATION.md; no signed store release or real Play transaction."

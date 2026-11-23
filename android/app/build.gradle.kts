@@ -13,7 +13,7 @@ val signingProperties = Properties()
 if (signingFile.exists()) signingProperties.load(FileInputStream(signingFile))
 
 android {
-    namespace = "com.vimistudio.vimi"
+    namespace = "com.vimistudio.covercrew"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
     compileOptions {
@@ -21,7 +21,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     defaultConfig {
-        applicationId = "com.vimistudio.vimi"
+        applicationId = "com.vimistudio.covercrew"
         minSdk = 24
         targetSdk = 36
         versionCode = flutter.versionCode

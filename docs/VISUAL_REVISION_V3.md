@@ -21,13 +21,13 @@ Affected source is in `lib/design/vimi_ui.dart`, `lib/main.dart`, `lib/features/
 
 Four new original runtime rasters: `neon-spectrum`, `neon-welcome`, `neon-floor`, `neon-mark`. The retained original glyph atlas and control/panel skins make seven active raster assets in total. New PNGs are in `assets/brand/sources/neon-v3/`; prompt records are in `assets/brand/generation-prompts-v3.json` and `garden-gpt-image-2/prompt/vimi-neon-*-20261119.md`. Runtime references use optimized WebP in `assets/ui/`.
 
-The exact rejected UI, active rasters and native resources were copied to `docs/design-history/2026-11-19-monochrome-v2/` before editing. Retired runtime files were removed only after literal-reference inspection and a byte match against that snapshot. History and source imagery are not registered for bundling.
+Retired runtime files were checked against literal asset references and the then-current snapshot before removal. The obsolete snapshot was later removed from the checkout.
 
 `docs/design-preview/vimi-neon-floor-v3-concept.png` is a generated social-home visual reference. Its Mina/Jae/Ari/Sol names, avatar treatment and post are illustrative design content, not app data or actual members. It is not a Flutter runtime screenshot and is not used as a page background or working screen. Native typography/layout/scroll positions can differ until actual device validation is authorized and performed.
 
 ## Evidence and boundary
 
-Dart formatting parses the 19 Dart source files. Static inspection covers JSON/XML, literal assets, local imports, current raster decode, old resource/color references, route callbacks and the bounded source differences from the recoverable snapshot. Contrast calculations cover flat semantic roles and sampled original gradient pixels, not every text/photo composition or rendered disabled state. See `contrast-inspection-v3.json` and `resource-inspection.json`.
+At this revision, Dart formatting parsed 19 source files. Static inspection covered JSON/XML, literal assets, local imports, raster decoding and route callbacks. Contrast calculations sampled flat semantic roles and gradient pixels. See `contrast-inspection-v3.json` and `resource-inspection.json`.
 
 Registered images, active DM Sans/license, data and legal text total 1,619,640 bytes; this excludes native launcher PNGs and Flutter/native compilation/delivery overhead. It is not an APK/AAB size measurement.
 

@@ -1,5 +1,7 @@
 # Vimi Google Play listing
 
+First release application ID: `com.vimistudio.covercrew`. In Production → Countries / regions, select the supported launch markets, excluding mainland China, Hong Kong, Macao, and Taiwan. [Google Play distribution settings](https://support.google.com/googleplay/android-developer/answer/7550024?hl=en)
+
 ## Main store listing · English (United States)
 
 ### App name
@@ -67,6 +69,8 @@ I'd like to invite you to the closed test for Vimi, a dance cover and practice a
 
 Open this link with the Google account invited to the test, opt in, then install Vimi from Google Play.
 [Insert closed test opt-in link]
+
+Please stay opted in for at least 14 consecutive days and use Vimi during the test.
 
 Try watching a cover and using a practice plan or saving a journal entry. With another tester you know, try following each other, sending a message, or making a voice or video call. For calls, keep Vimi open on both phones and allow microphone access. Allow camera access for video.
 

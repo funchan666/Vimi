@@ -1,4 +1,4 @@
-package com.vimistudio.vimi
+package com.vimistudio.covercrew
 
 import io.flutter.embedding.android.FlutterActivity
 

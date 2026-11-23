@@ -26,7 +26,7 @@
 | Account deletion | Genuine deletion was previously verified; a suspended actor also completed real native deletion in this pass | Support must verify and fulfill emailed deletion requests without requiring reinstallation |
 | Policy URLs | Published on Cloudflare Pages and set in the Android build configuration. All five pages returned the generated HTML without authentication. | Enter the corresponding links in Play Console. |
 | Store access | An ordinary reusable account is provisioned in private config/play-review-access.json; provide it in App access | Never provide the content-moderator password as the ordinary member login |
-| Supplied reference media | All 55 photos/ten complete videos are compressed, bundled and covered by native checks; publisher confirmed commercial/likeness/audio rights | Keep underlying rights and required attribution records; confirmation is not independent legal clearance. See media/SUPPLIED_MEDIA.md |
+| Supplied reference media | All 55 photos and ten complete videos are optimized, served from Supabase and covered by prior native checks. The publisher confirmed commercial, likeness and audio rights. | Keep underlying rights and required attribution records. See media/SUPPLIED_MEDIA.md. |
 | Data safety | Source-based mapping in GOOGLE_PLAY_DATA_SAFETY.md | Confirm against final SDKs, provider logs, support practices and direct-call infrastructure |
 | Developer / store forms | No operator company or legal jurisdiction was invented; the publisher confirmed there is none to supply yet | Genuine developer identity/package registration, audience 18+, IARC, child-safety declaration and access instructions |
 
@@ -34,7 +34,7 @@
 
 1. Use [Privacy Policy](https://vimi-dance.pages.dev/privacy), [Child Safety Standards](https://vimi-dance.pages.dev/child-safety) and [Account Deletion](https://vimi-dance.pages.dev/deletion) in the corresponding Play Console fields. Confirm publisher and contact details against the store identity.
 2. Run `python3 tool/play_release_check.py --check-public-urls`. Resolve all reported blockers. This cannot verify Console declarations or guarantee that a page is reachable in every country.
-3. Complete developer verification using genuine details, and register `com.vimistudio.vimi`. Use Social as the category only if it accurately describes the final product. Do not reclassify merely to avoid child-safety requirements.
+3. Confirm publishing eligibility after any developer-account enforcement, complete developer verification with genuine details and use `com.vimistudio.covercrew`. Vimi is a Social app. See [the submission guide](GOOGLE_PLAY_FORM_GUIDE.md) for current pending items.
 4. Declare the target audience as adults 18+ and answer IARC honestly about member posts, photos/videos and 1:1 messages. An adult audience does not exempt social apps from child-safety standards. The current date-of-birth check is not identity verification.
 5. App access must contain a maintained ordinary review account, English instructions and access to all restricted features. Normal review behavior must match the released product. Keep operator credentials separate; do not add reviewer/device/IP-based feature switching.
 6. Complete Data safety from the submitted build and actual service processing. Do not select “no data collected” for this Supabase social app, and do not claim end-to-end encryption or an independent security certification.
@@ -63,4 +63,4 @@ Vimi includes dance-specific eight-count prompts, rehearsal speed/mirror/loop co
 
 Google Play currently lists other apps using “Vimi”, including [Vimi by ACR Tech](https://play.google.com/store/apps/details?hl=en-US&id=ai.videophoto.generator) and [Vimi: AI Photo to Video](https://play.google.com/store/apps/details?hl=en-US&id=art.vimi.ai). This is a same-name finding, not an infringement finding or trademark clearance. Do not treat the name as exclusive or imply affiliation with those products. Confirm naming/rights and a distinctive, accurate store identity before submission; no package, product ID or approved branding was silently renamed in this audit.
 
-Publisher media now streams from a separate public Supabase bucket. The local privacy text, matching HTML and Data safety worksheet disclose delivery requests and provider network logs. Member uploads remain private and follow their existing approval/access rules. The migration did not enable billing, publish policy URLs or create a store release.
+Publisher media streams from a separate public Supabase bucket. The local privacy text, matching HTML and Data safety worksheet disclose delivery requests and provider network logs. Member uploads remain private and follow their existing approval/access rules.

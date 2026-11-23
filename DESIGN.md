@@ -30,7 +30,7 @@ The four signed-in destinations omit the shared title bar. Floor opens on a larg
 
 Challenges use publisher clips as playback references for the routine style. Welcome uses publisher duet and group performances. Contributing a challenge take opens the normal composer with the challenge attached. Profile and outgoing-message panels use a quiet tinted gradient; wallet coins and discovery use cyan highlights. Forms, safety sheets and feedback share the dark system rather than reverting to light defaults.
 
-Current original PNGs/prompts and measured mappings are in `assets/brand/`; the previous exact UI/source/assets snapshot is `docs/design-history/2026-11-19-monochrome-v2/`. Active rasters are in `assets/ui/`. No history, prompt, original PNG or visual concept enters the Flutter asset bundle.
+Current original PNGs, prompts and measured mappings are in `assets/brand/`. Active rasters are in `assets/ui/`. The Flutter asset bundle includes the registered runtime rasters.
 
 The publisher’s 55 photos and ten videos are visible through Discover, the profile image selector, the short-video feed and Studio. Photo picks leads to the full community gallery. Media tiles use actual optimized photography and first-frame covers, a lazy responsive grid, DM Sans labels and the existing violet/pink/cyan controls. No fake member rows or social statistics are attached to these supplied assets. Photo detail provides full-image zoom plus the same centered crop used by the profile. Clip detail reuses the existing native player and practice controls. Its note points to a stable cloud-library ID without copying video bytes. All source and derivative mappings are in `docs/media/SUPPLIED_MEDIA.md`.
 
