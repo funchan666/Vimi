@@ -1,17 +1,20 @@
 # Vimi · Google Play 填报单
 
-核对日期为 2026 年 11 月 23 日。适用于 Vimi 的免费安卓首发版，包名为 `com.vimistudio.covercrew`。先完成内部测试，再补齐商店资料和应用内容声明、做封闭测试，最后申请正式发布权限。表单选项和补充问题以实际发行地区、版本和控制台提示为准。
+适用于 Vimi 的免费安卓首发版，包名为 `com.vimistudio.covercrew`。开发者确认 Play Console 账号类型为组织。商店资料和应用内容声明填齐且正式版入口可用后，可直接提交正式版。表单选项和补充问题以实际发行地区、版本和控制台提示为准。
 
 ## 送审前待确认
 
 - **发布资格**。如旧账号终止决定涉及同一发布主体，先按 Google 原通知申诉或确认发布资格。 [Google Play 违规处置](https://support.google.com/googleplay/android-developer/answer/9899234?hl=zh-Hans)
-- **儿童安全负责人姓名**。暂空，提交儿童安全声明前补填有能力处理相关事件的真实联系人姓名。邮箱已确认。
-- **封闭测试人员**。当前尚未凑齐 12 位测试者。积累实际反馈并达到连续加入天数后，才可申请正式发布权限。
+- **儿童安全联系渠道**。姓名已记录在本机填报资料中。提交声明前，确认指定联系人可以通过儿童安全邮箱接收通知并处理事件。
+
+## 开发者账号联系资料
+
+在 **管理账号 → 账号详情 → 联系方式 → Google 如何与您联系** 中，使用[本机填报资料](../config/play-console-contact.local.md)中的账号联系邮箱，按页面提示完成验证。账号身份核验若要求法定姓名，使用资料中的姓名并与身份验证材料核对。「Google 如何与您联系」的邮箱与面向用户的应用支持邮箱是分别填写的字段。 [Google 开发者联系信息验证](https://support.google.com/googleplay/android-developer/answer/10841920?hl=zh-Hans)
 
 ## 0. 先做内部测试
 
-1. 在 Play Console 首页处理账号验证提示。如果显示设备验证任务，账号所有者在未 Root、运行 Android 10 或以上的安卓实体手机上，用 Play Console 手机应用完成验证。 [设备验证](https://support.google.com/googleplay/android-developer/answer/14316361?hl=zh-Hans)
-2. 在 **所有应用 → 创建应用** 填写应用名 `Vimi Dance Covers`、默认语言 `English (United States)`，选择 **应用**、**免费**。如果页面询问包名，填 `com.vimistudio.covercrew`。联系邮箱填 `funchan7777777@gmail.com`。核对并处理创建页要求的声明。 [创建应用](https://support.google.com/googleplay/android-developer/answer/9859152?hl=zh-Hans)
+1. 在 Play Console 首页完成组织账号显示的验证任务。 [开发者身份验证](https://support.google.com/googleplay/android-developer/answer/10841920?hl=zh-Hans)
+2. 在 **所有应用 → 创建应用** 填写应用名 `Vimi Dance Covers`、默认语言 `English (United States)`，选择 **应用**、**免费**。如果页面询问包名，填 `com.vimistudio.covercrew`。面向应用用户的支持邮箱填 `funchan7777777@gmail.com`。核对并处理创建页要求的声明。 [创建应用](https://support.google.com/googleplay/android-developer/answer/9859152?hl=zh-Hans)
 3. 在 Mac 上按 [签名打包步骤](GOOGLE_PLAY_SIGNING_MAC.md) 生成上传签名的 `build/app/outputs/bundle/release/app-release.aab`。如果本包名还没上传过，首包可用 `1.0.0`、版本代码 `1`。首次上传后，这个应用的包名固定。
 4. 打开 **测试和发布 → 测试 → 内部测试 → 测试人员**。创建邮箱名单，先加你自己手机上 Play 商店正在登录的 Google 账号，有其他可信测试者也可加。勾选名单并保存。反馈邮箱填 `funchan7777777@gmail.com`。Google 账号用于加入 Play 测试，Vimi 登录使用应用内账号。
 5. 切到 **版本 → 创建新版本**，按提示设置 Play App Signing，上传 AAB，核对包名和版本。检查预览后，在**内部测试轨道**发布。如果 **发布概览** 显示有变更等待提交审核，按控制台提示提交，等轨道显示可用。首次发布可能需要审核，具体看控制台状态。 [内部测试设置](https://support.google.com/googleplay/android-developer/answer/9845334?hl=zh-Hans) · [审核与发布状态](https://support.google.com/googleplay/android-developer/answer/9859654?hl=zh-Hans)
@@ -19,7 +22,7 @@
 
 安装后优先验证注册、登录与密码找回，短视频播放、发帖、评论、举报、拉黑、账号删除和政策链接。双人测试时，用两个 Vimi 账号互关，验证消息、语音和视频通话。记录设备型号、Android 版本、应用版本和复现步骤。有修复时，提高 `versionCode` 后把新 AAB 发到内部测试轨道复测。
 
-内部测试的参与人数和天数不计入后续封测要求。内部测试通过后，在 Console 的 **应用内容（App content）** 按下面的表格填报，补齐商店文案和图，再发布封测。儿童安全负责人姓名在此时补填。 [新个人账号测试要求](https://support.google.com/googleplay/android-developer/answer/14151465?hl=zh-Hans)
+内部测试后，在 Console 的 **应用内容（App content）** 按下面的表格填报，补齐商店文案和图。儿童安全声明的联系人姓名已在本机填报资料中备好。
 
 ## 1. Privacy policy
 
@@ -58,7 +61,7 @@ Open Vimi and tap Sign in below Join the crew. Enter the supplied email and pass
 | 字段 | 填写内容 |
 | --- | --- |
 | Published standards URL | `https://vimi-dance.pages.dev/child-safety` |
-| Designated point of contact | 待补。提交前填写能处理儿童安全事件的真实联系人姓名 |
+| Designated point of contact | 复制[本机填报资料](../config/play-console-contact.local.md)中的「儿童安全联系人姓名」 |
 | Contact email | `funchan7777777@gmail.com` |
 | In-app feedback / report | 应用内可举报用户、帖子、评论和消息。举报理由含儿童安全和疑似未成年。用正式包验证举报进入审核端后再勾选 |
 | Handling CSAM / legal compliance | 由实际负责人核对内容移除、账号处理及依法向有关机构报告的流程后签署声明 |
@@ -113,21 +116,10 @@ Open Vimi and tap Sign in below Join the crew. Enter the supplied email and pass
 
 最后打开 **App content → Needs attention**，核对尚未完成的字段。商店文案和版本说明见 [英文商店素材](GOOGLE_PLAY_LISTING.md)。
 
-## 9. 封测与正式发布
+## 9. 提交组织账号的首个正式版
 
-1. **测试和发布 → 测试 → 封闭式测试 → 管理轨道 → 测试人员**。添加参与者的 Google 账号邮箱，并配置反馈邮箱。
-2. 在该轨道创建版本，从制品库选用通过内部测试的 AAB。代码有改动时，上传版本代码更高且已复测的签名 AAB。若 **发布概览** 显示有待提交更改，点 **送审**。
-3. 封测版本可用后复制加入链接，发给名单里的真实测试者。让他们用名单中的 Google 账号主动加入，通过 Google Play 安装并实际使用。参加过内部测试的人先通过原链接退出内部测试，再通过封测链接加入。
-4. 至少 12 位测试者保持连续加入 14 天。申请时也要保持达标。把测试期间真实发现的问题、修复内容和复测结果留作答卷材料。
-5. 在应用 **信息中心 → 申请正式发布权限**，填写 Google 问卷。
+1. 在 **正式版（Production）→ 国家/地区** 选择控制台支持的首发市场，排除中国大陆、香港、澳门和台湾。如果显示 **世界其他地区**，先核实覆盖范围再选择。地区按用户的 Play 账号地区判定。 [发行地区设置](https://support.google.com/googleplay/android-developer/answer/7550024?hl=zh-Hans)
+2. 在 **正式版 → 创建新版本 → 从制品库添加** 选现有封测的 `1.0.0`（版本代码 `1`）。使用同一个 AAB 时，可直接复用该制品。代码有改动时，上传版本代码更高且已复测的签名 AAB。
+3. 填写[正式版英文说明](GOOGLE_PLAY_LISTING.md#release-notes--english-united-states)，核对商店资料、应用访问说明和审核账号。在 **发布概览** 核对正式版待送审变更并提交。上线以 Console 的正式版审核及发布状态为准。 [正式版本提交](https://support.google.com/googleplay/android-developer/answer/9859348?hl=zh-Hans)
 
-| 问卷主题 | 到时填写的实际材料 |
-| --- | --- |
-| 招募和使用 | 实际邀请途径、加入测试的人数、他们试过的功能 |
-| 反馈 | 反馈渠道、真实收到的问题和建议 |
-| 产品用途 | 面向 18 岁以上的舞蹈爱好者，分享舞蹈翻跳、找舞友和记录练习 |
-| 正式版准备 | 根据反馈修过的具体问题、复测的设备或操作结果 |
-
-获批后进入 **正式版（Production）→ 国家/地区**，逐项选择控制台支持的首发市场，排除中国大陆、香港、澳门和台湾。如果显示 **世界其他地区**，先核实覆盖范围再选择。封测轨道的地区跟随生产轨道时，确认受邀测试者所在的 Play 地区可参与。地区按用户的 Play 账号地区判定。 [发行地区设置](https://support.google.com/googleplay/android-developer/answer/7550024?hl=zh-Hans)
-
-控制台发放正式发布权限后，可创建正式版或提升已验证的测试版本，核对商店资料，并在 **发布概览** 送审。正式上线以 Console 的审核和发布状态为准。 [封闭测试设置](https://support.google.com/googleplay/android-developer/answer/9845334?hl=zh-Hans) · [个人账号正式发布权限](https://support.google.com/googleplay/android-developer/answer/14151465?hl=zh-Hans) · [正式版本提交](https://support.google.com/googleplay/android-developer/answer/9859348?hl=zh-Hans)
+组织账号可按需要保留封测或使用开放测试收集反馈。Google 的 **12 人连续加入封测 14 天**要求适用于 2023 年 11 月 13 日后创建的个人账号。 [测试轨道设置](https://support.google.com/googleplay/android-developer/answer/9845334?hl=zh-Hans) · [个人账号的封测要求](https://support.google.com/googleplay/android-developer/answer/14151465?hl=zh-Hans)

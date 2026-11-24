@@ -1,6 +1,6 @@
 # Vimi child-safety and deletion operations
 
-The designated child-safety contact selected by the publisher is `funchan7777777@gmail.com`. Assign a real individual who can receive notifications and explain the service's practices. An email address, database queue or policy page alone is not an operated response program; do not self-certify in Play Console until the responsible person is ready.
+The designated child-safety mailbox is `funchan7777777@gmail.com`. The publisher supplied the named contact in the [private local handoff](../config/play-console-contact.local.md). Before filing the declaration, confirm that the named contact can receive notifications at this address, respond to cases and explain how Vimi handles reports.
 
 ## Daily moderation and urgent concerns
 

@@ -23,7 +23,8 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 flutter:
-  uses-material-design: false
+  # Flutter's fallback text selection toolbar uses Material glyphs.
+  uses-material-design: true
   assets:
     - assets/ui/
     - assets/data/

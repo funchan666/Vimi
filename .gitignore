@@ -3,6 +3,7 @@ config/app.json
 config/qa-*
 config/reviewer-*
 config/play-review-access.json
+config/play-console-contact.local.md
 /ProjectMaterials/Supplied/
 android/key.properties
 *.jks
